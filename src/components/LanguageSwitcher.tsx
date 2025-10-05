@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Button } from './ui/button';
 
 /**
  * LanguageSwitcher Component
@@ -27,28 +28,16 @@ const LanguageSwitcher: React.FC = () => {
 
   {/* Language toggle button */ }
   return (
-    <button
+    <Button
       onClick={handleLanguageSwitch}
-      className="relative inline-flex h-8 w-14 items-center rounded-full bg-gray-200 shadow-xl cursor-pointer scale-120 ring-2 ring-blue-600 ring-offset-2"
+      className=""
       role="switch"
       aria-checked={i18n.language === 'ar'}
       aria-label={t('language.switch')}
       dir='rtl'
     >
-      {/* Toggle switch background */}
-      <span
-        className={`${i18n.language === 'ar' ? '-translate-x-1' : '-translate-x-7'
-          } inline-block h-6 w-6 rounded-full bg-white shadow-lg transition-translate duration-200`}
-      />
-
-      {/* Language indicators on the switch */}
-      <span className="absolute h-6 w-6 left-1 top-1/2 transform -translate-y-1/2 text-xs font-bold text-gray-600 flex justify-center items-center">
-        EN
-      </span>
-      <span className="absolute h-6 w-6 right-1 top-1/2 transform -translate-y-1/2 text-xs font-bold text-gray-600 flex justify-center items-center">
-        ع
-      </span>
-    </button>
+      {i18n.language === "ar" ? "EN" : "عربي"}
+    </Button>
 
 
   );
