@@ -21,35 +21,31 @@ export const useDirection = () => {
        * Update direction based on current language
        * Arabic (ar) = RTL, English (en) = LTR
        */
-      const updateDirection = () => {
+      const updateDirectionAndFont = () => {
          const currentLanguage = i18n.language;
          const isArabic = currentLanguage === 'ar';
-
          setIsRTL(isArabic);
 
-         // Update HTML document attributes
-         document.documentElement.setAttribute('dir', isArabic ? 'rtl' : 'ltr');
-         document.documentElement.setAttribute('lang', currentLanguage);
+         const html = document.documentElement;
+         html.setAttribute('dir', isArabic ? 'rtl' : 'ltr');
+         html.setAttribute('lang', currentLanguage);
 
-         // Update body classes for styling
-         document.body.classList.remove('rtl', 'ltr');
-         document.body.classList.add(isArabic ? 'rtl' : 'ltr');
+         // Remove previous classes
+         html.classList.remove('rtl', 'ltr', 'font-cairo', 'font-poppins');
+
+         // Add direction + font separately ✅
+         html.classList.add(isArabic ? 'rtl' : 'ltr');
+         html.classList.add(isArabic ? 'font-cairo' : 'font-poppins');
       };
 
-      // Set initial direction
-      updateDirection();
-
-      // Listen for language changes
-      const handleLanguageChange = () => {
-         updateDirection();
-      };
+      updateDirectionAndFont();
 
       // Add event listener for language changes
-      i18n.on('languageChanged', handleLanguageChange);
+      i18n.on('languageChanged', updateDirectionAndFont);
 
       // Cleanup event listener on unmount
       return () => {
-         i18n.off('languageChanged', handleLanguageChange);
+         i18n.off('languageChanged', updateDirectionAndFont);
       };
    }, [i18n]);
 

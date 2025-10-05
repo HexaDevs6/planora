@@ -1,9 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 
+
 @custom-variant dark (&:is(.dark *));
 
+@theme {
+  --font-cairo: "Cairo", sans-serif;
+  --font-poppins: "Poppins", sans-serif;
+}
+
 @theme inline {
+  --color-amber-light: oklch(82.8% 0.189 84.429);
+  --color-amber: oklch(76.9% 0.188 70.08);
+  --color-amber-dark: oklch(66.6% 0.179 58.318);
+
+  --color-violet-light: oklch(54.1% 0.281 293.009);
+  --color-violet: oklch(43.2% 0.232 292.759);
+  --color-violet-dark: oklch(28.3% 0.141 291.089);
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -117,4 +132,28 @@
   body {
     @apply bg-background text-foreground;
   }
+    body.font-cairo {
+    font-family: var(--font-cairo);
+  }
+
+  body.font-poppins {
+    font-family: var(--font-poppins);
+  }
+}
+
+.text-gradient-amber {
+  background-image: linear-gradient(to bottom right, var(--color-amber-light), var(--color-amber), var(--color-amber-dark));
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+.text-gradient-violet {
+  background-image: linear-gradient(to bottom right, var(--color-violet-light), var(--color-violet), var(--color-violet-dark));
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.container {
+  @apply mx-auto px-4
 }
