@@ -5,11 +5,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 // element has the class `dark`. This hook centralizes theme logic and keeps the
 // DOM class in sync with user preference while persisting it in localStorage.
 
-export type ThemePreference = 'light' | 'dark' | 'system'
-
 const THEME_STORAGE_KEY = 'theme'
 
-function getInitialTheme(): ThemePreference {
+function getInitialTheme() {
 	// Read persistent preference if available; otherwise default to 'system'
 	try {
 		const stored = localStorage.getItem(THEME_STORAGE_KEY)
@@ -22,7 +20,7 @@ function getInitialTheme(): ThemePreference {
 	return 'system'
 }
 
-function applyThemeClass(preference: ThemePreference) {
+function applyThemeClass(preference) {
 	// Apply or remove the `dark` class based on preference and system settings
 	const isSystemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
 	const shouldUseDark = preference === 'dark' || (preference === 'system' && isSystemDark)
@@ -37,7 +35,7 @@ function applyThemeClass(preference: ThemePreference) {
 
 export function useTheme() {
 	// Holds the user's selected preference: 'light' | 'dark' | 'system'
-	const [preference, setPreference] = useState<ThemePreference>(getInitialTheme)
+	const [preference, setPreference] = useState(getInitialTheme)
 
 	// Effective theme resolves 'system' to concrete 'light' | 'dark'
 	const effectiveTheme = useMemo(() => {

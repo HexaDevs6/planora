@@ -1,4 +1,3 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from './ui/button';
 
@@ -9,7 +8,7 @@ import { Button } from './ui/button';
  * It uses i18next's useTranslation hook to access the current language and changeLanguage function.
  * The selected language is automatically saved to localStorage by i18next configuration.
  */
-const LanguageSwitcher: React.FC = () => {
+const LanguageSwitcher = () => {
   // useTranslation hook provides access to:
   // - t: translation function
   // - i18n: i18next instance with methods like changeLanguage

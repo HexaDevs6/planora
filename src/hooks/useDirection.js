@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
  */
 export const useDirection = () => {
    const { i18n } = useTranslation();
-   const [isRTL, setIsRTL] = useState<boolean>(false);
+   const [isRTL, setIsRTL] = useState(false);
 
    useEffect(() => {
       /**
