@@ -5,14 +5,13 @@ import Autoplay from "embla-carousel-autoplay";
 
 export default function AutoFadeCarousel() {
     const plugin = React.useRef(
-        Autoplay({ delay: 2500, stopOnInteraction: false })
+        Autoplay({ delay: 8000, stopOnInteraction: false })
     );
 
     const images = [
-        "https://images.pexels.com/photos/2306281/pexels-photo-2306281.jpeg",
-        "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        "https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-
+        "https://images.pexels.com/photos/57980/pexels-photo-57980.jpeg",
+        "https://images.pexels.com/photos/301987/pexels-photo-301987.jpeg",
+        "https://images.pexels.com/photos/15777271/pexels-photo-15777271.jpeg",
     ];
 
     const [current, setCurrent] = React.useState(0);
@@ -20,7 +19,7 @@ export default function AutoFadeCarousel() {
     React.useEffect(() => {
         const interval = setInterval(() => {
             setCurrent((prev) => (prev + 1) % images.length);
-        }, 3000);
+        }, 8000);
         return () => clearInterval(interval);
     }, [images.length]);
 
@@ -29,7 +28,7 @@ export default function AutoFadeCarousel() {
             {images.map((src, index) => (
                 <div
                     key={index}
-                    className={`absolute inset-0 transition-opacity duration-2000 ${
+                    className={`absolute inset-0 transition-opacity duration-2500 ${
                         index === current ? "opacity-100" : "opacity-0"
                     }`}
                 >

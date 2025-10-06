@@ -11,13 +11,13 @@
 }
 
 @theme inline {
-  --color-amber-light: oklch(82.8% 0.189 84.429);
-  --color-amber: oklch(76.9% 0.188 70.08);
-  --color-amber-dark: oklch(66.6% 0.179 58.318);
+  --color-amber-light: #FFB936;
+  --color-amber: #FFA704;
+  --color-amber-dark: #CC8603;
 
-  --color-violet-light: oklch(54.1% 0.281 293.009);
-  --color-violet: oklch(43.2% 0.232 292.759);
-  --color-violet-dark: oklch(28.3% 0.141 291.089);
+  --color-violet-light: #5C3D59;
+  --color-violet: #330C2F;
+  --color-violet-dark: #1F071C;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
