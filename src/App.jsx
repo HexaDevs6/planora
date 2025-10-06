@@ -2,6 +2,7 @@ import LanguageSwitcher from "./components/LanguageSwitcher"
 import { useTranslation } from 'react-i18next';
 import { useDirection } from "./hooks/useDirection";
 import ThemeToggle from "./components/ThemeToggle";
+import HeroSection from "./components/HeroSection";
 
 
 
@@ -11,7 +12,8 @@ function App() {
   const { t } = useTranslation();
 
   return (
-    <main className="container">
+    <main >
+      <HeroSection />
       <LanguageSwitcher />
       <ThemeToggle />
       <h1 className="text-4xl font-extrabold text-gradient-violet">{t('hero.title')}</h1>
