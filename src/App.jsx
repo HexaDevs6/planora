@@ -5,6 +5,7 @@ import ThemeToggle from "./components/ThemeToggle";
 import HeroSection from "./components/HeroSection";
 import PlanSection from "./components/PlanSection";
 import EventsCategoriesSection from "./components/EventsCategoriesSection";
+import ProvidersSection from "./components/ProvidersSection";
 
 
 
@@ -22,6 +23,7 @@ function App() {
       <h1 className="text-4xl font-extrabold text-gradient-amber">{t('hero.subtitle')}</h1>
       <PlanSection/>
       <EventsCategoriesSection/>
+      <ProvidersSection/>
     </main>
   )
 }

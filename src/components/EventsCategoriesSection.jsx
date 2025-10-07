@@ -63,9 +63,9 @@ export default function EventsCategoriesSection() {
         </div>
         <div className="eventsCategories__content grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 pt-16 gap-6">
           {handleCategories.map((el) => (
-            <div key={el.id} className="relative shadow-lg group cursor-pointer">
+            <div key={el.id} className="relative shadow-lg group cursor-pointer overflow-hidden">
               <img src={el.imgSrc} className="w-full" alt="Concerts" />
-              <div className="absolute flex justify-center items-center flex-col gap-4 p-6 bg-[linear-gradient(to_bottom,rgba(169,158,173,0.3)_0%,rgba(51,12,47,0.4)_100%)] h-full inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500  text-white text-center">
+              <div className="absolute flex justify-center items-center flex-col gap-4 p-6 bg-[linear-gradient(to_bottom,rgba(169,158,173,0.3)_0%,rgba(51,12,47,0.5)_100%)] h-full inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500  text-white text-center">
                 {el.icon}
                 <h4 className="font-medium text-[32px] ">{el.title}</h4>
                 <p className="font-medium text-xl">{el.description}</p>
