@@ -7,7 +7,7 @@ import CircularText from "./ui/shadcn-io/circular-text/index";
 
 function HeroSection() {
     return (
-        <section className=' relative h-[50vh] md:h-[70vh] lg:h-[90vh] overflow-hidden flex items-center justify-start text-white'>
+        <section className=' relative h-[100vh] overflow-hidden flex items-center justify-start text-white'>
             <AutoFadeCarousel />
             <div className=' h-[inherit] absolute inset-0  bg-[linear-gradient(to_top,var(--color-violet)_0%,var(--color-violet)_15%,#B9B9B9_100%)] opacity-50 '></div>
 
