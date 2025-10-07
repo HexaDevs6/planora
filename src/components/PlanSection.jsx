@@ -7,6 +7,90 @@ import { BrainCircuit } from 'lucide-react';
 import { StarHalf } from 'lucide-react';
 
 export default function PlanSection() {
+
+
+    const handlePlan = [{
+        id:1,
+        title : 'Easy Booking',
+        description : 'Fast & secure ticketing',
+        icon : <CalendarDays
+              size={72}
+              strokeWidth={1.7}
+              className="text-amber-400 transition-transform duration-500 ease-in-out group-hover:scale-125 group-hover:rotate-2"
+            />,
+        
+    },
+    {
+        id : 2,
+        title: 'Smart Search',
+        description : 'Find events instantly',
+        icon : <Search
+              size={72}
+              strokeWidth={1.7}
+              className="text-amber-400 transition-transform duration-500 ease-in-out group-hover:scale-125 group-hover:rotate-2"
+            />,
+    },
+    {
+        id : 3,
+        title: 'Services Marketplace',
+        description : 'Hire photographers, planners, decorators & more..',
+        icon : <Store
+              size={72}
+              strokeWidth={1.7}
+              className="text-amber-400 transition-transform duration-500 ease-in-out group-hover:scale-125 group-hover:rotate-2"
+            />,
+    },
+    {
+        id : 4,
+        title: 'Notifications',
+        description : 'Stay updated & never miss out',
+        icon : <BellRing
+              size={72}
+              strokeWidth={1.7}
+              className="text-amber-400 transition-transform duration-500 ease-in-out group-hover:scale-125 group-hover:rotate-2"
+            />,
+    },
+    {
+        id : 5,
+        title: 'AI Powered',
+        description : 'Ai Suggestions and Helper',
+        icon : <BrainCircuit
+              size={72}
+              strokeWidth={1.7}
+              className="text-amber-400 transition-transform duration-500 ease-in-out group-hover:scale-125 group-hover:rotate-2"
+            />,
+    },
+    {
+        id : 6,
+        title: 'Rating & Blog',
+        description : 'feedback for events & service providers',
+        icon : <StarHalf
+              size={72}
+              strokeWidth={1.7}
+              className="text-amber-400 transition-transform duration-500 ease-in-out group-hover:scale-125 group-hover:rotate-2"
+            />,
+    },
+]
+
+    const handleRounded = (id) => {
+        switch(id){
+            case 1 :
+                return 'rounded-sm md:rounded-tl-sm md:rounded-tr-none md:rounded-bl-none md:rounded-br-none'
+            case 2:
+                return 'rounded-sm md:rounded-tr-sm md:rounded-tl-none md:rounded-bl-none md:rounded-br-none lg:rounded-none'
+            case 3:
+                return 'rounded-sm md:rounded-none lg:rounded-tr-sm'
+            case 4:
+                return 'rounded-sm md:rounded-none lg:rounded-bl-sm'
+            case 5 :
+                return "rounded-sm md:rounded-bl-sm md:rounded-tr-none md:rounded-tl-none md:rounded-br-none lg:rounded-none"
+            case 6 :
+                return 'rounded-sm md:rounded-br-sm md:rounded-tr-none md:rounded-tl-none md:rounded-bl-none'
+            default:
+                return ''
+        }
+    }
+
   return (
     <section className="py-16 bg-[linear-gradient(to_right,#99248D_0%,var(--color-violet-dark)_100%)]">
       <div className="container">
@@ -18,109 +102,23 @@ export default function PlanSection() {
             Connecting People with smart and joy
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
-          <div
-            className="group flex flex-col text-center justify-center items-center gap-5 rounded-sm p-10 bg-white/10 backdrop-blur-md border border-white/20 shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-[0_0_35px_rgba(251,188,4,0.3)] hover:border-amber-400/50"
+        <div className="plan__content grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-10 gap-6 md:gap-0">
+          {handlePlan.map(el=>(
+            <div
+            key={el.id}
+            className={`group flex flex-col text-center justify-center ${handleRounded(el.id)} items-center gap-5 p-10 bg-white/10 backdrop-blur-md border border-white/20 shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all duration-500 ease-in-out  hover:shadow-[0_0_35px_rgba(251,188,4,0.3)] hover:border-amber-400/50`}
           >
-            <CalendarDays
-              size={72}
-              strokeWidth={1.2}
-              className="text-amber-400 transition-transform duration-500 ease-in-out group-hover:scale-125 group-hover:rotate-2"
-            />
+            {el.icon}
 
             <h4 className="font-semibold text-[28px] text-white group-hover:text-amber-300 transition-colors duration-300">
-              Easy Booking
+              {el.title}
             </h4>
 
             <p className="text-lg text-gray-200 group-hover:text-gray-100 transition-colors duration-300">
-              Fast & secure ticketing
+              {el.description}
             </p>
           </div>
-          <div
-            className="group flex flex-col text-center justify-center items-center gap-5 rounded-sm p-10 bg-white/10 backdrop-blur-md border border-white/20 shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-[0_0_35px_rgba(251,188,4,0.3)] hover:border-amber-400/50"
-          >
-            <Search
-              size={72}
-              strokeWidth={1.2}
-              className="text-amber-400 transition-transform duration-500 ease-in-out group-hover:scale-125 group-hover:rotate-2"
-            />
-
-            <h4 className="font-semibold text-[28px] text-white group-hover:text-amber-300 transition-colors duration-300">
-              Smart Search
-            </h4>
-
-            <p className="text-lg text-gray-200 group-hover:text-gray-100 transition-colors duration-300">
-              Find events instantly 
-            </p>
-          </div>
-          <div
-            className="group flex flex-col text-center justify-center items-center gap-5 rounded-sm p-10 bg-white/10 backdrop-blur-md border border-white/20 shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-[0_0_35px_rgba(251,188,4,0.3)] hover:border-amber-400/50"
-          >
-            <Store
-              size={72}
-              strokeWidth={1.2}
-              className="text-amber-400 transition-transform duration-500 ease-in-out group-hover:scale-125 group-hover:rotate-2"
-            />
-
-            <h4 className="font-semibold text-[28px] text-white group-hover:text-amber-300 transition-colors duration-300">
-              Services Marketplace 
-            </h4>
-
-            <p className="text-lg text-gray-200 group-hover:text-gray-100 transition-colors duration-300">
-              Hire photographers, planners, decorators & more..
-            </p>
-          </div>
-          <div
-            className="group flex flex-col text-center justify-center items-center gap-5 rounded-sm p-10 bg-white/10 backdrop-blur-md border border-white/20 shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-[0_0_35px_rgba(251,188,4,0.3)] hover:border-amber-400/50"
-          >
-            <BellRing 
-              size={72}
-              strokeWidth={1.2}
-              className="text-amber-400 transition-transform duration-500 ease-in-out group-hover:scale-125 group-hover:rotate-2"
-            />
-
-            <h4 className="font-semibold text-[28px] text-white group-hover:text-amber-300 transition-colors duration-300">
-              Notifications
-            </h4>
-
-            <p className="text-lg text-gray-200 group-hover:text-gray-100 transition-colors duration-300">
-              Stay updated & never miss out
-            </p>
-          </div>
-          <div
-            className="group flex flex-col text-center justify-center items-center gap-5 rounded-sm p-10 bg-white/10 backdrop-blur-md border border-white/20 shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-[0_0_35px_rgba(251,188,4,0.3)] hover:border-amber-400/50"
-          >
-            <BrainCircuit
-              size={72}
-              strokeWidth={1.2}
-              className="text-amber-400 transition-transform duration-500 ease-in-out group-hover:scale-125 group-hover:rotate-2"
-            />
-
-            <h4 className="font-semibold text-[28px] text-white group-hover:text-amber-300 transition-colors duration-300">
-              AI Powered
-            </h4>
-
-            <p className="text-lg text-gray-200 group-hover:text-gray-100 transition-colors duration-300">
-              Ai Suggestions and Helper
-            </p>
-          </div>
-          <div
-            className="group text-center flex flex-col text-center justify-center items-center gap-5 rounded-sm p-10 bg-white/10 backdrop-blur-md border border-white/20 shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-[0_0_35px_rgba(251,188,4,0.3)] hover:border-amber-400/50"
-          >
-            <StarHalf
-              size={72}
-              strokeWidth={1.2}
-              className="text-amber-400 transition-transform duration-500 ease-in-out group-hover:scale-125 group-hover:rotate-2"
-            />
-
-            <h4 className="font-semibold text-[28px] text-white group-hover:text-amber-300 transition-colors duration-300">
-              Rating & Blog
-            </h4>
-
-            <p className="text-lg text-gray-200 group-hover:text-gray-100 transition-colors duration-300">
-              feedback for events & service providers
-            </p>
-          </div>
+          ))}
           
         </div>
       </div>
