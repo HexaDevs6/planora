@@ -95,7 +95,7 @@ export default function PlanSection() {
     <section className="py-16 bg-[linear-gradient(to_right,#99248D_0%,var(--color-violet-dark)_100%)]">
       <div className="container">
         <div className="plan__header text-center">
-          <h2 className="font-bold text-4xl text-white text-shadow-lg">
+          <h2 className="font-bold text-4xl text-white drop-shadow-[0px_4px_4px_rgba(0,0,0,0.25)]">
             Why Should you plan with Planora
           </h2>
           <p className="font-medium text-xl mt-6 text-amber">
