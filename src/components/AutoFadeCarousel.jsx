@@ -1,42 +1,37 @@
 "use client";
 
 import * as React from "react";
-import Autoplay from "embla-carousel-autoplay";
 
-export default function AutoFadeCarousel() {
-    const plugin = React.useRef(
-        Autoplay({ delay: 8000, stopOnInteraction: false })
-    );
-
-    const images = [
-        "https://images.pexels.com/photos/57980/pexels-photo-57980.jpeg",
-        "https://images.pexels.com/photos/301987/pexels-photo-301987.jpeg",
-        "https://images.pexels.com/photos/15777271/pexels-photo-15777271.jpeg",
-    ];
-
+export default function AutoFadeCarousel({
+    images = [],
+    delay = 1000,
+    className = "",
+}) {
     const [current, setCurrent] = React.useState(0);
 
     React.useEffect(() => {
+        if (images.length === 0) return;
+
         const interval = setInterval(() => {
             setCurrent((prev) => (prev + 1) % images.length);
-        }, 8000);
+        }, delay);
+
         return () => clearInterval(interval);
-    }, [images.length]);
+    }, [images, delay]);
 
     return (
-        <div className='relative w-[100%] mx-auto h-full overflow-hidden'>
+        <div className={`relative w-full h-full overflow-hidden ${className}`}>
             {images.map((src, index) => (
                 <div
                     key={index}
-                    className={`absolute inset-0 transition-opacity duration-2500 ${
+                    className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
                         index === current ? "opacity-100" : "opacity-0"
                     }`}
                 >
                     <img
                         src={src}
                         alt={`slide-${index}`}
-                        fill = "cover"
-                        className='object-cover h-full w-full'
+                        className='object-cover w-full h-full'
                     />
                 </div>
             ))}

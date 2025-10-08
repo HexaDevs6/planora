@@ -6,9 +6,14 @@ import { FlipWords } from "./ui/shadcn-io/flip-words";
 import CircularText from "./ui/shadcn-io/circular-text/index";
 
 function HeroSection() {
+    const heroImages = [
+        "https://images.pexels.com/photos/57980/pexels-photo-57980.jpeg",
+        "https://images.pexels.com/photos/301987/pexels-photo-301987.jpeg",
+        "https://images.pexels.com/photos/15777271/pexels-photo-15777271.jpeg",
+    ];
     return (
         <section className=' relative h-[100vh] overflow-hidden flex items-center justify-start text-white'>
-            <AutoFadeCarousel />
+            <AutoFadeCarousel images={heroImages} delay={5000}/>
             <div className=' h-[inherit] absolute inset-0  bg-[linear-gradient(to_top,var(--color-violet)_0%,var(--color-violet)_15%,#B9B9B9_100%)] opacity-50 '></div>
 
             <div className=' md:start-20 absolute z-10 max-w-5xl px-4 sm:px-8 text-start flex flex-col gap-12'>
@@ -35,7 +40,7 @@ function HeroSection() {
                     {""}
                 </div>
                 <SplittingText
-                    className='lg:text-2xl text-lg mb-4 font-semibold drop-shadow-6xl text-secondary leading-relaxed'
+                    className='lg:text-2xl text-lg mb-4 font-semibold drop-shadow-6xl text-secondary dark:text-foreground leading-relaxed md:w-[75%]'
                     text={[
                         "Organize, Discover, and Manage your awesome events effortlessly - one smart platform that connects ideas, people, and events.",
                     ]}
@@ -66,13 +71,13 @@ function HeroSection() {
                         Contact
                     </Button>
                 </div>
-                <CircularText
-                    text=' PLANORA • EVENTS •'
-                    onHover='goBonkers'
-                    spinDuration={15}
-                    className='hidden md:block bottom-0 end-[-30%] bg-secondary/10 backdrop-blur-xs text-secondary border border-secondary/30 hover:bg-violet/40   tracking-widest'
-                />
             </div>
+                <CircularText
+                    text='WELCOME • TO • PLANORA • EVENTS • '
+                    onHover='speedUp'
+                    spinDuration={15}
+                    className='hidden md:block h-[400px] w-[400px]  end-[-250px] bg-secondary/10 backdrop-blur-xs text-secondary border border-secondary/30 hover:bg-violet/40 tracking-widest'
+                />
         </section>
     );
 }
