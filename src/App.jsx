@@ -1,34 +1,28 @@
 import LanguageSwitcher from "./components/LanguageSwitcher"
 import { useTranslation } from 'react-i18next';
 import { useDirection } from "./hooks/useDirection";
-import ThemeToggle from "./components/ThemeToggle";
-import HeroSection from "./components/HeroSection";
-import PlanSection from "./components/PlanSection";
-import EventsCategoriesSection from "./components/EventsCategoriesSection";
-import ProvidersSection from "./components/ProvidersSection";
-import JoinSection from "./components/JoinSection";
-import FooterSection from "./components/FooterSection";
+import Home from "./pages/Home";
+import Register from "./pages/auth/Register";
+import Signin from "./pages/auth/Signin";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
 
 
 
 function App() {
   useDirection()
-  // useTranslation hook provides access to the translation function 't'
-  const { t } = useTranslation();
 
+  const { t } = useTranslation();
   return (
-    <main >
-      <HeroSection />
-      <LanguageSwitcher />
-      <ThemeToggle />
-      <h1 className="text-4xl font-extrabold text-gradient-violet">{t('hero.title')}</h1>
-      <h1 className="text-4xl font-extrabold text-gradient-amber">{t('hero.subtitle')}</h1>
-      <PlanSection/>
-      <EventsCategoriesSection/>
-      <ProvidersSection/>
-      <JoinSection/>
-      <FooterSection/>
-    </main>
+    <BrowserRouter>
+      <main>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/signin" element={<Signin />} />
+        </Routes>
+      </main>
+    </BrowserRouter>
   )
 }
 

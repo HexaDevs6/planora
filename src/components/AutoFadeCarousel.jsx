@@ -19,7 +19,7 @@ export default function AutoFadeCarousel() {
     React.useEffect(() => {
         const interval = setInterval(() => {
             setCurrent((prev) => (prev + 1) % images.length);
-        }, 8000);
+        }, 6000);
         return () => clearInterval(interval);
     }, [images.length]);
 
