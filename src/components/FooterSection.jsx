@@ -4,7 +4,7 @@ import { Phone } from 'lucide-react';
 
 export default function FooterSection() {
   return (
-    <footer className='py-16'>
+    <footer className='py-16 overflow-hidden'>
         <div className="container">
             <div className="footer__content py-16 grid grid-cols-2 md:grid-cols-5  md:gap-0 gap-10">
         <div className="col-span-2 flex flex-col gap-7">
