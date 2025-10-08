@@ -33,7 +33,7 @@ export default function ProvidersSection() {
 
 
   return (
-    <section className='bg-[linear-gradient(to_left,#99248D_0%,var(--color-violet-dark)_100%)] py-16 overflow-hidden'>
+    <section className='bg-[linear-gradient(to_left,#99248D_0%,var(--color-violet-dark)_100%)] py-16 overflow-hidden pb-0 md:pb-50'>
         <div className="container">
             <div className="provider__header text-center">
           <h2 className="font-bold text-4xl text-white drop-shadow-[0px_4px_4px_rgba(0,0,0,0.25)]">
