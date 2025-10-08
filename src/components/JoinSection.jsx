@@ -14,12 +14,12 @@ export default function JoinSection() {
           <input
             type="email"
             placeholder="Your Email"
-            className="bg-violet-200 text-violet placeholder-violet/70 px-4 py-3 outline-none focus:bg-violet-100 pr-1"
+            className="bg-violet-200 text-violet placeholder-violet/70 transition-all duration-500 px-4 py-3 outline-none focus:bg-violet-100 pr-1"
             required
           />
           <button
             type="submit"
-            className="bg-violet text-white px-6 py-3 font-medium hover:bg-violet"
+            className="bg-violet text-white px-6 py-3 transition-all duration-500 font-medium hover:bg-violet/90"
           >
             Join
           </button>
