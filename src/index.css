@@ -147,6 +147,7 @@
   -webkit-background-clip: text;
   color: transparent;
 }
+
 .text-gradient-violet {
   background-image: linear-gradient(to bottom right, var(--color-violet-light), var(--color-violet), var(--color-violet-dark));
   background-clip: text;
@@ -154,8 +155,10 @@
   color: transparent;
 }
 
+
+
 .container {
-  @apply mx-auto 
+  @apply mx-auto px-4
 }
 
 button {
