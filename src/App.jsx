@@ -7,6 +7,7 @@ import PlanSection from "./components/PlanSection";
 import EventsCategoriesSection from "./components/EventsCategoriesSection";
 import ProvidersSection from "./components/ProvidersSection";
 import JoinSection from "./components/JoinSection";
+import FooterSection from "./components/FooterSection";
 
 
 
@@ -26,6 +27,7 @@ function App() {
       <EventsCategoriesSection/>
       <ProvidersSection/>
       <JoinSection/>
+      <FooterSection/>
     </main>
   )
 }
