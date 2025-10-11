@@ -16,14 +16,14 @@ function HeroSection() {
             <AutoFadeCarousel images={heroImages} delay={5000}/>
             <div className=' h-[inherit] absolute inset-0  bg-[linear-gradient(to_top,var(--color-violet)_0%,var(--color-violet)_15%,#B9B9B9_100%)] opacity-50 '></div>
 
-            <div className=' md:start-20 absolute z-10 max-w-5xl px-4 sm:px-8 text-start flex flex-col gap-12'>
+            <div className=' md:start-20 absolute z-10 max-w-5xl px-4 sm:px-8 text-start flex flex-col gap-7'>
                 <img
                     className=' hidden md:block w-100'
                     src='PlanoraYellowTypo.png'
                     alt='LogoPLanora'
                 />
-                <div className='lg:text-5xl text-3xl font-bold mb-4 leading-tight drop-shadow-2xl text-violet '>
-                    WHERE ALL GREAT EVENTS BEGIN,{" "}
+                <div className='lg:text-5xl text-3xl font-bold mb-4 leading-tight drop-shadow-[0px_4px_4px_rgba(0,0,0,0.25)] text-violet '>
+                    WHERE ALL GREAT EVENTS BEGIN{" "}
                     <FlipWords
                         words={[
                             "Events",
