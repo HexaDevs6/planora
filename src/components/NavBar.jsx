@@ -42,7 +42,7 @@ function NavBar() {
                             <a>Services</a>
                         </li>
                         <li className='navbar-link__right px-3 py-2 rounded-sm hover:bg-violet/10 transition-all ease-in-out duration-300 cursor-pointer'>
-                            <a>Contact</a>
+                            <a href="/contact">Contact</a>
                         </li>
                     </ul>
                     <div className='navbar-link__right px-3 py-2 rounded-sm  text-violet dark:text-foreground hover:bg-violet/10 transition-all ease-in-out duration-300 cursor-pointer'>
