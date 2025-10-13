@@ -2,7 +2,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-
 @custom-variant dark (&:is(.dark *));
 
 @theme {
@@ -54,6 +53,18 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --animate-shine: shine var(--duration) infinite linear;
+  @keyframes shine {
+  0% {
+    background-position: 0% 0%;
+    }
+  50% {
+    background-position: 100% 100%;
+    }
+  to {
+    background-position: 0% 0%;
+    }
+  }
 }
 
 :root { 
@@ -65,8 +76,8 @@
   --card-foreground: oklch(0.129 0.042 264.695);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
+  --primary: #330C2F;
+  --primary-foreground: #330C2F;
   --secondary: oklch(0.968 0.007 247.896);
   --secondary-foreground: oklch(0.208 0.042 265.755);
   --muted: oklch(0.968 0.007 247.896);
@@ -156,7 +167,12 @@
   color: transparent;
 }
 
-
+.bg-gradient-violet {
+  background-image: linear-gradient(to left,#99248D 0%,var(--color-violet-dark) 100%);
+}
+.bg-gradient-amber {
+  background-image: linear-gradient(to left,rgb(255, 174, 0) 0%,var(--color-amber-dark) 100%);
+}
 
 .container {
   @apply mx-auto px-4
