@@ -11,7 +11,7 @@ import { MessageSquareText } from 'lucide-react';
 function CallToAction() {
     return (
         <>
-            <div className='cta-section py-16 flex items-center flex-col gap-16 bg-[linear-gradient(to_left,#99248D_0%,var(--color-violet-dark)_100%)] '>
+            <div className='cta-section py-16 flex items-center flex-col gap-16 bg-gradient-violet'>
                 <h3 className='px-4 cta-section-title text-4xl font-bold text-white drop-shadow-[0px_4px_4px_rgba(0,0,0,0.25)]  text-center'>
                     Easy 3 steps to your great event!
                 </h3>

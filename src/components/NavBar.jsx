@@ -21,7 +21,7 @@ function NavBar() {
                     </button>{" "}
                     <ul className='navbar-links__left  text-violet dark:text-foreground justify-center lg:gap-8 text-md lg:text-lg font-medium hidden md:flex '>
                         <li className='navbar-link__left px-3 py-2 rounded-sm hover:bg-violet/10 transition-all ease-in-out duration-300 cursor-pointer'>
-                            <a>Home</a>
+                            <a href="/">Home</a>
                         </li>
                         <li className='navbar-link__left px-3 py-2 rounded-sm hover:bg-violet/10 transition-all ease-in-out duration-300 cursor-pointer'>
                             <a>About us</a>
@@ -42,7 +42,7 @@ function NavBar() {
                             <a>Services</a>
                         </li>
                         <li className='navbar-link__right px-3 py-2 rounded-sm hover:bg-violet/10 transition-all ease-in-out duration-300 cursor-pointer'>
-                            <a>Contact</a>
+                            <a href="/contact">Contact</a>
                         </li>
                     </ul>
                     <div className='navbar-link__right px-3 py-2 rounded-sm  text-violet dark:text-foreground hover:bg-violet/10 transition-all ease-in-out duration-300 cursor-pointer'>
