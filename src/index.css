@@ -54,24 +54,39 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   --animate-shine: shine var(--duration) infinite linear;
+
   @keyframes shine {
-  0% {
-    background-position: 0% 0%;
+    0% {
+      background-position: 0% 0%;
     }
-  50% {
-    background-position: 100% 100%;
+
+    50% {
+      background-position: 100% 100%;
     }
-  to {
-    background-position: 0% 0%;
+
+    to {
+      background-position: 0% 0%;
     }
   }
 }
 
-:root { 
+@theme inline {
+  --animate-aurora: aurora 60s linear infinite;
+  @keyframes aurora {
+    from {
+      background-position: 50% 50%, 50% 50%;
+    }
+    to {
+      background-position: 350% 50%, 350% 50%;
+    }
+  }
+}
+
+:root {
   --radius: 0.625rem;
   --background: #FBF7F4;
   --foreground: oklch(0.129 0.042 264.695);
-  --text:#8A817C;
+  --text: #8A817C;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.129 0.042 264.695);
   --popover: oklch(1 0 0);
@@ -141,10 +156,12 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
-    body.font-cairo {
+
+  body.font-cairo {
     font-family: var(--font-cairo);
   }
 
@@ -168,10 +185,15 @@
 }
 
 .bg-gradient-violet {
-  background-image: linear-gradient(to left,#99248D 0%,var(--color-violet-dark) 100%);
+  background-image: linear-gradient(to left, #99248D 0%, var(--color-violet-dark) 100%);
 }
+
 .bg-gradient-amber {
-  background-image: linear-gradient(to left,rgb(255, 174, 0) 0%,var(--color-amber-dark) 100%);
+  background-image: linear-gradient(to left, rgb(255, 174, 0) 0%, var(--color-amber-dark) 100%);
+}
+
+.flex-center {
+  @apply flex justify-center items-center
 }
 
 .container {
