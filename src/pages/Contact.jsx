@@ -115,7 +115,7 @@ const Contact = () => {
                   <div className="max-w-3xl mx-auto">
                      <MagicCard 
                      className={"rounded-xl"} 
-                     gradientColor={"#ffae0063"} 
+                     gradientColor={"#ffae0030"} 
                      gradientSize={500}
                      gradientFrom={"#c909b6"}
                      gradientTo={"#FFA704"}
