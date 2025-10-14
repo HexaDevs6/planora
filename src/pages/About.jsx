@@ -232,7 +232,7 @@ const About = () => {
                <div className="container px-4 md:px-6">
                   <div className="text-center space-y-4 mb-12">
                      <h2 className="text-3xl md:text-4xl font-bold">
-                        Meet Our Team
+                        Meet The HexaDevs Team
                      </h2>
                      <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                         Passionate individuals dedicated to transforming event

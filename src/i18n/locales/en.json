@@ -1,6 +1,198 @@
 {
-   "hero": {
-      "title": "Planora",
-      "subtitle": "Where grate events begin"
-   }
+    "nav": {
+        "home": "Home",
+        "about": "About",
+        "contact": "Contact",
+        "events": "Events",
+        "services": "Services"
+    },
+    "hero": {
+        "slogan": "WHERE ALL GREAT EVENTS BEGIN",
+        "description": "Organize, Discover, and Manage your awesome events effortlessly - one smart platform that connects ideas, people, and events.",
+        "flipWords": "Events Meetups Conference Workshops Festivals Exhibitions Weddings",
+        "rotating": "WELCOME • TO • PLANORA • PLATFORM • "
+    },
+    "cta": {
+        "title": "Ready to Transform Your Events?",
+        "add": "Add Events Details",
+        "share": "Share Your QR",
+        "enjoy": "Enjoy & Give Feedback"
+    },
+    "upcoming": {
+        "title": "Biggest Upcoming event Starts In",
+        "days": "Days",
+        "hours": "Hours",
+        "minutes": "Minutes",
+        "seconds": "Seconds"
+    },
+    "plan": {
+        "title": "Why Should You Plan With Planora?",
+        "subtitle": "Connecting People with smart and joy",
+        "services": "Our Services"
+    },
+
+    "categories": {
+        "title": "Events Categories",
+        "concerts": {
+            "title": "Concerts",
+            "subtitle": "Get ready for electrifying nights filled with rhythm, passion, and crowd vibes that move your soul."
+        },
+        "wedding": {
+            "title": "Wedding",
+            "subtitle": "From charming halls to luxury setups — we make every wedding a dream come true with seamless planning and perfect details."
+        },
+        "theaters": {
+            "title": "Theaters",
+            "subtitle": "Immerse yourself in the magic of live performances, captivating stories, and unforgettable moments in our theater."
+        },
+        "festivals": {
+            "title": "Festivals",
+            "subtitle": "Experience the vibrant energy of festivals, where music, art, and culture come together to create unforgettable moments."
+        },
+        "exhibitions": {
+            "title": "Exhibitions",
+            "subtitle": "Discover captivating exhibitions, captivating stories, and unforgettable moments in our theater."
+        },
+        "workshops": {
+            "title": "Workshops",
+            "subtitle": "Immerse yourself in the magic of live performances, captivating stories, and unforgettable moments in our theater."
+        },
+        "conferences": {
+            "title": "Conferences",
+            "subtitle": "Immerse yourself in the magic of live performances, captivating stories, and unforgettable moments in our theater."
+        }
+    },
+
+    "services": {
+        "photographers": {
+            "title": "Photographers",
+            "subtitle": "Capture moments that tell a story",
+            "desc": "Capture moments that tell a story"
+        },
+        "planners": {
+            "title": "Planners",
+            "subtitle": "Plan the perfect events"
+        },
+        "decorators": {
+            "title": "Decorators",
+            "subtitle": "Decorate the perfect events"
+        },
+        "designers": {
+            "title": "Designers",
+            "subtitle": "Design the perfect events"
+        },
+        "halls": {
+            "title": "Events Halls",
+            "subtitle": "Where Grandeur Meets Perfection",
+            "desc": "Experience the pinnacle of luxury and elegance in our Royal Halls — grand venues designed to host your most prestigious events with unmatched style, ambiance, and service."
+        },
+
+        "catering": {
+            "title": "Catering",
+            "subtitle": "Where Every Bite Tells a Story",
+            "desc": "Delight your guests with world-class catering, exquisite flavors, elegant presentation, and flawless service for every occasion."
+        },
+
+        "sound": {
+            "title": "Sound System",
+            "subtitle": "Feel the Beat",
+            "desc": "Turn up the energy with our professional DJs — bringing the perfect beats to make every moment unforgettable."
+        },
+        "venues": {
+            "title": "Venues",
+            "subtitle": "Plan the perfect events"
+        },
+        "video": {
+            "title": "Video Production",
+            "subtitle": "Plan the perfect events"
+        }
+    },
+
+    "feats": {
+        "1": {
+            "title": "Easy Booking",
+            "subtitle": "Fast & secure ticketing"
+        },
+        "2": {
+            "title": "Smart Search",
+            "subtitle": "Find events instantly"
+        },
+        "3": {
+            "title": "Services Marketplace",
+            "subtitle": "Hire photographers, planners, decorators & more"
+        },
+        "4": {
+            "title": "Notifications",
+            "subtitle": "Stay updated & never miss out"
+        },
+        "5": {
+            "title": "AI Powered",
+            "subtitle": "Ai Suggestions and Helper"
+        },
+        "6": {
+            "title": "Rating & Blog",
+            "subtitle": "feedback for events & service providers"
+        }
+    },
+
+    "footer": {
+        "newstitle": "Ready to Transform Your Events?",
+        "newssubtitle": "Join event hosts and attendees who trust Planora",
+        "platform": "Platform",
+        "features": "Features",
+        "events": "Events",
+        "signup": "Sign Up",
+        "about": "About",
+        "blog": "Blog",
+        "qa": "Q&A",
+        "contact": "Contact",
+        "privacy": "Privacy Policy",
+        "terms": "Terms & Conditions",
+        "support": "Support",
+        "resources": "Resources",
+        "copyright": "© 2025 Planora. All rights reserved | HexaDevs Team."
+    },
+
+    "button": {
+        "login": "Login",
+        "register": "Register",
+        "logout": "Logout",
+        "submit": "Submit",
+        "cancel": "Cancel",
+        "more": "More",
+        "close": "Close",
+        "search": "Search",
+        "edit": "Edit",
+        "delete": "Delete",
+        "create": "Create",
+        "update": "Update",
+        "save": "Save",
+        "apply": "Apply",
+        "getStarted": "Get Started",
+        "contactUs": "Contact Us",
+        "join": "Join"
+    },
+    "input": {
+        "name": "Name",
+        "email": "Email",
+        "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "phone": "Phone",
+        "address": "Address",
+        "city": "City",
+        "country": "Country",
+        "state": "State",
+        "zip": "Zip",
+        "description": "Description",
+        "title": "Title",
+        "subtitle": "Subtitle",
+        "date": "Date",
+        "time": "Time",
+        "duration": "Duration",
+        "price": "Price",
+        "capacity": "Capacity",
+        "category": "Category",
+        "location": "Location",
+        "image": "Image"
+    }
 }

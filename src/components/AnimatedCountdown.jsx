@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { t } from "i18next";
 
 export default function AnimatedCountdown({ targetDate }) {
     const calculateTimeLeft = () => {
@@ -30,10 +31,10 @@ export default function AnimatedCountdown({ targetDate }) {
         );
 
     const timeUnits = [
-        { label: "Days", value: timeLeft.days },
-        { label: "Hours", value: timeLeft.hours },
-        { label: "Minutes", value: timeLeft.minutes },
-        { label: "Seconds", value: timeLeft.seconds },
+        { label: t('upcoming.days'), value: timeLeft.days },
+        { label: t('upcoming.hours'), value: timeLeft.hours },
+        { label: t('upcoming.minutes'), value: timeLeft.minutes },
+        { label: t('upcoming.seconds'), value: timeLeft.seconds },
     ];
 
     return (

@@ -3,6 +3,10 @@ import { Search, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import ThemeToggle from "@/components/ThemeToggle";
+import LanguageSwitcher from "./LanguageSwitcher";
+import { Link } from "react-router-dom";
+import { Button } from "./ui/button";
+import { t } from "i18next";
 
 function NavBar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -11,23 +15,28 @@ function NavBar() {
     return (
         <>
             <nav className='navbar navbar-expand-lg  fixed top-0 z-50 w-full drop-shadow-lg  backdrop-blur supports-[backdrop-filter]:bg-background/25 [&_*]:no-underline'>
-                <div className='container flex justify-evenly lg:justify-center lg:gap-14 items-center dark:text-foreground '>
+                <div className=' flex justify-evenly  items-center dark:text-foreground '>
                     {/* Menu icon for mobile */}
                     <button
                         onClick={toggleMenu}
                         className='md:hidden text-violet dark:text-foreground cursor-pointer rounded-sm transition-all ease-in-out duration-300'
                     >
                         {isOpen ? <X size={28} /> : <Menu size={28} />}
-                    </button>{" "}
-                    <ul className='navbar-links__left  text-violet dark:text-foreground justify-center lg:gap-8 text-md lg:text-lg font-medium hidden md:flex '>
+                    </button>
+                    <div className='nav__toggles flex gap-2'>
+                        <ThemeToggle />
+                        <LanguageSwitcher />
+                    </div>
+
+                    <ul className='navbar-links__left text-violet dark:text-foreground  justify-center lg:gap-8 text-md lg:text-lg font-medium hidden md:flex '>
                         <li className='navbar-link__left px-3 py-2 rounded-sm hover:bg-violet/10 transition-all ease-in-out duration-300 cursor-pointer'>
-                            <a href="/">Home</a>
+                            <Link to='/'>{t("nav.home")}</Link>
                         </li>
                         <li className='navbar-link__left px-3 py-2 rounded-sm hover:bg-violet/10 transition-all ease-in-out duration-300 cursor-pointer'>
-                            <a href="/about">About us</a>
+                            <Link to='/about'>{t("nav.about")}</Link>
                         </li>
                         <li className='navbar-link__left px-3 py-2 rounded-sm hover:bg-violet/10 transition-all ease-in-out duration-300 cursor-pointer'>
-                            <a>Events</a>
+                            <Link to='/events'>{t("nav.events")}</Link>
                         </li>
                     </ul>
                     <div className='navbar-logo w-55 bg-[linear-gradient(to_right,rgba(169,158,173,0.4)_0%,rgba(51,12,47,0.4)_100%)] px-9 py-5 supports-[backdrop-filter]:bg-background/25 [clip-path:polygon(0_1%,100%_0,85%_100%,16%_99%)]'>
@@ -39,20 +48,20 @@ function NavBar() {
                     </div>
                     <ul className='navbar-links__right  text-violet dark:text-foreground justify-center lg:gap-8 text-md lg:text-lg font-medium hidden md:flex  '>
                         <li className='navbar-link__right px-3 py-2 rounded-sm hover:bg-violet/10 transition-all ease-in-out duration-300 cursor-pointer'>
-                            <a>Services</a>
+                            <Link to='/services'>{t("nav.services")}</Link>
                         </li>
                         <li className='navbar-link__right px-3 py-2 rounded-sm hover:bg-violet/10 transition-all ease-in-out duration-300 cursor-pointer'>
-                            <a href="/contact">Contact</a>
+                            <Link to='/contact'>{t("nav.contact")}</Link>
                         </li>
                     </ul>
                     <div className='navbar-link__right px-3 py-2 rounded-sm  text-violet dark:text-foreground hover:bg-violet/10 transition-all ease-in-out duration-300 cursor-pointer'>
-                        <a className='flex gap-2 items-center'>
+                        <Button
+                            variant='glass'
+                            className='flex gap-2 items-center text-violet'
+                        >
                             <Search />
-                        </a>
-
+                        </Button>
                     </div>
-                                            <ThemeToggle />
-
                 </div>
                 {/* Mobile dropdown menu */}
                 {isOpen && (
@@ -67,31 +76,31 @@ function NavBar() {
                                 href='#'
                                 className='block py-2 hover:bg-violet/10'
                             >
-                                Home
+                                {t("nav.home")}
                             </a>
                             <a
                                 href='#'
                                 className='block py-2 hover:bg-violet/10'
                             >
-                                About us
+                                {t("nav.about")}
                             </a>
                             <a
                                 href='#'
                                 className='block py-2 hover:bg-violet/10'
                             >
-                                Events
+                                {t("nav.events")}
                             </a>
                             <a
                                 href='#'
                                 className='block py-2 hover:bg-violet/10'
                             >
-                                Services
+                                {t("nav.services")}
                             </a>
                             <a
                                 href='#'
                                 className='block py-2 hover:bg-violet/10'
                             >
-                                Contact
+                                {t("nav.contact")}
                             </a>
                         </div>
                     </motion.div>

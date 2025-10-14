@@ -4,6 +4,7 @@ import YellowTicketCTA from "../../public/YellowTicketCTA.png";
 import { Calendar } from 'lucide-react';
 import { QrCode  } from 'lucide-react';
 import { MessageSquareText } from 'lucide-react';
+import { t } from "i18next";
 
 
 
@@ -13,7 +14,7 @@ function CallToAction() {
         <>
             <div className='cta-section py-16 flex items-center flex-col gap-16 bg-gradient-violet'>
                 <h3 className='px-4 cta-section-title text-4xl font-bold text-white drop-shadow-[0px_4px_4px_rgba(0,0,0,0.25)]  text-center'>
-                    Easy 3 steps to your great event!
+                    {t("cta.title")}
                 </h3>
                 <div className=' container cta-section-content flex flex-col md:flex-row gap-6 justify-evenly items-center'>
                     <div
@@ -24,7 +25,7 @@ function CallToAction() {
                         }}
                     >
                         <span>1.</span>
-                        <span>Add Events Details</span>
+                        <span>{t("cta.add")}</span>
                         <Calendar size={72} className="text-violet" strokeWidth={1.7} />
                     </div>
                     <div
@@ -35,7 +36,7 @@ function CallToAction() {
                         }}
                     >
                         <span>2.</span>
-                        <span>Share Your QR</span>
+                        <span>{t("cta.share")}</span>
                         <QrCode size={72} className="text-white" strokeWidth={1.7} />
                     </div>
                     <div
@@ -46,7 +47,7 @@ function CallToAction() {
                         }}
                     >
                         <span>3.</span>
-                        <span>Enjoy & Give Feedback</span>
+                        <span>{t("cta.enjoy")}</span>
                         <MessageSquareText size={72} className="text-violet" strokeWidth={1.7} />
                     </div>
                 </div>

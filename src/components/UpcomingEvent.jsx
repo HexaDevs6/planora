@@ -1,6 +1,7 @@
 import React from "react";
 import AutoFadeCarousel from "./AutoFadeCarousel";
 import AnimatedCountdown from "./AnimatedCountdown";
+import { t } from "i18next";
 
 function UpcomingEvent() {
     let upcomingEventImgs = [
@@ -17,7 +18,7 @@ function UpcomingEvent() {
             <div className='upcoming-event container py-16 flex items-center flex-col gap-16'>
                 <div className='upcoming-event__head flex flex-col lg:flex-row justify-between gap-5 w-full'>
                     <h3 className='px-4 cta-section-title text-4xl font-bold text-violet dark:text-foreground drop-shadow-[0px_4px_4px_rgba(0,0,0,0.25)] lg:w-[38%] leading-normal'>
-                        Biggest Upcoming event Starts In
+                        {t("upcoming.title")}
                     </h3>
                     <AnimatedCountdown targetDate={eventDate} />
                 </div>
