@@ -1,19 +1,20 @@
 
 import { useState } from "react";
 import img from "@/assets/sign-img.png";
-import img1 from "/LogoBasic.png";
+import img1 from "@/assets/logosiginin.png";
+import { Link } from "react-router-dom";
 function Signin() {
     const [showPassword, setShowPassword] = useState(false);
 
     return (
-        <div className="flex flex-col font-poppins md:flex-row min-h-screen bg-[#FBF7F4]">
+        <div className="flex flex-col font-poppins md:flex-row min-h-screen bg-background">
             {/* Left column - form */}
             <div className="w-full md:w-1/2 flex items-start justify-center px-8 md:px-20 py-12 md:py-16">
                 <div className="w-full max-w-lg">
                     <header className="mb-10">
                         <div className="flex items-center gap-3 mb-6">
 
-                            <div >
+                            <div className="w-[fit]">
                                 <img src={img1} alt="Logo" />
                             </div>
                         </div>
@@ -116,7 +117,7 @@ function Signin() {
                             </div>
                         </form>
                         <div className="mt-6 text-center font-[12.8px] text-[#616161]">
-                            <h5>Not a member yet?  <a href="#" className="text-violet  text-decoration-line: underline; font-[900]"> REGISTER NOW</a></h5>
+                            <h5>Not a member yet?  <Link to="/register" className="text-violet  text-decoration-line: underline; font-[900] "> REGISTER NOW</Link></h5>
                         </div>
                     </main>
                 </div>
