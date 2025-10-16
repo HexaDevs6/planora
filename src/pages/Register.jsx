@@ -52,9 +52,9 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-6">
+    <div className="min-h-screen flex items-center justify-center bg-background p-6 pt-20">
       <div className="w-full max-w-4xl">
-        <Card className="border border-text/20 shadow-lg rounded-2xl overflow-hidden bg-white/90 backdrop-blur-md">
+        <Card className="border border-text/20 shadow-lg rounded-2xl overflow-hidden bg-muted/30 backdrop-blur-md">
           <CardContent className="p-10 md:p-12">
             {/* Header */}
             <div className="text-center mb-10">
@@ -75,8 +75,8 @@ const Register = () => {
                   <div
                     className={`w-10 h-10 flex items-center justify-center rounded-full border-2 font-semibold transition-all duration-300 ${
                       step >= i
-                        ? "bg-primary text-white border-primary shadow-md scale-105"
-                        : "bg-white text-text border-text/30"
+                        ? "bg-muted-foreground text-white border-primary shadow-md scale-105"
+                        : "bg-muted text-text border-text/30"
                     }`}
                   >
                     {i}
@@ -154,7 +154,7 @@ const Register = () => {
                   className={`transition-all ${
                     userType
                       ? "bg-primary text-white hover:bg-amber"
-                      : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                      : "bg-primary text-gray-500 cursor-not-allowed"
                   }`}
                 >
                   Continue
@@ -168,7 +168,7 @@ const Register = () => {
                 {/* Google Button */}
                 <Button
                   onClick={handleGoogleSignUp}
-                  className="w-full flex items-center justify-center gap-3 py-3 rounded-full border border-text/20 bg-white text-primary shadow-sm hover:shadow-md hover:border-amber transition-all duration-200"
+                  className="w-full flex items-center justify-center gap-3 py-3 rounded-full border border-text/20 bg-muted text-primary shadow-sm hover:shadow-md hover:border-amber transition-all duration-200"
                 >
                   <img
                     src="https://www.svgrepo.com/show/355037/google.svg"
@@ -180,7 +180,7 @@ const Register = () => {
 
                 <div className="relative">
                   <Separator />
-                  <span className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-2 text-sm text-text/70">
+                  <span className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 bg-transparent px-2 text-sm text-text/70">
                     or
                   </span>
                 </div>
@@ -200,7 +200,7 @@ const Register = () => {
                   <Button variant="outline" onClick={() => setStep(1)} className="border-text/30 text-text hover:bg-amber/10">
                     Back
                   </Button>
-                  <Button onClick={handleNext} className="bg-primary text-white hover:bg-amber">
+                  <Button onClick={handleNext} className="bg-amber">
                     Continue
                   </Button>
                 </div>
@@ -257,7 +257,7 @@ const Register = () => {
                     className={`transition-all rounded-full px-8 ${
                       agreedToTerms
                         ? "bg-primary text-white hover:bg-amber"
-                        : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                        : "bg-primary text-gray-500 cursor-not-allowed"
                     }`}
                   >
                     Confirm & Create Account

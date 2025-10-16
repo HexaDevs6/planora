@@ -2,20 +2,24 @@
 import { useState } from "react";
 import img from "@/assets/sign-img.png";
 import img1 from "@/assets/logosiginin.png";
+import logoLight from "/LogoBasicLight.png"
 import { Link } from "react-router-dom";
 function Signin() {
     const [showPassword, setShowPassword] = useState(false);
 
     return (
-        <div className="flex flex-col font-poppins md:flex-row min-h-screen bg-background">
+        <div className="flex flex-col font-poppins md:flex-row min-h-screen bg-background pt-16">
             {/* Left column - form */}
             <div className="w-full md:w-1/2 flex items-start justify-center px-8 md:px-20 py-12 md:py-16">
                 <div className="w-full max-w-lg">
                     <header className="mb-10">
                         <div className="flex items-center gap-3 mb-6">
 
-                            <div className="w-[fit]">
-                                <img src={img1} alt="Logo" />
+                            <div className="w-[fit] dark:hidden">
+                                <img src={img1} alt="Logo" width={200} />
+                            </div>
+                            <div className="w-[fit] hidden dark:block">
+                                <img src={logoLight} alt="Logo" width={200} />
                             </div>
                         </div>
 
@@ -44,9 +48,9 @@ function Signin() {
                         </div>
 
                         <div className="flex items-center my-6">
-                            <div className="flex-1 h-px bg-gray-300" />
+                            <div className="flex-1 h-px bg-muted" />
                             <div className="px-4 text-sm text-gray-500">Or use Email</div>
-                            <div className="flex-1 h-px bg-gray-300" />
+                            <div className="flex-1 h-px bg-muted" />
                         </div>
 
                         <form className="space-y-6">
@@ -55,7 +59,7 @@ function Signin() {
                                     type="email"
                                     id="email"
                                     placeholder=" "
-                                    className="peer w-full border border-gray-300 rounded-md px-4 pt-5 pb-2 text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-amber focus:border-transparent"
+                                    className="peer w-full border rounded-md px-4 pt-5 pb-2 text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-amber focus:border-transparent"
                                 />
                                 <label
                                     htmlFor="email"
@@ -70,7 +74,7 @@ function Signin() {
                                     type={showPassword ? "text" : "password"}
                                     id="password"
                                     placeholder=" "
-                                    className="peer w-full border border-gray-300 rounded-md px-4 pt-5 pb-2 pr-12 text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-amber focus:border-transparent"
+                                    className="peer w-full border rounded-md px-4 pt-5 pb-2 pr-12 text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-amber focus:border-transparent"
                                 />
                                 <label
                                     htmlFor="password"
