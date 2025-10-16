@@ -8,7 +8,8 @@ import Home from "./pages/Home";
 import NavBar from "./components/NavBar";
 import FooterSection from "./components/FooterSection";
 import About from "./pages/About";
-
+import Signin from "./pages/Signin";
+import Register from "./pages/Register";
 function App() {
    useDirection();
    // useTranslation hook provides access to the translation function 't'
@@ -21,6 +22,8 @@ function App() {
                <Route path="/" element={<Home />} />
                <Route path="/about" element={<About />} />
                <Route path="/contact" element={<Contact />} />
+               <Route path="/signin" element={<Signin />} />
+               <Route path="/register" element={<Register />} />
             </Routes>
 				<FooterSection />
          </BrowserRouter>
