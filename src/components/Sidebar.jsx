@@ -1,68 +1,138 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { useState } from "react";
+import {
+  Home,
+  LayoutDashboard,
+  Calendar,
+  Settings,
+  LogOut,
+  ArrowRight,
+  X,
+  MessageSquareTextIcon,
+} from "lucide-react";
 
-const links = [
-  { to: "/user/overview", label: "Overview", icon: "🏠" },
-  { to: "/user/settings", label: "Settings", icon: "⚙️" },
-  { to: "/user/tickets", label: "Evens & Tickets", icon: "🔐" },
-  { to: "/user/messages", label: "Messages", icon: "🔐" },
-];
+export default function Sidebar({ sideLinks, image, title, subtitle }) {
+  const [isOpen, setIsOpen] = useState(true);
 
-export default function Sidebar() {
-  const [open, setOpen] = useState(false); // for mobile
+  const toggleSidebar = () => setIsOpen(!isOpen);
+
+  const userName = title || "Mustafa Hawash";
+  const userRole = subtitle || "Vendor";
+  const userAvatar = image || "https://i.pravatar.cc/100";
+
+  const menuItems = sideLinks || [
+    {
+      icon: <LayoutDashboard size={20} />,
+      label: "Overview",
+      path: "/user/overview",
+    },
+    {
+      icon: <Calendar size={20} />,
+      label: "Events & Tickets",
+      path: "/user/tickets",
+    },
+    {
+      icon: <MessageSquareTextIcon size={20} />,
+      label: "Messages",
+      path: "/user/messages",
+    },
+    { icon: <Settings size={20} />, label: "Settings", path: "/user/settings" },
+  ];
 
   return (
-    <>
-      <div className="md:hidden flex items-center justify-between px-4 py-3 bg-gray-900 text-white">
-        <div className="flex items-center gap-3">
-          <span className="text-lg font-bold">👤 Profile</span>
-        </div>
+    <div
+      className={`${
+        isOpen ? "w-52" : "w-16"
+      } bg-primary text-secondary fixed md:static h-screen p-3 flex flex-col justify-between transition-all duration-300`}
+    >
+      {/* Top Section */}
+      <div>
+        {/* Toggle Button */}
         <button
-          onClick={() => setOpen((s) => !s)}
-          aria-label="Toggle sidebar"
-          className="p-2 rounded-md focus:outline-none focus:ring"
+          onClick={toggleSidebar}
+          className={`text-secondary mb-6 flex items-center transition-transform duration-300 ${
+            isOpen ? "rotate-180" : ""
+          }`}
         >
-          {open ? "✖" : "☰"}
+          {isOpen ? <X size={24} /> : <ArrowRight size={24} />}
         </button>
-      </div>
+        {/* User Info Section */}
+        <div className="flex flex-col items-center mb-6">
+          <img
+            src={userAvatar}
+            alt="User Avatar"
+            className={`rounded-full border-2 border-violet-light transition-all duration-300 ${
+              isOpen ? "w-16 h-16 mb-2" : "w-10 h-10"
+            }`}
+          />
 
-      {/* Sidebar panel */}
-      <aside
-        className={`${
-          open ? "block" : "hidden"
-        } md:block bg-gray-900 text-white md:min-h-screen md:sticky md:top-0`}
-      >
-        <div className="p-5 md:p-6">
-          <h2 className="text-xl font-semibold mb-6">👤 My Profile</h2>
+          {isOpen && (
+            <>
+              <h3 className="text-sm font-semibold text-secondary">
+                {userName}
+              </h3>
+              <p className="text-xs text-gray-300">{userRole}</p>
+            </>
+          )}
+        </div>
 
-          <nav className="flex flex-col gap-2">
-            {links.map((link) => (
+        {/* Menu Items */}
+        <ul className="space-y-2 border-t border-gray-700 pt-4 ">
+          {menuItems.map((item, index) => (
+            <li key={index}>
               <NavLink
-                key={link.to}
-                to={link.to}
-                onClick={() => setOpen(false)} // close on mobile after click
+                to={item.path}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
-                    isActive
-                      ? "bg-gray-700 font-medium"
-                      : "hover:bg-gray-800/80"
-                  }`
+                  `flex items-center gap-3 cursor-pointer p-2 rounded-sm 
+                    ${
+                      isActive
+                        ? "bg-violet-light text-secondary"
+                        : "text-text hover:bg-violet-light"
+                    }`
                 }
               >
-                <span className="text-lg">{link.icon}</span>
-                <span className="text-sm">{link.label}</span>
+                {item.icon}
+                {isOpen && (
+                  <span className="text-sm font-medium ">{item.label}</span>
+                )}
               </NavLink>
-            ))}
+            </li>
+          ))}
+        </ul>
+      </div>
 
-            <div className="mt-6 border-t border-gray-800 pt-4 text-sm">
-              <button className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-800/80">
-                Sign out
-              </button>
-            </div>
-          </nav>
-        </div>
-      </aside>
-    </>
+      {/* Bottom Section */}
+      <div className=" mt-auto border-t border-gray-700 pt-4 space-y-4">
+        <NavLink
+          to="/"
+          className={({ isActive }) =>
+            `flex items-center gap-3 cursor-pointer p-2 rounded-sm
+              ${
+                isActive
+                  ? "bg-violet-light text-secondary"
+                  : "text-text hover:bg-violet-light"
+              }`
+          }
+        >
+          <Home size={20} />
+          {isOpen && <span className="text-sm font-medium">Home</span>}
+        </NavLink>
+
+        <NavLink
+          to="/logout"
+          className={({ isActive }) =>
+            `flex items-center gap-3 cursor-pointer p-2 rounded-sm
+              ${
+                isActive
+                  ? "bg-violet-light text-secondary"
+                  : "text-text hover:bg-violet-light"
+              }`
+          }
+        >
+          <LogOut size={20} />
+          {isOpen && <span className="text-sm font-medium">Logout</span>}
+        </NavLink>
+      </div>
+    </div>
   );
 }
