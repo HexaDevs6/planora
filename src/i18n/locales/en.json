@@ -170,7 +170,10 @@
         "apply": "Apply",
         "getStarted": "Get Started",
         "contactUs": "Contact Us",
-        "join": "Join"
+        "join": "Join",
+        "follow": "Follow",
+        "explore": "Explore More",
+        "bookNow": "Book Now"
     },
     "input": {
         "name": "Name",
@@ -194,5 +197,65 @@
         "category": "Category",
         "location": "Location",
         "image": "Image"
+    },
+    "aboutUs": {
+        "head": {
+            "title": "Connecting People Through Events",
+            "subTitle": "About Planora",
+            "desc": "Planora is a platform that connects people with events seamless, helping millions create lasting memories every day."
+        },
+
+        "statsSection": {
+            "activeEvents": "Active Events",
+            "happyClients": "Happy Clients",
+            "organizers": "Organizers",
+            "cities": "Cities"
+        },
+
+        "ourStory": {
+            "title": "Our Story",
+            "subTitle": "From a simple idea to a powerful platform",
+            "desc": "Planora was founded at the Information Technology Institute (ITI) - Damanhour branch, where a group of passionate learners from the Front-End and Cross-Platform Development track came together with one goal - to turn knowledge into real impact. What started as a graduation project became a symbol of teamwork, creativity, and gratitude toward our mentors and colleagues. Planora reflects our hope for a lasting collaboration that continues beyond the classroom and grows into something meaningful "
+        },
+
+        "values": {
+            "title": "Our Values",
+            "subTitle": "The principles that guide everything we do",
+            "mission" :{
+                "title": "Mission",
+                "desc": "To connect people with unforgettable experiences and make event discovery effortless for everyone."
+            },
+            "community" :{
+                "title": "Community First",
+                "desc": "Building a vibrant community of event organizers, attendees, and service providers worldwide."
+            },
+            "innovation" :{
+                "title": "Innovation",
+                "desc": "Constantly evolving our platform with cutting-edge technology to serve you better."
+            },
+            "trust" :{
+                "title": "Trust & Safety",
+                "desc": "Your security and privacy are our top priorities. We ensure safe, reliable transactions."
+            }
+        },
+
+        "team": {
+            "title": "Meet The HexaDevs Team",
+            "subTitle": "The brains behind Planora",
+            "mahmoud" :"Mahmoud Abu-Attiya",
+            "mohamed":"Mohamed El-Kafrawy",
+            "mariam":"Mariam Hamido",
+            "islam":"Islam Adel",
+            "mustafa":"Moustafa Hawash",
+            "nadeen":"Nadeen Ahmed"
+        },
+
+        "ctaSec":{
+            "title": "Join Our Growing Community",
+            "desc": "Whether you're an organizer, attendee, or service provider, there's a place for you on Planora."
+        }
+
+
+        
     }
 }

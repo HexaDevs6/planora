@@ -1,5 +1,5 @@
 import React from "react";
-import { Search, Menu, X } from "lucide-react";
+import { Search, Menu, X, User2Icon } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -23,10 +23,12 @@ function NavBar() {
                     >
                         {isOpen ? <X size={28} /> : <Menu size={28} />}
                     </button>
-                    <div className='nav__toggles flex gap-2'>
-                        <ThemeToggle />
-                        <LanguageSwitcher />
-                    </div>
+                    <Button
+                        variant='glass'
+                        className='flex gap-2 items-center text-violet'
+                    >
+                        <Search />
+                    </Button>
 
                     <ul className='navbar-links__left text-violet dark:text-foreground  justify-center lg:gap-8 text-md lg:text-lg font-medium hidden md:flex '>
                         <li className='navbar-link__left px-3 py-2 rounded-sm hover:bg-violet/10 transition-all ease-in-out duration-300 cursor-pointer'>
@@ -41,7 +43,7 @@ function NavBar() {
                     </ul>
                     <div className='navbar-logo w-55 bg-[linear-gradient(to_right,rgba(169,158,173,0.4)_0%,rgba(51,12,47,0.4)_100%)] px-9 py-5 supports-[backdrop-filter]:bg-background/25 [clip-path:polygon(0_1%,100%_0,85%_100%,16%_99%)]'>
                         <img
-                            src='../../public/logoBasic.png'
+                            src='/LogoBasic.png'
                             alt='Planora'
                             className='w-full h-full object-cover'
                         />
@@ -55,12 +57,13 @@ function NavBar() {
                         </li>
                     </ul>
                     <div className='navbar-link__right px-3 py-2 rounded-sm  text-violet dark:text-foreground hover:bg-violet/10 transition-all ease-in-out duration-300 cursor-pointer'>
-                        <Button
-                            variant='glass'
-                            className='flex gap-2 items-center text-violet'
-                        >
-                            <Search />
-                        </Button>
+                        <div className='nav__toggles flex gap-2'>
+                           <Button variant='glass' size='sm'>
+                            <Link to='/user' ><User2Icon/></Link>
+                            </Button>
+                            <ThemeToggle />
+                            <LanguageSwitcher />
+                        </div>
                     </div>
                 </div>
                 {/* Mobile dropdown menu */}

@@ -64,7 +64,7 @@ function HeroSection() {
                             size: "CTA",
                         })}
                     >
-                        {t("button.contact")}
+                        {t("button.contactUs")}
                     </Button>
                 </div>
             </div>

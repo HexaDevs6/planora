@@ -18,6 +18,7 @@
   --color-violet: #330C2F;
   --color-violet-dark: #1F071C;
 
+  --color-text:var(--content);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -72,10 +73,12 @@
 
 @theme inline {
   --animate-aurora: aurora 60s linear infinite;
+
   @keyframes aurora {
     from {
       background-position: 50% 50%, 50% 50%;
     }
+
     to {
       background-position: 350% 50%, 350% 50%;
     }
@@ -86,7 +89,7 @@
   --radius: 0.625rem;
   --background: #FBF7F4;
   --foreground: oklch(0.129 0.042 264.695);
-  --text: #8A817C;
+  --content: #8A817C;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.129 0.042 264.695);
   --popover: oklch(1 0 0);
@@ -121,6 +124,7 @@
 .dark {
   --background: #1F071C;
   --foreground: #FBF7F4;
+  --content: #8A817C;
   --card: oklch(0.208 0.042 265.755);
   --card-foreground: oklch(0.984 0.003 247.858);
   --popover: oklch(0.208 0.042 265.755);
@@ -202,4 +206,14 @@
 
 button {
   cursor: pointer;
+}
+
+
+.upcoming-events__cards::-webkit-scrollbar {
+  height: 8px;
+}
+
+.upcoming-events__cards::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 4px;
 }
