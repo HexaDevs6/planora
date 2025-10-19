@@ -9,6 +9,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
+        amber: "bg-gradient-amber text-secondary hover:bg-amber/80 hover:scale-105",
         primary: "bg-violet text-amber-light hover:bg-violet/80",
         glass: "bg-secondary/10 backdrop-blur-xs text-secondary border border-secondary/30 hover:bg-violet/40 dark:text-primary",
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
@@ -24,9 +25,9 @@ const buttonVariants = cva(
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
-        sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
-        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
-        CTA: "h-10 rounded-md px-9 py-7 text-lg font-semibold has-[>svg]:px-4",
+        sm: "h-8 rounded-sm gap-1.5 px-3 has-[>svg]:px-2.5",
+        lg: "h-10 rounded-sm px-6 has-[>svg]:px-4",
+        CTA: "h-10 rounded-sm px-9 py-7 text-lg font-semibold has-[>svg]:px-4",
         icon: "size-9",
         "icon-sm": "size-8",
         "icon-lg": "size-10",

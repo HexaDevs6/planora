@@ -10,7 +10,7 @@ export default function UserLayout() {
         <Sidebar />
       </div>
       {/* Content area */}
-      <main className="flex-1 overflow-y-auto ml-14 md:ml-0 p-6 transition-all duration-300 bg-background ">
+      <main className="flex-1 overflow-y-auto ml-16 md:ml-0 p-2 md:p-6 transition-all duration-300 bg-background ">
         <Outlet />
       </main>
     </div>

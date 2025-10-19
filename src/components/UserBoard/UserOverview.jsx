@@ -1,56 +1,198 @@
 import React from "react";
+import { Link, NavLink } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import BoardCard from "../BoardCard";
+import { ArrowUpRightFromSquareIcon } from "lucide-react";
 
 export default function UserOverview() {
-  return (
-    <div className="container bg-background">
-      <div className="mb-10">
-        <h2 className="text-3xl font-bold text-[var(--primary-purple)] mb-6">
-          Upcoming Events
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <div className="bg-white rounded-2xl soft-shadow overflow-hidden group transform transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-            <img
-              alt="Music Festival"
-              className="w-full h-48 object-cover"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuE9FToirIJIBcBmt0df13dxjxDKS8Gip8ffnvOMVuH8KqWvTRWL5JeEpIgCEVrcZAoeFu-cLPcIRK3k6SYo9cKR4lhlmSe2EXcWUMKzyhVz3Qq40JBn-vkv8zQ03xm3N0RSoRSI0bKsfk74cLiWhYHyT8W6CQDEBN1oAYfc6D2nUCdlw7bXKHehGPRYNybkIHWrH2m5JV1fBaofmsYqqqah2NcrSGcITc8tKzNEPEKBPlKxL8syZ1UZ2RwHxJ3rfFwk3SY7AH1dWy"
-            />
-            <div className="p-6">
-              <p className="text-sm font-semibold text-[var(--primary-yellow)]">
-                SAT, DEC 12, 2024
-              </p>
-              <h3 className="text-xl font-bold text-[var(--primary-purple)] mt-2">
-                Vibrations Music Festival
-              </h3>
-              <p className="text-gray-500 mt-1 flex items-center gap-2">
-                <span className="material-symbols-outlined text-base">
-                  location_on
-                </span>
-                Central Park, NYC
-              </p>
-              <div className="mt-4 flex items-center justify-between">
-                <div className="flex -space-x-2">
-                  <img
-                    alt="Attendee"
-                    className="inline-block h-8 w-8 rounded-full ring-2 ring-white"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBf4oMvciKLg64j-P5VaABoKKWt9G6aNieHg-yhpScjDa_Awc49KRPIWuSI1IOVzhh1zTszQSb1rEuyWqawE42XdOL3GILVSu7mETNAPKqLA4L4BGvLnYQLd-5MtPt03gRAnMRjcwjDk60GvBOAEfvRhBBjpOEJux2J5SuYXQEjgQ44jI3fx5WhXpIbib84lulmTxQCfahbDjT9NpLuHh-Kefl9cDCyc5LWMjSkrLvnxRS946hJzRdFrXwVG_yneQP_6M049tcIGfBt"
-                  />
-                  <img
-                    alt="Attendee"
-                    className="inline-block h-8 w-8 rounded-full ring-2 ring-white"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvG42OiJ8sAIVM9_pzhCEhZw7XUVkPsIY-IFtql4nsEJku_AdBp2J9fZE4H-8RBqiKaY7GEYi5hOt5MID19HvbSboOKO2EiYIQ26ygw6Au_G1vzakQ0Dm-uZiKnuqCy0-Nm58G4y78Xm-jxhTb1QZ2tj8_0aT_Hr5iAIRRoBFwM02vBgdw8SzOxGky2qhMqIyztvXOhTXngjhsZDdTFpYM74GgDKALQ0uFCwvntPKuQoqto8CIiZcQT7OTj3gHisBN6Mgs1i3mQPKe"
-                  />
-                  <div className="h-8 w-8 rounded-full ring-2 ring-white bg-gray-200 flex items-center justify-center text-xs font-bold text-gray-600">
-                    +5
-                  </div>
+    const userEventsData = {
+        past: [
+            {
+                title: "Midnight Art Gala",
+                date: "June 15, 2023",
+                img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBvG42OiJ8sAIVM9_pzhCEhZw7XUVkPsIY-IFtql4nsEJku_AdBp2J9fZE4H-8RBqiKaY7GEYi5hOt5MID19HvbSboOKO2EiYIQ26ygw6Au_G1vzakQ0Dm-uZiKnuqCy0-Nm58G4y78Xm-jxhTb1QZ2tj8_0aT_Hr5iAIRRoBFwM02vBgdw8SzOxGky2qhMqIyztvXOhTXngjhsZDdTFpYM74GgDKALQ0uFCwvntPKuQoqto8CIiZcQT7OTj3gHisBN6Mgs1i3mQPKe",
+            },
+            {
+                title: "Run for Hope Charity 5K",
+                date: "Oct 02, 2023",
+                img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAmC70nqMguBCRUYKgKaZwZg2XhQc1eTybnhjxYdQhW7iQAFN_bOcS7je6-MM4ITFG55bTG6fTgvAq9ZUIt22F37muEK_KWZf-SaNdI4n402uL8O0HtEK5hrdXZuJ8IlVqN5ZF3W2kPO0NEXhNLKEyZKqRNjcbXxlgMofPDHjKVb1oFo6kIc-xi8jr24Zje8p6GrCsHGRD5Ae5hbM82oGEc7aqIGCsHnOwQ12LhehXURQbt3qZwiVDoGrQnwdPgw-7J2cOrq1ho50hD",
+            },
+        ],
+        saved: [
+            {
+                title: "The Lumineers Live",
+                date: "Jan 25, 2025",
+                img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBLAlmqWfkz4NFpHytbo55OEsIEg6kEiwAkxYzqwpqoAOpcuWdyQIExGBpxaRlRYvEMIf64f7lWUrowjOus1FyuYjKSx0qe9W4Upuxhmvqdssu4ieGoqnYyr7FiB2mYguEOAbLnW2BZZ3V_COHweL8LZW9H2thXBChhq8G0N5FKCY4vrGkb4STHAZPUnbPsUf0xWfaOfakUehp3NSQgKEHiEp408j8k5_fzrWW5dxctvpcP2WMdrX2tN7HfkqA40NkHq2TCmAo0jsZ-",
+            },
+        ],
+    };
+
+
+    return (
+        <>
+            <div className='overview bg-background flex flex-col gap-12 transition-all duration-300 ease-in-out '>
+                <div className='upcoming-events'>
+                    <div className=' upcoming-events__header flex justify-between'>
+                        <h2 className='text-3xl font-bold text-primary mb-2 '>
+                            Upcoming Events
+                        </h2>
+                        <Button variant='link' className='text-center'>
+                            <Link to='/user/tickets'>
+                                See All
+                            </Link>
+                        </Button>
+                    </div>
+                    <div className='upcoming-events__cards flex  items-start flex-nowrap overflow-x-auto gap-4 py-4'>
+                        <div className='flex-shrink-0 min-w-[300px]'>
+                            <BoardCard />
+                        </div>
+                        <div className='flex-shrink-0 min-w-[300px]'>
+                            <BoardCard />
+                        </div>
+                        <div className='flex-shrink-0 min-w-[300px]'>
+                            <BoardCard />
+                        </div>
+                        <div className='flex-shrink-0 min-w-[300px]'>
+                            <BoardCard />
+                        </div>
+                    </div>
                 </div>
-                <button className="gradient-highlight text-white font-bold py-2 px-4 rounded-full text-sm transition-transform hover:scale-105">
-                  View Details
-                </button>
-              </div>
+
+                <div className='user-highlights grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+                    <div className='user-highlights__events space-y-4 col-span-2'>
+                        <div className='past-events space-y-2'>
+                            <h3 className='text-2xl font-bold text-primary '>
+                                Past Events
+                            </h3>
+                            <div className='bg-card  rounded-md p-4 soft-shadow space-y-4'>
+                                {userEventsData.past.map((event, idx) => (
+                                    <div
+                                        key={idx}
+                                        className='flex items-center justify-between p-3 rounded-sm hover:bg-amber-light dark:hover:bg-gray-800 transition-colors'
+                                    >
+                                        <div className='flex flex-col md:flex-row items-center gap-4'>
+                                            <img
+                                                src={event.img}
+                                                alt={event.title}
+                                                className='w-16 h-16 object-cover rounded-sm'
+                                            />
+                                            <div>
+                                                <h4 className='font-bold text-primary'>
+                                                    {event.title}
+                                                </h4>
+                                                <p className='text-sm text-text'>
+                                                    {event.date}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <Button variant='ghost'>
+                                            <ArrowUpRightFromSquareIcon />
+                                        </Button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        <div className='saved-events space-y-2'>
+                            <h3 className='text-2xl font-bold text-primary '>
+                                Saved Events
+                            </h3>
+                            <div className='bg-card  rounded-md p-4 soft-shadow space-y-4'>
+                                {userEventsData.saved.map((event, idx) => (
+                                    <div
+                                        key={idx}
+                                        className='flex  items-center justify-between p-3 rounded-sm hover:bg-amber-light dark:hover:bg-gray-800 transition-colors'
+                                    >
+                                        <div className='flex flex-col md:flex-row items-center gap-4'>
+                                            <img
+                                                src={event.img}
+                                                alt={event.title}
+                                                className='w-16 h-16 object-cover rounded-sm'
+                                            />
+                                            <div>
+                                                <h4 className='font-bold text-primary'>
+                                                    {event.title}
+                                                </h4>
+                                                <p className='text-sm text-text'>
+                                                    {event.date}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <Button variant='ghost'>
+                                            <ArrowUpRightFromSquareIcon />
+                                        </Button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                    <div className='user__next-ticket space-y-2'>
+                        <h3 className=' ticket-head text-2xl font-bold text-primary '>
+                            Next Ticket
+                        </h3>
+                        <div>
+                            <div className=' ticket-content bg-card rounded-md p-6 soft-shadow text-center'>
+                                <h3 className='text-lg font-bold text-primary'>
+                                    Vibrations Music Festival
+                                </h3>
+                                <p className='text-sm text-text'>
+                                    Main Stage Access
+                                </p>
+
+                                <div className='ticket-image my-6'>
+                                    <img
+                                        src='https://lh3.googleusercontent.com/aida-public/AB6AXuCxE_bEHgOB6zMC9k9Dd0BvU0z_0yTVsLceuLP483W61bGYJ8D85TqwyjUrc8Jpr-CmNBPNoDsF46TGFkwB9jboovIT_RTixjagzp58fRNlH4pNB126qdZO4Zjzbzru70Gv0MteWw9N0-AvlwvLguAhtWllhH3ddH4zH5cX9PFTQj7M8eVME9WfyjslnS9VoPsUZHrHHuHWJzHzi5vwf7-ufd2DZdKDZr8xW15XRjjW82G3ZwrJxe-qNrH53NdwxqyJH6eNaXrmSYyr'
+                                        alt='QR Code'
+                                        className='mx-auto rounded-sm'
+                                    />
+                                </div>
+
+                                <div className='ticket-info border-t border-dashed border-gray-300 pt-4 text-left'>
+                                    <div className='flex justify-between '>
+                                        <div className='text-left'>
+                                            <p className='text-xs text-text'>
+                                                Name
+                                            </p>
+
+                                            <p className='font-semibold text-primary'>
+                                                Jane Doe
+                                            </p>
+                                        </div>
+                                        <div className='text-right'>
+                                            <p className='text-xs text-text'>
+                                                Date
+                                            </p>
+
+                                            <p className='font-semibold text-primary'>
+                                                Dec 12
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className='flex justify-between items-center mt-3 '>
+                                        <div className='text-left'>
+                                            <p className='text-xs text-text'>
+                                                Seat
+                                            </p>
+
+                                            <p className='font-semibold text-primary'>
+                                                GA
+                                            </p>
+                                        </div>
+                                        <div className='text-right'>
+                                            <p className='text-xs text-text'>
+                                                Time
+                                            </p>
+
+                                            <p className='font-semibold text-primary'>
+                                                12:00 PM
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+        </>
+    );
 }

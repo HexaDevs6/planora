@@ -21,7 +21,7 @@ export default function ThemeToggle() {
             size='sm'
             type='button'
             onClick={cycleTheme}
-            className='flex gap-2 items-center text-violet'
+            className='flex gap-2 items-center text-background'
             aria-label='Toggle theme'
             title={`Theme: ${preference} (click to cycle)`}
         >
