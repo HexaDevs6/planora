@@ -7,9 +7,19 @@ import LanguageSwitcher from "./LanguageSwitcher";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import { t } from "i18next";
-
+import { useSelector } from "react-redux";
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebaseConfig";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+    DropdownMenu,
+    DropdownMenuTrigger,
+    DropdownMenuContent,
+    DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 function NavBar() {
     const [isOpen, setIsOpen] = useState(false);
+    const { user } = useSelector((state) => state.auth);
 
     const toggleMenu = () => setIsOpen(!isOpen);
     return (
@@ -58,9 +68,44 @@ function NavBar() {
                     </ul>
                     <div className='navbar-link__right px-3 py-2 rounded-sm  text-violet dark:text-foreground hover:bg-violet/10 transition-all ease-in-out duration-300 cursor-pointer'>
                         <div className='nav__toggles flex gap-2'>
-                           <Button variant='glass' size='sm'>
-                            <Link to='/user' ><User2Icon/></Link>
-                            </Button>
+                            {!user ? (
+                                // المستخدم مش داخل 👇
+                                <Button variant='glass' size='sm'>
+                                    <Link to='/signin'><User2Icon /></Link>
+                                </Button>
+                            ) : (
+                                // المستخدم داخل ✅
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Avatar className="cursor-pointer">
+                                            <AvatarImage src={user.photoURL || ""} alt={user.displayName || ""} />
+                                            <AvatarFallback>
+                                                {user.displayName
+                                                    ? user.displayName[0].toUpperCase()
+                                                    : user.email
+                                                        ? user.email[0].toUpperCase()
+                                                        : "U"}
+                                            </AvatarFallback>
+                                        </Avatar>
+                                    </DropdownMenuTrigger>
+
+                                    <DropdownMenuContent align="end" className="w-40">
+                                        <DropdownMenuItem asChild>
+                                            <Link to="/user/overview">Dashboard</Link>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem asChild>
+                                            <Link to="/user/settings">Settings</Link>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            onClick={() => signOut(auth)}
+                                            className="text-amper focus:text-amper/80 hover:bg-red-600/10"
+                                        >
+                                            Logout
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            )}
+
                             <ThemeToggle />
                             <LanguageSwitcher />
                         </div>
