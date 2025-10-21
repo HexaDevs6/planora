@@ -4,10 +4,10 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import ThemeToggle from "@/components/ThemeToggle";
 import LanguageSwitcher from "./LanguageSwitcher";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { t } from "i18next";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebaseConfig";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -20,6 +20,20 @@ import {
 function NavBar() {
     const [isOpen, setIsOpen] = useState(false);
     const { user } = useSelector((state) => state.auth);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const handleSignOut = async () => {
+        try {
+            await signOut(auth);
+            navigate("/signin");
+            dispatch(clearUser());
+            toast.success("Signed out successfully!");
+        } catch (error) {
+            console.error("Error during sign out:", error);
+            toast.error("Failed to sign out. Please try again.");
+        }
+    };
 
     const toggleMenu = () => setIsOpen(!isOpen);
     return (
@@ -51,13 +65,16 @@ function NavBar() {
                             <Link to='/events'>{t("nav.events")}</Link>
                         </li>
                     </ul>
-                    <div className='navbar-logo w-55 bg-[linear-gradient(to_right,rgba(169,158,173,0.4)_0%,rgba(51,12,47,0.4)_100%)] px-9 py-5 supports-[backdrop-filter]:bg-background/25 [clip-path:polygon(0_1%,100%_0,85%_100%,16%_99%)]'>
+                    <Link
+                        to='/'
+                        className='navbar-logo w-55 bg-[linear-gradient(to_right,rgba(169,158,173,0.4)_0%,rgba(51,12,47,0.4)_100%)] px-9 py-5 supports-[backdrop-filter]:bg-background/25 [clip-path:polygon(0_1%,100%_0,85%_100%,16%_99%)]'
+                    >
                         <img
                             src='/LogoBasic.png'
                             alt='Planora'
                             className='w-full h-full object-cover'
                         />
-                    </div>
+                    </Link>
                     <ul className='navbar-links__right  text-violet dark:text-foreground justify-center lg:gap-8 text-md lg:text-lg font-medium hidden md:flex  '>
                         <li className='navbar-link__right px-3 py-2 rounded-sm hover:bg-violet/10 transition-all ease-in-out duration-300 cursor-pointer'>
                             <Link to='/services'>{t("nav.services")}</Link>
@@ -71,34 +88,46 @@ function NavBar() {
                             {!user ? (
                                 // المستخدم مش داخل 👇
                                 <Button variant='glass' size='sm'>
-                                    <Link to='/signin'><User2Icon /></Link>
+                                    <Link to='/signin'>
+                                        <User2Icon />
+                                    </Link>
                                 </Button>
                             ) : (
                                 // المستخدم داخل ✅
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                        <Avatar className="cursor-pointer">
-                                            <AvatarImage src={user.photoURL || ""} alt={user.displayName || ""} />
+                                        <Avatar className='cursor-pointer'>
+                                            <AvatarImage
+                                                src={user.photoURL || ""}
+                                                alt={user.displayName || ""}
+                                            />
                                             <AvatarFallback>
                                                 {user.displayName
                                                     ? user.displayName[0].toUpperCase()
                                                     : user.email
-                                                        ? user.email[0].toUpperCase()
-                                                        : "U"}
+                                                    ? user.email[0].toUpperCase()
+                                                    : "U"}
                                             </AvatarFallback>
                                         </Avatar>
                                     </DropdownMenuTrigger>
 
-                                    <DropdownMenuContent align="end" className="w-40">
+                                    <DropdownMenuContent
+                                        align='end'
+                                        className='w-40'
+                                    >
                                         <DropdownMenuItem asChild>
-                                            <Link to="/user/overview">Dashboard</Link>
+                                            <Link to='/user/overview'>
+                                                Dashboard
+                                            </Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem asChild>
-                                            <Link to="/user/settings">Settings</Link>
+                                            <Link to='/user/settings'>
+                                                Settings
+                                            </Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem
-                                            onClick={() => signOut(auth)}
-                                            className="text-amper focus:text-amper/80 hover:bg-red-600/10"
+                                            onClick={handleSignOut}
+                                            className='text-amper focus:text-amper/80 hover:bg-red-600/10'
                                         >
                                             Logout
                                         </DropdownMenuItem>
