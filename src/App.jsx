@@ -13,6 +13,7 @@ import UserSettings from "./components/UserBoard/UserSettings";
 import UserTickets from "./components/UserBoard/UserTickets";
 import AuthLayout from "./layout/AuthLayout";
 import MainLayout from "./layout/MainLayout";
+import Details from "./pages/EventDetails";
 
 function App() {
   useDirection();
@@ -25,6 +26,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/events/:eventId" element={<Details />} />
           </Route>
 
           <Route element={<AuthLayout />}>
