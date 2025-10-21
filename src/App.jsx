@@ -13,6 +13,7 @@ import UserSettings from "./components/UserBoard/UserSettings";
 import UserTickets from "./components/UserBoard/UserTickets";
 import AuthLayout from "./layout/AuthLayout";
 import MainLayout from "./layout/MainLayout";
+import Details from "./pages/EventDetails";
 import { Toaster } from "sonner";
 import ProtectedRoute from "@/components/guards/ProtectedRoute";
 import PublicRoute from "@/components/guards/PublicRoute";
@@ -32,6 +33,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/events/:eventId" element={<Details />} />
           </Route>
           <Route
             element={
