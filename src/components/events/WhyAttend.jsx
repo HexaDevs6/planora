@@ -1,11 +1,11 @@
 import { CircleCheck, Lightbulb, PencilRuler, Users } from "lucide-react";
 import React from "react";
 
-const WhyAttend = () => {
+const WhyAttend = ({lang = "en"}) => {
    return (
       <section className="bg-primary/5 dark:bg-primary/10 rounded-xl p-6 shadow-sm">
-         <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
-            Why Attend?
+         <h3 className="text-2xl font-bold mb-4 text-gradient-amber">
+            {lang === "en" ? "Why Attend?" : "لماذا الحضور؟"}
          </h3>
          <ul className="list-none space-y-3 text-gray-700 dark:text-gray-300">
             <li className="flex items-start gap-3">

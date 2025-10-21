@@ -3,7 +3,7 @@ import React from "react";
 
 const QuickInfo = () => {
    return (
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+      <div className="bg-white dark:bg-violet-light rounded-xl shadow-lg p-6">
          <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
             Quick Info
          </h4>

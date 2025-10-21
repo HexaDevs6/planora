@@ -1,32 +1,28 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-// TailwindCSS v4 dark mode setup note:
-// We use the "class" strategy. Tailwind applies dark variants when the root <html>
-// element has the class `dark`. This hook centralizes theme logic and keeps the
-// DOM class in sync with user preference while persisting it in localStorage.
+// TailwindCSS dark mode setup note:
+// We use the "class" strategy. Tailwind applies dark variants when the root
+// <html> element has the class `dark`. This simplified hook supports only
+// 'light' and 'dark' preferences and keeps the DOM class in sync while
+// persisting the selection in localStorage.
 
 const THEME_STORAGE_KEY = 'theme'
 
 function getInitialTheme() {
-	// Read persistent preference if available; otherwise default to 'system'
 	try {
 		const stored = localStorage.getItem(THEME_STORAGE_KEY)
-		if (stored === 'light' || stored === 'dark' || stored === 'system') {
+		if (stored === 'light' || stored === 'dark') {
 			return stored
 		}
 	} catch {
 		// Ignore storage errors (e.g., privacy mode)
 	}
-	return 'system'
+	return 'light'
 }
 
 function applyThemeClass(preference) {
-	// Apply or remove the `dark` class based on preference and system settings
-	const isSystemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-	const shouldUseDark = preference === 'dark' || (preference === 'system' && isSystemDark)
-
-	const root = document.documentElement // documentElement => html tag
-	if (shouldUseDark) {
+	const root = document.documentElement
+	if (preference === 'dark') {
 		root.classList.add('dark')
 	} else {
 		root.classList.remove('dark')
@@ -34,17 +30,11 @@ function applyThemeClass(preference) {
 }
 
 export function useTheme() {
-	// Holds the user's selected preference: 'light' | 'dark' | 'system'
+	// Holds the user's selected preference: 'light' | 'dark'
 	const [preference, setPreference] = useState(getInitialTheme)
 
-	// Effective theme resolves 'system' to concrete 'light' | 'dark'
-	const effectiveTheme = useMemo(() => {
-		if (preference === 'system') {
-			const isSystemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-			return isSystemDark ? 'dark' : 'light'
-		}
-		return preference
-	}, [preference])
+	// Effective theme is the same as preference now
+	const effectiveTheme = useMemo(() => preference, [preference])
 
 	// Apply the theme class and persist preference whenever it changes
 	useEffect(() => {
@@ -56,34 +46,13 @@ export function useTheme() {
 		}
 	}, [preference])
 
-	// Listen for OS theme changes only when in 'system' mode
-	useEffect(() => {
-		if (preference !== 'system') return
-		const mql = window.matchMedia('(prefers-color-scheme: dark)')
-		const handler = () => applyThemeClass('system')
-		try {
-			mql.addEventListener('change', handler)
-		} catch {
-			// Fallback for older browsers
-			mql.addListener?.(handler)
-		}
-		return () => {
-			try {
-				mql.removeEventListener('change', handler)
-			} catch {
-				mql.removeListener?.(handler)
-			}
-		}
-	}, [preference])
-
 	// Helpers to change preference
 	const setLight = useCallback(() => setPreference('light'), [])
 	const setDark = useCallback(() => setPreference('dark'), [])
-	const setSystem = useCallback(() => setPreference('system'), [])
 
-	// Cycle order: light -> dark -> system -> light
+	// Toggle between light and dark
 	const cycleTheme = useCallback(() => {
-		setPreference(prev => (prev === 'light' ? 'dark' : prev === 'dark' ? 'system' : 'light'))
+		setPreference(prev => (prev === 'light' ? 'dark' : 'light'))
 	}, [])
 
 	return {
@@ -91,7 +60,6 @@ export function useTheme() {
 		effectiveTheme, // 'light' | 'dark' reflecting current appearance
 		setLight,
 		setDark,
-		setSystem,
 		cycleTheme,
 	}
 }
