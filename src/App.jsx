@@ -14,13 +14,20 @@ import UserTickets from "./components/UserBoard/UserTickets";
 import AuthLayout from "./layout/AuthLayout";
 import MainLayout from "./layout/MainLayout";
 import Details from "./pages/EventDetails";
+import { Toaster } from "sonner";
+import ProtectedRoute from "@/components/guards/ProtectedRoute";
+import PublicRoute from "@/components/guards/PublicRoute";
+
+
 
 function App() {
   useDirection();
   // useTranslation hook provides access to the translation function 't'
   return (
-    <main>
+      <main>
       <BrowserRouter>
+        <Toaster richColors position="top-right" />
+
         <Routes>
           <Route element={<MainLayout />}>
             <Route path="/" element={<Home />} />
@@ -28,13 +35,24 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/events/:eventId" element={<Details />} />
           </Route>
-
-          <Route element={<AuthLayout />}>
+          <Route
+            element={
+              <PublicRoute>
+                <AuthLayout />
+              </PublicRoute>
+            }
+          >
             <Route path="/signin" element={<Signin />} />
             <Route path="/register" element={<Register />} />
           </Route>
-
-          <Route path="/user" element={<UserLayout />}>
+          <Route
+            path="/user"
+            element={
+              <ProtectedRoute>
+                <UserLayout />
+              </ProtectedRoute>
+            }
+          >
             <Route index element={<Navigate to="overview" replace />} />
             <Route path="overview" element={<UserOverview />} />
             <Route path="settings" element={<UserSettings />} />
