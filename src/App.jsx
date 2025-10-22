@@ -16,6 +16,8 @@ import MainLayout from "./layout/MainLayout";
 import { Toaster } from "sonner";
 import ProtectedRoute from "@/components/guards/ProtectedRoute";
 import PublicRoute from "@/components/guards/PublicRoute";
+import Events from "./pages/Events";
+import Services from "./pages/Services";
 
 
 
@@ -32,6 +34,8 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/events" element={<Events/>}/>
+            <Route path="/services" element={<Services/>}/>
           </Route>
           <Route
             element={
