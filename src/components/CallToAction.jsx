@@ -1,6 +1,6 @@
 import React from "react";
-import WhiteTicketCTA from "../../public/WhiteTicketCTA.png";
-import YellowTicketCTA from "../../public/YellowTicketCTA.png";
+import WhiteTicketCTA from "/WhiteTicketCTA.png";
+import YellowTicketCTA from "/YellowTicketCTA.png";
 import { Calendar } from 'lucide-react';
 import { QrCode  } from 'lucide-react';
 import { MessageSquareText } from 'lucide-react';

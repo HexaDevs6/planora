@@ -10,8 +10,8 @@ const buttonVariants = cva(
     variants: {
       variant: {
         amber: "bg-gradient-amber text-secondary hover:bg-amber/80 hover:scale-105",
-        primary: "bg-violet text-amber-light hover:bg-violet/80",
-        glass: "bg-secondary/10 backdrop-blur-xs text-secondary border border-secondary/30 hover:bg-violet/40 dark:text-primary",
+        primary: "bg-primary text-amber  hover:scale-105",
+        glass: "bg-secondary/10 backdrop-blur-xs text-secondary border border-secondary/30 hover:bg-primary/40 dark:text-primary",
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive:
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
