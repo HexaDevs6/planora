@@ -9,7 +9,7 @@ const Highlights = ({ lang = "en", highlights }) => {
          </h3>
          <ul className="mb-8 space-y-6">
             {highlights.map((item, i) => (
-               <li>
+               <li key={i}>
                   <div className="relative flex items-start space-x-3">
                      <div>
                         <div className="relative px-1">

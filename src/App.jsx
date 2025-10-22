@@ -19,6 +19,7 @@ import ProtectedRoute from "@/components/guards/ProtectedRoute";
 import PublicRoute from "@/components/guards/PublicRoute";
 import Events from "./pages/Events";
 import Services from "./pages/Services";
+import EventDetails from "./pages/EventDetails";
 
 function App() {
     useDirection();
@@ -33,7 +34,7 @@ function App() {
                         <Route path='/' element={<Home />} />
                         <Route path='/about' element={<About />} />
                         <Route path='/contact' element={<Contact />} />
-                        <Route path="/events/:eventId" element={<Details />} />
+                        <Route path="/events/:eventId" element={<EventDetails />} />
                         <Route path="/events" element={<Events/>}/>
                         <Route path="/services" element={<Services/>}/>
                     </Route>

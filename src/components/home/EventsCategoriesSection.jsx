@@ -3,9 +3,9 @@ import { Drum } from "lucide-react";
 import { Gem } from "lucide-react";
 import { Theater } from "lucide-react";
 import { t } from "i18next";
-import Concert from "../assets/Concerts.png";
-import Wedding from "../assets/Wedding.png";
-import Theaters from "../assets/Theaters.png";
+import Concert from "@/assets/Concerts.png";
+import Wedding from "@/assets/Wedding.png";
+import Theaters from "@/assets/Theaters.png";
 export default function EventsCategoriesSection() {
     const handleCategories = [
         {

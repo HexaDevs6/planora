@@ -1,8 +1,8 @@
 import React from "react";
-import { AnimatedTestimonials } from "./ui/shadcn-io/animated-testimonials";
-import Royal_Halls from "../assets/Royal_Halls.jpg";
-import Catering from "../assets/Catering.jpg";
-import Dj from "../assets/Dj.jpg";
+import { AnimatedTestimonials } from "../ui/shadcn-io/animated-testimonials";
+import Royal_Halls from "@/assets/Royal_Halls.jpg";
+import Catering from "@/assets/Catering.jpg";
+import Dj from "@/assets/Dj.jpg";
 import { t } from "i18next";
 
 export default function ProvidersSection() {

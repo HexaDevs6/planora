@@ -1,9 +1,9 @@
 import React from "react";
-import AutoFadeCarousel from "./AutoFadeCarousel";
-import { Button, buttonVariants } from "./ui/button";
-import { SplittingText } from "./ui/shadcn-io/splitting-text/index";
-import { FlipWords } from "./ui/shadcn-io/flip-words";
-import CircularText from "./ui/shadcn-io/circular-text/index";
+import AutoFadeCarousel from "../AutoFadeCarousel";
+import { Button, buttonVariants } from "../ui/button";
+import { SplittingText } from "../ui/shadcn-io/splitting-text/index";
+import { FlipWords } from "../ui/shadcn-io/flip-words";
+import CircularText from "../ui/shadcn-io/circular-text/index";
 import { t } from "i18next";
 
 function HeroSection() {

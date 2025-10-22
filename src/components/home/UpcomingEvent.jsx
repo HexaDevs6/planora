@@ -1,6 +1,6 @@
 import React from "react";
-import AutoFadeCarousel from "./AutoFadeCarousel";
-import AnimatedCountdown from "./AnimatedCountdown";
+import AutoFadeCarousel from "../AutoFadeCarousel";
+import AnimatedCountdown from "../AnimatedCountdown";
 import { t } from "i18next";
 
 function UpcomingEvent() {

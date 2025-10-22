@@ -370,50 +370,50 @@
         "title4": "Catering",
         "title5": "Decoration",
         "title6": "Venue"
-      },
-      "cards": {
-        "1": {
-          "title": "Professional Event Photography",
-          "location": "San Francisco, CA",
-          "category": "Photography"
-        },
-        "2": {
-          "title": "Summer Music Festival",
-          "location": "Austin, TX",
-          "category": "Event Planning"
-        },
-        "3": {
-          "title": "Digital Marketing Masterclass",
-          "location": "Online Event",
-          "category": "Austin, TX"
-        },
-        "4": {
-          "title": "NBA Finals Watch Party",
-          "location": "Los Angeles, CA",
-          "category": "New York, NY"
-        },
-        "5": {
-          "title": "Modern Art Showcase",
-          "location": "New York, NY",
-          "category": "Photography"
-        },
-        "6": {
-          "title": "Startup Founders Meetup",
-          "location": "Seattle, WA",
-          "category": "Event Planning"
-        },
-        "7": {
-          "title": "Web Development Bootcamp",
-          "location": "Boston, MA",
-          "category": "DJ Services"
-        },
-        "8": {
-          "title": "Jazz Night Live",
-          "location": "Chicago, IL",
-          "category": "Catering"
-        },
-        "viewMore": "Load More"
       }
+    },
+    "cards": {
+      "1": {
+        "title": "Professional Event Photography",
+        "location": "San Francisco, CA",
+        "category": "Photography"
+      },
+      "2": {
+        "title": "Summer Music Festival",
+        "location": "Austin, TX",
+        "category": "Event Planning"
+      },
+      "3": {
+        "title": "Digital Marketing Masterclass",
+        "location": "Online Event",
+        "category": "Austin, TX"
+      },
+      "4": {
+        "title": "NBA Finals Watch Party",
+        "location": "Los Angeles, CA",
+        "category": "New York, NY"
+      },
+      "5": {
+        "title": "Modern Art Showcase",
+        "location": "New York, NY",
+        "category": "Photography"
+      },
+      "6": {
+        "title": "Startup Founders Meetup",
+        "location": "Seattle, WA",
+        "category": "Event Planning"
+      },
+      "7": {
+        "title": "Web Development Bootcamp",
+        "location": "Boston, MA",
+        "category": "DJ Services"
+      },
+      "8": {
+        "title": "Jazz Night Live",
+        "location": "Chicago, IL",
+        "category": "Catering"
+      },
+      "viewMore": "Load More"
     }
   }
 }
