@@ -10,7 +10,7 @@ export default function FooterSection() {
                 <div className='footer__content py-16 grid grid-cols-2 md:grid-cols-5  md:gap-0 gap-10'>
                     <div className='col-span-2 flex flex-col gap-7'>
                         <img
-                            src='../../public/LogoBasic.png'
+                            src='/LogoBasic.png'
                             className='w-50'
                             alt='Logo'
                         />
