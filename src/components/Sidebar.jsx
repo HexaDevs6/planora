@@ -49,7 +49,7 @@ export default function Sidebar({ sideLinks, image, title, subtitle }) {
         <div
             className={`${
                 isOpen ? "w-52" : "w-16"
-            } bg-violet  fixed md:static h-screen p-3 flex flex-col justify-between transition-all duration-300`}
+            } bg-violet  fixed md:static h-screen p-3 flex flex-col justify-between transition-all duration-300 z-5`}
         >
             {/* Top Section */}
             <div>
