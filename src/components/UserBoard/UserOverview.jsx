@@ -36,9 +36,9 @@ export default function UserOverview() {
                         <h2 className='text-3xl font-bold text-primary mb-2 '>
                             Upcoming Events
                         </h2>
-                        <Button variant='link' className='text-center'>
-                            <Link to='/user/tickets'>
-                                See All
+                        <Button variant='primary' size='lg' className='text-center font-bold'>
+                            <Link to='/user/create-event'>
+                                + New Event
                             </Link>
                         </Button>
                     </div>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
     Home,
     LayoutDashboard,
@@ -12,15 +12,33 @@ import {
 } from "lucide-react";
 import LanguageSwitcher from "./LanguageSwitcher";
 import ThemeToggle from "./ThemeToggle";
+import { useDispatch, useSelector } from "react-redux";
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebaseConfig";
 
-export default function Sidebar({ sideLinks, image, title, subtitle }) {
-    const [isOpen, setIsOpen] = useState(true);
-
+export default function Sidebar({ sideLinks, subtitle }) {
+    const [isOpen, setIsOpen] = useState(false);
+    const { user } = useSelector((state) => state.auth);
     const toggleSidebar = () => setIsOpen(!isOpen);
 
-    const userName = title || "Harry Potter";
-    const userRole = subtitle || "Partner";
-    const userAvatar = image || "https://i.pravatar.cc/100";
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const handleSignOut = async () => {
+        try {
+            await signOut(auth);
+            navigate("/signin");
+            dispatch(clearUser());
+            toast.success("Signed out successfully!");
+        } catch (error) {
+            console.error("Error during sign out:", error);
+            toast.error("Failed to sign out. Please try again.");
+        }
+    };
+
+    const userName = user.displayName || user.email.split("@")[0];
+    const userRole = user.userRole;
+    const userAvatar = user.photoURL || "https://i.pravatar.cc/100";
 
     const menuItems = sideLinks || [
         {
@@ -121,8 +139,8 @@ export default function Sidebar({ sideLinks, image, title, subtitle }) {
                         `flex items-center gap-3 cursor-pointer p-2 rounded-sm
               ${
                   isActive
-                      ? "bg-violet-light text-white"
-                      : "text-text hover:bg-violet-light"
+                      ? "bg-violet-light "
+                      : "text-amber hover:bg-violet-light"
               }`
                     }
                 >
@@ -132,22 +150,16 @@ export default function Sidebar({ sideLinks, image, title, subtitle }) {
                     )}
                 </NavLink>
 
-                <NavLink
+                <button
                     to='/logout'
-                    className={({ isActive }) =>
-                        `flex items-center gap-3 cursor-pointer p-2 rounded-sm
-              ${
-                  isActive
-                      ? "bg-violet-light text-white"
-                      : "text-text hover:bg-violet-light"
-              }`
-                    }
+                    className='flex items-center gap-3 cursor-pointer p-2 rounded-sm text-amber hover:bg-violet-light w-full'
+                    onClick={handleSignOut}
                 >
                     <LogOut size={20} />
                     {isOpen && (
                         <span className='text-sm font-medium'>Logout</span>
                     )}
-                </NavLink>
+                </button>
             </div>
         </div>
     );

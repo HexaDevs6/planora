@@ -52,6 +52,6 @@ export const useDirection = () => {
    return {
       isRTL,
       direction: isRTL ? 'rtl' : 'ltr',
-      language: i18n.language
+      lang: i18n.language
    };
 };
