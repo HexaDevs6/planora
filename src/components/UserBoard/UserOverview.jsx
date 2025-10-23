@@ -3,6 +3,7 @@ import { Link, NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import BoardCard from "../BoardCard";
 import { ArrowUpRightFromSquareIcon } from "lucide-react";
+import { seedPlanoraData } from "@/store/api/planoraSeeder";
 
 export default function UserOverview() {
     const userEventsData = {
@@ -40,6 +41,9 @@ export default function UserOverview() {
                             <Link to='/user/create-event'>
                                 + New Event
                             </Link>
+                        </Button>
+                        <Button onClick={seedPlanoraData} variant='primary'  className='text-center font-bold'>
+                            Push dummy data
                         </Button>
                     </div>
                     <div className='upcoming-events__cards flex  items-start flex-nowrap overflow-x-auto gap-4 py-4'>
