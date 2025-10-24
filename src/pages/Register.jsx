@@ -30,11 +30,15 @@ import {
    Briefcase,
    Heart,
    BriefcaseBusiness,
+   Facebook,
+   Instagram,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import CustomerSignUpFrom from "@/components/auth/CustomerSignUpFrom";
 import ProviderInfoFrom from "@/components/auth/ProviderInfoFrom";
+import VendorSignUpFrom from "@/components/auth/VendorSignUpFrom";
+
 const saveUserToFirestore = async (uid, formData, userType) => {
    try {
       await setDoc(doc(db, "users", uid), {
@@ -340,19 +344,16 @@ const Register = () => {
                   {/* Progress Indicator */}
                   <div className="flex justify-center gap-2 mb-8">
                      <div
-                        className={`h-2 w-20 rounded-full transition-all ${
-                           step >= 1 ? "bg-primary" : "bg-muted"
-                        }`}
+                        className={`h-2 w-20 rounded-full transition-all ${step >= 1 ? "bg-primary" : "bg-muted"
+                           }`}
                      />
                      <div
-                        className={`h-2 w-20 rounded-full transition-all ${
-                           step >= 2 ? "bg-primary" : "bg-muted"
-                        }`}
+                        className={`h-2 w-20 rounded-full transition-all ${step >= 2 ? "bg-primary" : "bg-muted"
+                           }`}
                      />
                      <div
-                        className={`h-2 w-20 rounded-full transition-all ${
-                           step >= 3 ? "bg-primary" : "bg-muted"
-                        }`}
+                        className={`h-2 w-20 rounded-full transition-all ${step >= 3 ? "bg-primary" : "bg-muted"
+                           }`}
                      />
                   </div>
 
@@ -423,18 +424,14 @@ const Register = () => {
                                              e.preventDefault();
                                              toggleInterest(interest);
                                           }}
-                                          className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
-                                             formData.interests.includes(
-                                                interest
-                                             )
-                                                ? "border-primary bg-primary/10"
-                                                : "border-border hover:border-primary/50"
-                                          }`}
+                                          className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${formData.interests.includes(
+                                             interest
+                                          )
+                                             ? "border-primary bg-primary/10"
+                                             : "border-border hover:border-primary/50"
+                                             }`}
                                        >
                                           <div className="flex items-center gap-2">
-                                             {/* <Checkbox
-                                checked={formData.interests.includes(interest)}
-                              /> */}
                                              <span className="text-sm font-medium">
                                                 {interest}
                                              </span>
@@ -467,7 +464,7 @@ const Register = () => {
                         {userType === "vendor" && (
                            <>
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                 <div className="space-y-2 md:col-span-2">
+                                 <div className="space-y-2 ">
                                     <Label htmlFor="businessName">
                                        Business/Company Name *
                                     </Label>
@@ -489,66 +486,9 @@ const Register = () => {
                                     </div>
                                  </div>
 
-                                 <div className="space-y-2">
-                                    <Label htmlFor="businessType">
-                                       Business Type
-                                    </Label>
-                                    <RadioGroup
-                                       value={formData.businessType}
-                                       onValueChange={(value) =>
-                                          handleInputChange(
-                                             "businessType",
-                                             value
-                                          )
-                                       }
-                                    >
-                                       <div className="flex items-center space-x-2">
-                                          <RadioGroupItem
-                                             value="individual"
-                                             id="individual"
-                                          />
-                                          <Label htmlFor="individual">
-                                             Individual/Freelancer
-                                          </Label>
-                                       </div>
-                                       <div className="flex items-center space-x-2">
-                                          <RadioGroupItem
-                                             value="company"
-                                             id="company"
-                                          />
-                                          <Label htmlFor="company">
-                                             Registered Company
-                                          </Label>
-                                       </div>
-                                    </RadioGroup>
-                                 </div>
-
-                                 <div className="space-y-2">
-                                    <Label htmlFor="yearsExperience">
-                                       Years of Experience
-                                    </Label>
-                                    <div className="relative">
-                                       <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                                       <Input
-                                          id="yearsExperience"
-                                          type="number"
-                                          placeholder="5"
-                                          value={formData.yearsExperience}
-                                          onChange={(e) =>
-                                             handleInputChange(
-                                                "yearsExperience",
-                                                e.target.value
-                                             )
-                                          }
-                                          className="pl-10"
-                                          min="0"
-                                       />
-                                    </div>
-                                 </div>
-
-                                 <div className="space-y-2 md:col-span-2">
+                                 <div className="space-y-2 ">
                                     <Label htmlFor="serviceCategory">
-                                       Service Category *
+                                        Category *
                                     </Label>
                                     <div className="relative">
                                        <Tag className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
@@ -561,7 +501,7 @@ const Register = () => {
                                                 e.target.value
                                              )
                                           }
-                                          className="w-full pl-10 h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                          className="w-full pl-10 h-10 rounded-md border border-input \ px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                                           required
                                        >
                                           <option value="">
@@ -596,82 +536,45 @@ const Register = () => {
                                  </div>
 
                                  <div className="space-y-2">
-                                    <Label htmlFor="priceRange">
-                                       Price Range
-                                    </Label>
-                                    <div className="relative">
-                                       <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                                       <Input
-                                          id="priceRange"
-                                          placeholder="e.g., $500 - $2000"
-                                          value={formData.priceRange}
-                                          onChange={(e) =>
-                                             handleInputChange(
-                                                "priceRange",
-                                                e.target.value
-                                             )
-                                          }
-                                          className="pl-10"
-                                       />
-                                    </div>
-                                 </div>
-
-                                 <div className="space-y-2">
-                                    <Label htmlFor="serviceArea">
-                                       Service Area
-                                    </Label>
-                                    <div className="relative">
-                                       <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                                       <Input
-                                          id="serviceArea"
-                                          placeholder="Cities/regions you serve"
-                                          value={formData.serviceArea}
-                                          onChange={(e) =>
-                                             handleInputChange(
-                                                "serviceArea",
-                                                e.target.value
-                                             )
-                                          }
-                                          className="pl-10"
-                                       />
-                                    </div>
-                                 </div>
-
-                                 <div className="space-y-2 md:col-span-2">
-                                    <Label htmlFor="portfolio">
-                                       Portfolio/Website URL
+                                    <Label htmlFor="facebook">
+                                       <Facebook size={15} />  Facebook URL
+                                       
+                                       
                                     </Label>
                                     <Input
-                                       id="portfolio"
+                                       id="facebook"
                                        type="url"
-                                       placeholder="https://yourportfolio.com"
-                                       value={formData.portfolio}
+                                       placeholder="https://facebook.com/yourpage"
+                                       value={formData.facebook || ""}
                                        onChange={(e) =>
                                           handleInputChange(
-                                             "portfolio",
+                                             "facebook",
+                                             e.target.value
+                                          )
+                                       }
+                                    />
+                                 </div>
+                                 <div className="space-y-2 ">
+                                    <Label htmlFor="instagram">
+                                      
+                                       <Instagram size={15}  /> Instagram URL
+                                      
+                                    </Label>
+                                    <Input
+                                       id="instagram"
+                                       type="url"
+                                       placeholder="https://instagram.com/yourprofile"
+                                       value={formData.instagram || ""}
+                                       onChange={(e) =>
+                                          handleInputChange(
+                                             "instagram",
                                              e.target.value
                                           )
                                        }
                                     />
                                  </div>
 
-                                 <div className="space-y-2 md:col-span-2">
-                                    <Label htmlFor="certifications">
-                                       Certifications/Licenses (Optional)
-                                    </Label>
-                                    <Textarea
-                                       id="certifications"
-                                       placeholder="List any relevant certifications, licenses, or awards..."
-                                       value={formData.certifications}
-                                       onChange={(e) =>
-                                          handleInputChange(
-                                             "certifications",
-                                             e.target.value
-                                          )
-                                       }
-                                       rows={3}
-                                    />
-                                 </div>
+                                
                               </div>
                            </>
                         )}
@@ -712,6 +615,7 @@ const Register = () => {
                            setStep={setStep}
                            handleSubmit={handleSubmit}
                            step={step}
+                           userType={userType}
                         />
                      ) : userType === "vendor" ? (
                         <VendorSignUpFrom
@@ -721,6 +625,7 @@ const Register = () => {
                            setStep={setStep}
                            handleSubmit={handleSubmit}
                            step={step}
+                           userType={userType}
                         />
                      ) : userType === "provider" ? (
                         <ProviderSignUpFrom
