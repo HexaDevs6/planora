@@ -34,6 +34,7 @@ import {
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import CustomerSignUpFrom from "@/components/auth/CustomerSignUpFrom";
+import ProviderInfoFrom from "@/components/auth/ProviderInfoFrom";
 const saveUserToFirestore = async (uid, formData, userType) => {
    try {
       await setDoc(doc(db, "users", uid), {
@@ -111,6 +112,84 @@ const Register = () => {
       "Transportation",
       "Security",
       "Other Services",
+   ];
+
+   const usersTypes = [
+      {
+         type: "client",
+         title: "I'm a Client",
+         description:
+            "Browse events, book tickets, and hire service providers for your events",
+         icon: <Users className="h-10 w-10" />,
+         list: [
+            {
+               en: "Discover amazing events",
+               ar: "اكتشف الأحداث الرائعة",
+            },
+            {
+               en: "Book event services",
+               ar: "احجز خدمات الأحداث",
+            },
+            {
+               en: "Manage your bookings",
+               ar: "إدارة الحجوزات",
+            },
+            {
+               en: "Get personalized recommendations",
+               ar: "احصل على توصيات مخصصة لك",
+            },
+         ],
+      },
+      {
+         type: "vendor",
+         title: "I'm a Vendor",
+         description:
+            "Offer your services, manage bookings, and grow your event business",
+         icon: <Building2 className="h-10 w-10" />,
+         list: [
+            {
+               en: "List your services",
+               ar: "أضف خدماتك",
+            },
+            {
+               en: "Receive booking requests",
+               ar: "استقبل طلبات الحجوزات",
+            },
+            {
+               en: "Manage your bookings",
+               ar: "إدارة الحجوزات",
+            },
+            {
+               en: "Get personalized recommendations",
+               ar: "احصل على توصيات مخصصة لك",
+            },
+         ],
+      },
+      {
+         type: "provider",
+         title: "I'm a Provider",
+         description:
+            "Offer your services, manage bookings, and grow your event business",
+         icon: <BriefcaseBusiness className="h-10 w-10" />,
+         list: [
+            {
+               en: "List your services",
+               ar: "أضف خدماتك",
+            },
+            {
+               en: "Receive booking requests",
+               ar: "استقبل طلبات الحجوزات",
+            },
+            {
+               en: "Manage your bookings",
+               ar: "إدارة الحجوزات",
+            },
+            {
+               en: "Get personalized recommendations",
+               ar: "احصل على توصيات مخصصة لك",
+            },
+         ],
+      },
    ];
 
    const handleInputChange = (field, value) => {
@@ -281,89 +360,33 @@ const Register = () => {
                   {step === 1 && (
                      <div className="space-y-6 animate-fade-in">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                           <Card
-                              className={`cursor-pointer transition-all duration-300 ${
-                                 userType === "client"
-                                    ? "border-primary shadow-accent bg-primary/5"
-                                    : "border-border hover:border-primary/50 hover:shadow-card"
-                              }`}
-                              onClick={() => setUserType("client")}
-                           >
-                              <CardContent className="p-8 text-center space-y-4">
-                                 <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-primary text-primary mx-auto border border-primary">
-                                    <Users className="h-10 w-10" />
-                                 </div>
-                                 <h3 className="text-xl font-bold">
-                                    I'm a Client
-                                 </h3>
-                                 <p className="text-sm text-muted-foreground">
-                                    Browse events, book tickets, and hire
-                                    service providers for your events
-                                 </p>
-                                 <ul className="text-sm text-muted-foreground text-left space-y-2">
-                                    <li>• Discover amazing events</li>
-                                    <li>• Book event services</li>
-                                    <li>• Manage your bookings</li>
-                                    <li>• Get personalized recommendations</li>
-                                 </ul>
-                              </CardContent>
-                           </Card>
-
-                           <Card
-                              className={`cursor-pointer transition-all duration-300 ${
-                                 userType === "vendor"
-                                    ? "border-primary shadow-accent bg-primary/5"
-                                    : "border-border hover:border-primary/50 hover:shadow-card"
-                              }`}
-                              onClick={() => setUserType("vendor")}
-                           >
-                              <CardContent className="p-8 text-center space-y-4">
-                                 <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-accent text-primary border border-primary mx-auto">
-                                    <Building2 className="h-10 w-10" />
-                                 </div>
-                                 <h3 className="text-xl font-bold">
-                                    I'm a Vendor
-                                 </h3>
-                                 <p className="text-sm text-muted-foreground">
-                                    Offer your services, manage bookings, and
-                                    grow your event business
-                                 </p>
-                                 <ul className="text-sm text-muted-foreground text-left space-y-2">
-                                    <li>• List your services</li>
-                                    <li>• Receive booking requests</li>
-                                    <li>• Manage your business</li>
-                                    <li>• Analytics & insights</li>
-                                 </ul>
-                              </CardContent>
-                           </Card>
-
-                           <Card
-                              className={`cursor-pointer transition-all duration-300 ${
-                                 userType === "vendor"
-                                    ? "border-primary shadow-accent bg-primary/5"
-                                    : "border-border hover:border-primary/50 hover:shadow-card"
-                              }`}
-                              onClick={() => setUserType("vendor")}
-                           >
-                              <CardContent className="p-8 text-center space-y-4">
-                                 <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-accent text-primary border border-primary mx-auto">
-                                    <BriefcaseBusiness className="h-10 w-10" />
-                                 </div>
-                                 <h3 className="text-xl font-bold">
-                                    I'm a Provider
-                                 </h3>
-                                 <p className="text-sm text-muted-foreground">
-                                    Offer your services, manage bookings, and
-                                    grow your event business
-                                 </p>
-                                 <ul className="text-sm text-muted-foreground text-left space-y-2">
-                                    <li>• List your services</li>
-                                    <li>• Receive booking requests</li>
-                                    <li>• Manage your business</li>
-                                    <li>• Analytics & insights</li>
-                                 </ul>
-                              </CardContent>
-                           </Card>
+                           {usersTypes.map((type, i) => (
+                              <Card
+                                 className={`cursor-pointer transition-all duration-300 ${
+                                    userType === type.type
+                                       ? "border-primary shadow-accent bg-primary/5"
+                                       : "border-border hover:border-primary/50 hover:shadow-card"
+                                 }`}
+                                 onClick={() => setUserType(type.type)}
+                              >
+                                 <CardContent className="p-8 text-center space-y-4">
+                                    <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-primary text-primary mx-auto border border-primary">
+                                       {type.icon}
+                                    </div>
+                                    <h3 className="text-xl font-bold">
+                                       {type.title}
+                                    </h3>
+                                    <p className="text-sm text-muted-foreground">
+                                       {type.description}
+                                    </p>
+                                    <ul className="text-sm text-muted-foreground text-left space-y-2">
+                                       {type.list.map((item) => (
+                                          <li key={item.en}>• {item.en}</li>
+                                       ))}
+                                    </ul>
+                                 </CardContent>
+                              </Card>
+                           ))}
                         </div>
 
                         <div className="flex justify-between pt-4">
@@ -652,35 +675,12 @@ const Register = () => {
                               </div>
                            </>
                         )}
-
-                        <div className="flex items-start space-x-2 pt-4">
-                           <Checkbox
-                              id="terms"
-                              checked={agreedToTerms}
-                              onCheckedChange={(checked) =>
-                                 setAgreedToTerms(checked)
-                              }
+                        {userType === "provider" && (
+                           <ProviderInfoFrom
+                              formData={formData}
+                              handleInputChange={handleInputChange}
                            />
-                           <label
-                              htmlFor="terms"
-                              className="text-sm text-muted-foreground leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                           >
-                              I agree to the{" "}
-                              <Link
-                                 to="/terms"
-                                 className="text-primary hover:underline"
-                              >
-                                 Terms of Service
-                              </Link>{" "}
-                              and{" "}
-                              <Link
-                                 to="/privacy"
-                                 className="text-primary hover:underline"
-                              >
-                                 Privacy Policy
-                              </Link>
-                           </label>
-                        </div>
+                        )}
 
                         <div className="flex justify-between pt-4">
                            <Button
@@ -713,7 +713,7 @@ const Register = () => {
                            handleSubmit={handleSubmit}
                            step={step}
                         />
-                     ) : (
+                     ) : userType === "vendor" ? (
                         <VendorSignUpFrom
                            data={formData}
                            setFormData={setFormData}
@@ -722,20 +722,17 @@ const Register = () => {
                            handleSubmit={handleSubmit}
                            step={step}
                         />
-                     ))}
-
-                  {/* Sign In Link */}
-                  {step !== 1 && (
-                     <p className="text-center text-sm text-muted-foreground mt-6">
-                        Already have an account?{" "}
-                        <Link
-                           to="/signin"
-                           className="text-primary font-semibold hover:underline"
-                        >
-                           Sign In
-                        </Link>
-                     </p>
-                  )}
+                     ) : userType === "provider" ? (
+                        <ProviderSignUpFrom
+                           data={formData}
+                           setFormData={setFormData}
+                           handleNext={handleNext}
+                           setStep={setStep}
+                           handleSubmit={handleSubmit}
+                           step={step}
+							handleGoogleSignUp={handleGoogleSignUp}
+                        />
+                     ) : null)}
                </CardContent>
             </Card>
          </div>
