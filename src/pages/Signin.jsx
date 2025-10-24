@@ -34,6 +34,8 @@ function Signin() {
             toast.error("Login failed!", {
                 description: "Please check your email and password.",
             });
+        } finally {
+            setLoading(false);
         }
     };
     const handleGoogleSignIn = async () => {

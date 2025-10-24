@@ -12,6 +12,8 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "@/lib/firebaseConfig";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Link } from "react-router-dom";
 
 const CustomerSignUpFrom = ({
    data,
@@ -20,6 +22,8 @@ const CustomerSignUpFrom = ({
    setStep,
    handleSubmit,
    step,
+   agreedToTerms,
+   setAgreedToTerms,
 }) => {
    let {
       fullName,
@@ -187,19 +191,39 @@ const CustomerSignUpFrom = ({
                   />
                </div>
             </div>
-         </form>
+            <div className="flex items-start space-x-2 pt-4">
+               <Checkbox
+                  id="terms"
+                  checked={agreedToTerms}
+                  onCheckedChange={(checked) => setAgreedToTerms(checked)}
+               />
+               <label
+                  htmlFor="terms"
+                  className="text-sm text-muted-foreground leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+               >
+                  I agree to the{" "}
+                  <Link to="/terms" className="text-primary hover:underline">
+                     Terms of Service
+                  </Link>{" "}
+                  and{" "}
+                  <Link to="/privacy" className="text-primary hover:underline">
+                     Privacy Policy
+                  </Link>
+               </label>
+            </div>
 
-         <div className="flex justify-between pt-4">
-            <Button
-               onClick={() => setStep(step === 1 ? 1 : step - 1)}
-               variant="outline"
-            >
-               Back
-            </Button>
-            <Button onClick={handleNext} variant="amber" size="lg">
-               Continue
-            </Button>
-         </div>
+            <div className="flex justify-between pt-4">
+               <Button
+                  onClick={() => setStep(step === 1 ? 1 : step - 1)}
+                  variant="outline"
+               >
+                  Back
+               </Button>
+               <Button type="submit" variant="amber" size="lg">
+                  Continue
+               </Button>
+            </div>
+         </form>
       </div>
    );
 };

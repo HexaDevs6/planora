@@ -10,16 +10,16 @@ const ProviderInfoFrom = ({ formData, handleInputChange }) => {
       <>
          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-               <Label htmlFor="name">Name</Label>
+               <Label htmlFor="fullname">Full Name *</Label>
                <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                   <Input
-                     id="name"
-                     name="name"
-                     placeholder="Your Name"
-                     value={formData.name}
+                     id="fullname"
+                     name="fullname"
+                     placeholder="Your Full Name"
+                     value={formData.fullName}
                      onChange={(e) =>
-                        handleInputChange("name", e.target.value)
+                        handleInputChange("fullName", e.target.value)
                      }
                      className="h-10 shadow-none"
                      required

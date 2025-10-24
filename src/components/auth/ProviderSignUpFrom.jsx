@@ -1,6 +1,24 @@
-import React from "react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { Mail, Phone, Lock, Chrome } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Link } from "react-router-dom";
 
-const ProviderSignUpFrom = ({ data, setFormData, handleNext, setStep, handleSubmit, step, handleGoogleSignUp }) => {
+const ProviderSignUpFrom = ({
+   data,
+   setFormData,
+   handleNext,
+   setStep,
+   handleSubmit,
+   step,
+   handleGoogleSignUp,
+   userType,
+   agreedToTerms,
+   setAgreedToTerms,
+   handleInputChange,
+}) => {
    return (
       <form onSubmit={handleSubmit}>
          <div className="space-y-6 animate-fade-in">
@@ -30,7 +48,7 @@ const ProviderSignUpFrom = ({ data, setFormData, handleNext, setStep, handleSubm
                         id="email"
                         type="email"
                         placeholder="your@email.com"
-                        value={email}
+                        value={data.email}
                         onChange={(e) =>
                            handleInputChange("email", e.target.value)
                         }
@@ -48,7 +66,7 @@ const ProviderSignUpFrom = ({ data, setFormData, handleNext, setStep, handleSubm
                         id="phone"
                         type="tel"
                         placeholder="+1 (555) 000-0000"
-                        value={phone}
+                        value={data.phone}
                         onChange={(e) =>
                            handleInputChange("phone", e.target.value)
                         }
@@ -65,7 +83,7 @@ const ProviderSignUpFrom = ({ data, setFormData, handleNext, setStep, handleSubm
                         id="password"
                         type="password"
                         placeholder="Min. 8 characters"
-                        value={password}
+                        value={data.password}
                         onChange={(e) =>
                            handleInputChange("password", e.target.value)
                         }
@@ -83,7 +101,7 @@ const ProviderSignUpFrom = ({ data, setFormData, handleNext, setStep, handleSubm
                         id="confirmPassword"
                         type="password"
                         placeholder="Repeat password"
-                        value={confirmPassword}
+                        value={data.confirmPassword}
                         onChange={(e) =>
                            handleInputChange("confirmPassword", e.target.value)
                         }
@@ -92,6 +110,26 @@ const ProviderSignUpFrom = ({ data, setFormData, handleNext, setStep, handleSubm
                      />
                   </div>
                </div>
+            </div>
+            <div className="flex items-start space-x-2 pt-4">
+               <Checkbox
+                  id="terms"
+                  checked={agreedToTerms}
+                  onCheckedChange={(checked) => setAgreedToTerms(checked)}
+               />
+               <label
+                  htmlFor="terms"
+                  className="text-sm text-muted-foreground leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+               >
+                  I agree to the{" "}
+                  <Link to="/terms" className="text-primary hover:underline">
+                     Terms of Service
+                  </Link>{" "}
+                  and{" "}
+                  <Link to="/privacy" className="text-primary hover:underline">
+                     Privacy Policy
+                  </Link>
+               </label>
             </div>
 
             <div className="flex justify-between pt-4">

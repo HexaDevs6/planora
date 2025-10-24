@@ -9,53 +9,57 @@ import { GoogleAuthProvider } from "firebase/auth";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { Checkbox } from "@/components/ui/checkbox";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
-import {
-   Mail,
-   Lock,
-   User,
-   Chrome,
-   Building2,
-   Users,
-   Phone,
-   MapPin,
-   Calendar,
-   Tag,
-   DollarSign,
-   Briefcase,
-   Heart,
-   BriefcaseBusiness,
-   Facebook,
-   Instagram,
-} from "lucide-react";
+import { Building2, Users, BriefcaseBusiness } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import CustomerSignUpFrom from "@/components/auth/CustomerSignUpFrom";
 import ProviderInfoFrom from "@/components/auth/ProviderInfoFrom";
 import VendorSignUpFrom from "@/components/auth/VendorSignUpFrom";
+import VendorInfoForm from "@/components/auth/VendorInfoForm";
+import ProviderSignUpFrom from "@/components/auth/ProviderSignUpFrom";
 
 const saveUserToFirestore = async (uid, formData, userType) => {
+   let data = {};
+   switch (userType) {
+      case "client":
+         data = {
+            fullName: formData.fullName,
+            email: formData.email,
+            phone: formData.phone || "",
+            interests: formData.interests,
+            eventPreferences: formData.eventPreferences || "",
+            userType: userType,
+            createdAt: serverTimestamp(),
+         };
+         break;
+      case "vendor":
+         data = {
+            businessName: formData.businessName, //
+            category: formData.category, //
+            businessDescription: formData.businessDescription,
+            facebook: formData.facebook,
+            instagram: formData.instagram,
+            userType: userType,
+            createdAt: serverTimestamp(),
+         };
+         break;
+      case "provider":
+         data = {
+            fullName: formData.fullName,
+            service: formData.service,
+            bio: formData.bio,
+            email: formData.email,
+            userType: userType,
+            createdAt: serverTimestamp(),
+         };
+         break;
+   }
    try {
       await setDoc(doc(db, "users", uid), {
-         fullName: formData.fullName,
-         email: formData.email,
-         phone: formData.phone,
-         dateOfBirth: formData.dateOfBirth,
-         location: formData.location,
-         userType,
-         interests: formData.interests || [],
-         businessName: formData.businessName || "",
-         businessType: formData.businessType || "",
-         serviceCategory: formData.serviceCategory || "",
-         businessDescription: formData.businessDescription || "",
-         createdAt: serverTimestamp(),
+         ...data,
       });
-      toast.success("Account saved to Firestore ✅");
    } catch (error) {
       console.error("Firestore Error:", error);
       toast.error("Error saving data: " + error.message);
@@ -74,22 +78,18 @@ const Register = () => {
       password: "",
       confirmPassword: "",
       phone: "",
-      dateOfBirth: "",
-      location: "",
       // Client-specific
       interests: [],
       eventPreferences: "",
-      budgetRange: "",
       // Vendor-specific
       businessName: "",
-      businessType: "",
       serviceCategory: "",
-      yearsExperience: "",
       businessDescription: "",
-      priceRange: "",
-      portfolio: "",
-      certifications: "",
-      serviceArea: "",
+      category: "",
+      facebook: "",
+      instagram: "",
+      bio: "",
+      service: "",
    });
 
    const interestOptions = [
@@ -103,19 +103,6 @@ const Register = () => {
       "Education & Workshops",
       "Entertainment",
       "Community Events",
-   ];
-
-   const serviceCategoryOptions = [
-      "Venue & Space",
-      "Catering & Food",
-      "Photography & Videography",
-      "Entertainment (DJ, Band, etc.)",
-      "Decoration & Design",
-      "Event Planning & Coordination",
-      "Audio/Visual Equipment",
-      "Transportation",
-      "Security",
-      "Other Services",
    ];
 
    const usersTypes = [
@@ -233,16 +220,20 @@ const Register = () => {
          return false;
       }
 
-      if (!agreedToTerms) {
-         toast.warning("You must agree to the terms and conditions");
+      if (
+         userType === "provider" &&
+         (!formData.fullName || !formData.service || !formData.bio)
+      ) {
+         toast.warning("Please fill in all required information");
          return false;
       }
 
       return true;
    };
+
    const validateStep3 = () => {
-      const { fullName, email, password, confirmPassword, phone } = formData;
-      if (!fullName || !email || !password || !confirmPassword || !phone) {
+      const { email, password, confirmPassword } = formData;
+      if (!email || !password || !confirmPassword) {
          toast.error("Please fill in all required fields");
          return false;
       }
@@ -254,6 +245,10 @@ const Register = () => {
 
       if (password.length < 8) {
          toast.warning("Password must be at least 8 characters");
+         return false;
+      }
+      if (!agreedToTerms) {
+         toast.warning("You must agree to the terms and conditions");
          return false;
       }
 
@@ -269,9 +264,13 @@ const Register = () => {
    };
 
    const handleSubmit = async (e) => {
+      console.log("handleSubmit");
+
       e.preventDefault();
 
       if (!validateStep3()) {
+         console.log("validateStep3 failed");
+
          return;
       }
 
@@ -291,6 +290,7 @@ const Register = () => {
          const user = userCredential.user;
 
          // ✅ حفظ بيانات المستخدم في Firestore
+
          await saveUserToFirestore(user.uid, formData, userType);
 
          // ✅ إشعار نجاح
@@ -307,7 +307,7 @@ const Register = () => {
             }
          }, 1500);
 
-         setFormData(initialState);
+         setFormData("");
       } catch (error) {
          console.error("Error during registration:", error);
          toast.error("Registration failed", {
@@ -344,16 +344,19 @@ const Register = () => {
                   {/* Progress Indicator */}
                   <div className="flex justify-center gap-2 mb-8">
                      <div
-                        className={`h-2 w-20 rounded-full transition-all ${step >= 1 ? "bg-primary" : "bg-muted"
-                           }`}
+                        className={`h-2 w-20 rounded-full transition-all ${
+                           step >= 1 ? "bg-primary" : "bg-muted"
+                        }`}
                      />
                      <div
-                        className={`h-2 w-20 rounded-full transition-all ${step >= 2 ? "bg-primary" : "bg-muted"
-                           }`}
+                        className={`h-2 w-20 rounded-full transition-all ${
+                           step >= 2 ? "bg-primary" : "bg-muted"
+                        }`}
                      />
                      <div
-                        className={`h-2 w-20 rounded-full transition-all ${step >= 3 ? "bg-primary" : "bg-muted"
-                           }`}
+                        className={`h-2 w-20 rounded-full transition-all ${
+                           step >= 3 ? "bg-primary" : "bg-muted"
+                        }`}
                      />
                   </div>
 
@@ -424,12 +427,13 @@ const Register = () => {
                                              e.preventDefault();
                                              toggleInterest(interest);
                                           }}
-                                          className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${formData.interests.includes(
-                                             interest
-                                          )
-                                             ? "border-primary bg-primary/10"
-                                             : "border-border hover:border-primary/50"
-                                             }`}
+                                          className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
+                                             formData.interests.includes(
+                                                interest
+                                             )
+                                                ? "border-primary bg-primary/10"
+                                                : "border-border hover:border-primary/50"
+                                          }`}
                                        >
                                           <div className="flex items-center gap-2">
                                              <span className="text-sm font-medium">
@@ -462,121 +466,10 @@ const Register = () => {
                         )}
 
                         {userType === "vendor" && (
-                           <>
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                 <div className="space-y-2 ">
-                                    <Label htmlFor="businessName">
-                                       Business/Company Name *
-                                    </Label>
-                                    <div className="relative">
-                                       <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                                       <Input
-                                          id="businessName"
-                                          placeholder="Your Business Name"
-                                          value={formData.businessName}
-                                          onChange={(e) =>
-                                             handleInputChange(
-                                                "businessName",
-                                                e.target.value
-                                             )
-                                          }
-                                          className="pl-10"
-                                          required
-                                       />
-                                    </div>
-                                 </div>
-
-                                 <div className="space-y-2 ">
-                                    <Label htmlFor="serviceCategory">
-                                        Category *
-                                    </Label>
-                                    <div className="relative">
-                                       <Tag className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                                       <select
-                                          id="serviceCategory"
-                                          value={formData.serviceCategory}
-                                          onChange={(e) =>
-                                             handleInputChange(
-                                                "serviceCategory",
-                                                e.target.value
-                                             )
-                                          }
-                                          className="w-full pl-10 h-10 rounded-md border border-input \ px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                                          required
-                                       >
-                                          <option value="">
-                                             Select a category
-                                          </option>
-                                          {serviceCategoryOptions.map((cat) => (
-                                             <option key={cat} value={cat}>
-                                                {cat}
-                                             </option>
-                                          ))}
-                                       </select>
-                                    </div>
-                                 </div>
-
-                                 <div className="space-y-2 md:col-span-2">
-                                    <Label htmlFor="businessDescription">
-                                       Business Description *
-                                    </Label>
-                                    <Textarea
-                                       id="businessDescription"
-                                       placeholder="Describe your services, expertise, and what makes your business unique..."
-                                       value={formData.businessDescription}
-                                       onChange={(e) =>
-                                          handleInputChange(
-                                             "businessDescription",
-                                             e.target.value
-                                          )
-                                       }
-                                       rows={4}
-                                       required
-                                    />
-                                 </div>
-
-                                 <div className="space-y-2">
-                                    <Label htmlFor="facebook">
-                                       <Facebook size={15} />  Facebook URL
-                                       
-                                       
-                                    </Label>
-                                    <Input
-                                       id="facebook"
-                                       type="url"
-                                       placeholder="https://facebook.com/yourpage"
-                                       value={formData.facebook || ""}
-                                       onChange={(e) =>
-                                          handleInputChange(
-                                             "facebook",
-                                             e.target.value
-                                          )
-                                       }
-                                    />
-                                 </div>
-                                 <div className="space-y-2 ">
-                                    <Label htmlFor="instagram">
-                                      
-                                       <Instagram size={15}  /> Instagram URL
-                                      
-                                    </Label>
-                                    <Input
-                                       id="instagram"
-                                       type="url"
-                                       placeholder="https://instagram.com/yourprofile"
-                                       value={formData.instagram || ""}
-                                       onChange={(e) =>
-                                          handleInputChange(
-                                             "instagram",
-                                             e.target.value
-                                          )
-                                       }
-                                    />
-                                 </div>
-
-                                
-                              </div>
-                           </>
+                           <VendorInfoForm
+                              formData={formData}
+                              handleInputChange={handleInputChange}
+                           />
                         )}
                         {userType === "provider" && (
                            <ProviderInfoFrom
@@ -616,6 +509,8 @@ const Register = () => {
                            handleSubmit={handleSubmit}
                            step={step}
                            userType={userType}
+                           agreedToTerms={agreedToTerms}
+                           setAgreedToTerms={setAgreedToTerms}
                         />
                      ) : userType === "vendor" ? (
                         <VendorSignUpFrom
@@ -626,6 +521,8 @@ const Register = () => {
                            handleSubmit={handleSubmit}
                            step={step}
                            userType={userType}
+                           agreedToTerms={agreedToTerms}
+                           setAgreedToTerms={setAgreedToTerms}
                         />
                      ) : userType === "provider" ? (
                         <ProviderSignUpFrom
@@ -635,7 +532,10 @@ const Register = () => {
                            setStep={setStep}
                            handleSubmit={handleSubmit}
                            step={step}
-							handleGoogleSignUp={handleGoogleSignUp}
+                           userType={userType}
+                           agreedToTerms={agreedToTerms}
+                           setAgreedToTerms={setAgreedToTerms}
+                           handleInputChange={handleInputChange}
                         />
                      ) : null)}
                </CardContent>

@@ -8,10 +8,11 @@ export const startAuthListener = (store) => {
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
-     
-      store.dispatch(setUser(user));
+      const userjson = user.toJSON();
+      console.log("user", user.toJSON());
+      
+      store.dispatch(setUser(userjson));
     } else {
- 
       store.dispatch(clearUser());
     }
   });
