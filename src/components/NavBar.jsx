@@ -6,7 +6,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
-import { t } from "i18next";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -21,6 +21,7 @@ function NavBar() {
     const [isOpen, setIsOpen] = useState(false);
     const { user } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
+    const { t } = useTranslation();
     const navigate = useNavigate();
 
 
@@ -116,7 +117,7 @@ function NavBar() {
                                             </Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem
-                                            onClick={() => handleSignOut(dispatch, navigate)}
+                                            onClick={() => handleSignOut(dispatch, navigate, t)}
                                             className='text-amper focus:text-amper/80 hover:bg-red-600/10'
                                         >
                                             Logout

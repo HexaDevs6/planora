@@ -1,4 +1,72 @@
 {
+  "common": {
+    "buttons": {
+      "login": "تسجيل الدخول",
+      "register": "إنشاء حساب",
+      "logout": "تسجيل الخروج",
+      "submit": "إرسال",
+      "cancel": "إلغاء",
+      "more": "المزيد",
+      "close": "إغلاق",
+      "search": "بحث",
+      "edit": "تعديل",
+      "delete": "حذف",
+      "create": "إنشاء",
+      "update": "تحديث",
+      "save": "حفظ",
+      "apply": "تقديم",
+      "getStarted": "ابدأ الآن",
+      "contactUs": "تواصل معنا",
+      "join": "انضم إلينا",
+      "follow": "تابع",
+      "explore": "تصفح المزيد",
+      "bookNow": "احجز الان",
+      "back": "رجوع",
+      "continue": "متابعة",
+      "creating": "جاري إنشاء الحساب...",
+      "signingIn": "جاري تسجيل الدخول...",
+      "letsGetStarted": "ابدأ رحلتك الآن"
+    },
+    "form": {
+      "email": "البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "fullName": "الاسم الكامل",
+      "phone": "رقم الهاتف",
+      "name": "الاسم",
+      "address": "العنوان",
+      "city": "المدينة",
+      "country": "الدولة",
+      "state": "المنطقة",
+      "zip": "الرمز البريدي",
+      "description": "الوصف",
+      "title": "العنوان",
+      "subtitle": "العنوان الفرعي",
+      "date": "التاريخ",
+      "time": "الوقت",
+      "duration": "المدة",
+      "price": "السعر",
+      "capacity": "السعة",
+      "category": "الفئة",
+      "location": "الموقع",
+      "image": "الصورة"
+    },
+    "validation": {
+      "required": "هذا الحقل مطلوب",
+      "emailInvalid": "يرجى إدخال بريد إلكتروني صحيح",
+      "passwordLength": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
+      "passwordsNoMatch": "كلمات المرور غير متطابقة",
+      "fillAllFields": "يرجى ملء جميع الحقول المطلوبة",
+      "agreeToTerms": "يجب الموافقة على الشروط والأحكام",
+      "emailExists": "البريد الإلكتروني موجود بالفعل"
+    },
+    "toast": {
+      "success": "نجح!",
+      "error": "خطأ!",
+      "warning": "تحذير!",
+      "info": "معلومات!"
+    }
+  },
   "nav": {
     "home": "الرئيسية",
     "about": "من نحن",
@@ -144,50 +212,206 @@
     "resources": "الموارد",
     "copyright": "© 2025 Planora. جميع الحقوق محفوظة | فريق HexaDevs."
   },
-  "button": {
-    "login": "تسجيل الدخول",
-    "register": "إنشاء حساب",
-    "logout": "تسجيل الخروج",
-    "submit": "إرسال",
-    "cancel": "إلغاء",
-    "more": "المزيد",
-    "close": "إغلاق",
-    "search": "بحث",
-    "edit": "تعديل",
-    "delete": "حذف",
-    "create": "إنشاء",
-    "update": "تحديث",
-    "save": "حفظ",
-    "apply": "تقديم",
-    "getStarted": "ابدأ الآن",
-    "contactUs": "تواصل معنا",
-    "join": "انضم إلينا",
-    "follow": "تابع",
-    "explore": "تصفح المزيد",
-    "bookNow": "احجز الان"
-  },
-  "input": {
-    "name": "الاسم",
-    "email": "البريد الإلكتروني",
-    "password": "كلمة المرور",
-    "confirmPassword": "تأكيد كلمة المرور",
-    "phone": "رقم الهاتف",
-    "address": "العنوان",
-    "city": "المدينة",
-    "country": "الدولة",
-    "state": "المنطقة",
-    "zip": "الرمز البريدي",
-    "description": "الوصف",
-    "title": "العنوان",
-    "subtitle": "العنوان الفرعي",
-    "date": "التاريخ",
-    "time": "الوقت",
-    "duration": "المدة",
-    "price": "السعر",
-    "capacity": "السعة",
-    "category": "الفئة",
-    "location": "الموقع",
-    "image": "الصورة"
+  "auth": {
+    "signout": {
+      "alert": {
+        "title": "تسجيل الخروج من بلانورا؟",
+        "text": "يمكنك تسجيل الدخول مرة أخرى في أي وقت.",
+        "confirmButton": "نعم، سجلني خارجاً",
+        "cancelButton": "إلغاء"
+      },
+      "toast": {
+        "success": {
+          "title": "تم تسجيل الخروج بنجاح!",
+          "description": "لقد تم تسجيل خروجك من حسابك."
+        },
+        "error": {
+          "title": "فشل في تسجيل الخروج",
+          "description": "يرجى المحاولة مرة أخرى لاحقاً."
+        }
+      }
+    },
+    "signin": {
+      "title": "من هنا تبدأ قصص النجاح!",
+      "googleSignIn": "تسجيل الدخول عبر جوجل",
+      "orUseEmail": "أو استخدم البريد الإلكتروني",
+      "notMember": "لست عضواً بعد؟",
+      "registerNow": "سجل الآن",
+      "toast": {
+        "success": {
+          "title": "تم تسجيل الدخول بنجاح!",
+          "description": "مرحباً بك مرة أخرى في بلانورا!"
+        },
+        "error": {
+          "title": "فشل في تسجيل الدخول!",
+          "description": "يرجى التحقق من البريد الإلكتروني وكلمة المرور."
+        },
+        "googleSuccess": {
+          "title": "تم تسجيل الدخول عبر جوجل!",
+          "description": "مرحباً بك في بلانورا!"
+        },
+        "googleError": {
+          "title": "فشل تسجيل الدخول عبر جوجل!",
+          "description": "يرجى المحاولة مرة أخرى."
+        }
+      }
+    },
+    "register": {
+      "title": "إنشاء حساب",
+      "step1": {
+        "subtitle": "اختر نوع حسابك",
+        "client": {
+          "title": "أنا عميل",
+          "description": "تصفح الفعاليات، احجز التذاكر، واستأجر مقدمي الخدمات لفعالياتك",
+          "features": [
+            "اكتشف الفعاليات الرائعة",
+            "احجز خدمات الفعاليات",
+            "إدارة حجوزاتك",
+            "احصل على توصيات مخصصة"
+          ]
+        },
+        "vendor": {
+          "title": "أنا بائع",
+          "description": "اعرض خدماتك، أدر الحجوزات، ونمّي عملك في مجال الفعاليات",
+          "features": [
+            "أضف خدماتك",
+            "استقبل طلبات الحجوزات",
+            "إدارة حجوزاتك",
+            "احصل على توصيات مخصصة"
+          ]
+        },
+        "provider": {
+          "title": "أنا مقدم خدمة",
+          "description": "اعرض خدماتك، أدر الحجوزات، ونمّي عملك في مجال الفعاليات",
+          "features": [
+            "أضف خدماتك",
+            "استقبل طلبات الحجوزات",
+            "إدارة حجوزاتك",
+            "احصل على توصيات مخصصة"
+          ]
+        },
+        "alreadyHaveAccount": "لديك حساب بالفعل؟"
+      },
+      "step2": {
+        "client": {
+          "subtitle": "أخبرنا عن اهتماماتك",
+          "interestsLabel": "اهتماماتك * (اختر واحد على الأقل)",
+          "eventPreferencesLabel": "تفضيلات الفعاليات (اختياري)",
+          "eventPreferencesPlaceholder": "أخبرنا عن أنواع الفعاليات التي تحضرها أو تنظمها عادة..."
+        },
+        "vendor": {
+          "subtitle": "أكمل ملفك التجاري"
+        },
+        "provider": {
+          "subtitle": "أكمل ملف مقدم الخدمة"
+        }
+      },
+      "step3": {
+        "subtitle": "أدخل معلوماتك الأساسية"
+      },
+      "toast": {
+        "validation": {
+          "selectUserType": "يرجى اختيار ما إذا كنت عميلاً أم بائعاً",
+          "selectInterestsAndFullName": "يرجى اختيار اهتمام واحد على الأقل وملء الاسم الكامل",
+          "fillBusinessInfo": "يرجى ملء جميع المعلومات التجارية المطلوبة",
+          "fillRequiredInfo": "يرجى ملء جميع المعلومات المطلوبة"
+        },
+        "success": {
+          "title": "تم التسجيل بنجاح!",
+          "description": "مرحباً بك في بلانورا كـ"
+        },
+        "error": {
+          "title": "فشل في التسجيل",
+          "description": "حدث خطأ أثناء التسجيل"
+        }
+      }
+    },
+    "form": {
+      "googleSignUp": "المتابعة عبر جوجل",
+      "or": "أو",
+      "fullName": {
+        "label": "الاسم الكامل *",
+        "placeholder": "أحمد محمد"
+      },
+      "email": {
+        "label": "البريد الإلكتروني *",
+        "placeholder": "your@email.com"
+      },
+      "phone": {
+        "label": "رقم الهاتف",
+        "placeholder": "+20 123 456 7890"
+      },
+      "password": {
+        "label": "كلمة المرور *",
+        "placeholder": "8 أحرف على الأقل"
+      },
+      "confirmPassword": {
+        "label": "تأكيد كلمة المرور *",
+        "placeholder": "أعد إدخال كلمة المرور"
+      },
+      "terms": {
+        "text": "أوافق على",
+        "termsLink": "شروط الخدمة",
+        "and": "و",
+        "privacyLink": "سياسة الخصوصية"
+      },
+      "toast": {
+        "googleSuccess": {
+          "title": "تم تسجيل الدخول عبر جوجل!",
+          "description": "مرحباً بك في بلانورا كـ"
+        },
+        "googleError": {
+          "title": "فشل تسجيل الدخول عبر جوجل",
+          "description": "حدث خطأ أثناء تسجيل الدخول عبر جوجل"
+        }
+      }
+    },
+    "providerInfo": {
+      "service": {
+        "label": "الخدمة التي تقدمها *",
+        "placeholder": "اختر خدمة",
+        "options": {
+          "photography": "التصوير الفوتوغرافي",
+          "catering": "تقديم الطعام",
+          "dj": "دي جي / موسيقى",
+          "planning": "تخطيط الفعاليات",
+          "design": "الديكور والتصميم",
+          "security": "الأمن",
+          "transport": "النقل",
+          "venue": "إدارة القاعات",
+          "av": "معدات الصوت والمرئيات",
+          "other": "أخرى"
+        }
+      },
+      "bio": {
+        "label": "نبذة شخصية *",
+        "placeholder": "أخبرنا عن نفسك، خلفيتك، خبرتك، وما أنت شغوف به..."
+      }
+    },
+    "vendorInfo": {
+      "businessName": {
+        "label": "اسم الشركة/المؤسسة *",
+        "placeholder": "اسم شركتك"
+      },
+      "category": {
+        "label": "الفئة *",
+        "placeholder": "اختر فئة"
+      },
+      "businessDescription": {
+        "label": "وصف الشركة *",
+        "placeholder": "صف خدماتك، خبرتك، وما يميز شركتك..."
+      },
+      "socialMedia": {
+        "facebook": {
+          "label": "رابط فيسبوك",
+          "placeholder": "https://facebook.com/yourpage"
+        },
+        "instagram": {
+          "label": "رابط إنستغرام",
+          "placeholder": "https://instagram.com/yourprofile"
+        }
+      }
+    }
   },
   "aboutUs": {
     "head": {

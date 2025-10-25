@@ -13,8 +13,8 @@ import {
 import LanguageSwitcher from "./LanguageSwitcher";
 import ThemeToggle from "./ThemeToggle";
 import { useDispatch, useSelector } from "react-redux";
-import { signOut } from "firebase/auth";
-import { auth } from "@/lib/firebaseConfig";
+import { handleSignOut } from "@/components/auth/handleSignOut";
+import { useTranslation } from "react-i18next";
 
 export default function Sidebar({ sideLinks, subtitle }) {
     const [isOpen, setIsOpen] = useState(false);
@@ -23,19 +23,7 @@ export default function Sidebar({ sideLinks, subtitle }) {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
-    const handleSignOut = async () => {
-        try {
-            await signOut(auth);
-            navigate("/signin");
-            dispatch(clearUser());
-            toast.success("Signed out successfully!");
-        } catch (error) {
-            console.error("Error during sign out:", error);
-            toast.error("Failed to sign out. Please try again.");
-        }
-    };
-
+    const { t } = useTranslation();
     const userName = user.displayName || user.email.split("@")[0];
     const userRole = user.userRole;
     const userAvatar = user.photoURL || "https://i.pravatar.cc/100";
@@ -153,7 +141,7 @@ export default function Sidebar({ sideLinks, subtitle }) {
                 <button
                     to='/logout'
                     className='flex items-center gap-3 cursor-pointer p-2 rounded-sm text-amber hover:bg-violet-light w-full'
-                    onClick={handleSignOut}
+                    onClick={() => handleSignOut(dispatch, navigate, t)}
                 >
                     <LogOut size={20} />
                     {isOpen && (

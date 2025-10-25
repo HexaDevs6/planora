@@ -14,7 +14,7 @@ export default function JoinSection() {
         <form className="flex rounded-sm overflow-hidden">
           <input
             type="email"
-            placeholder={t("input.email")}
+            placeholder={t("common.form.email")}
             className="bg-violet-200 text-violet placeholder-violet/70 transition-all duration-500 px-4 py-3 outline-none focus:bg-violet-100 pr-1"
             required
           />
@@ -22,7 +22,7 @@ export default function JoinSection() {
             type="submit"
             className="bg-violet text-white px-6 py-3 transition-all duration-500 font-medium hover:bg-violet/90"
           >
-            {t("button.join")}
+            {t("common.buttons.join")}
           </button>
         </form>
       </div>

@@ -6,6 +6,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, provider } from "@/lib/firebaseConfig";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
+import { Eye, EyeOff } from "lucide-react";
 
 function Signin() {
     const [showPassword, setShowPassword] = useState(false);
@@ -14,6 +16,7 @@ function Signin() {
     const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -21,8 +24,8 @@ function Signin() {
             setLoading(true);
 
             await signInWithEmailAndPassword(auth, email, password);
-            toast.success("Login Successful!", {
-                description: "Welcome back to Planora!",
+            toast.success(t("auth.signin.toast.success.title"), {
+                description: t("auth.signin.toast.success.description"),
             });
             setLoading(false);
 
@@ -31,8 +34,8 @@ function Signin() {
             }, 1500);
         } catch (error) {
             console.log("login failed with email:", error.message);
-            toast.error("Login failed!", {
-                description: "Please check your email and password.",
+            toast.error(t("auth.signin.toast.error.title"), {
+                description: t("auth.signin.toast.error.description"),
             });
         } finally {
             setLoading(false);
@@ -41,8 +44,8 @@ function Signin() {
     const handleGoogleSignIn = async () => {
         try {
             await signInWithPopup(auth, provider);
-            toast.success("Signed in with Google!", {
-                description: "Welcome to Planora!",
+            toast.success(t("auth.signin.toast.googleSuccess.title"), {
+                description: t("auth.signin.toast.googleSuccess.description"),
             });
 
             setTimeout(() => {
@@ -51,8 +54,8 @@ function Signin() {
         } catch (error) {
             console.log("Sign-in failed with Google:", error.message);
 
-            toast.error("Sign-In failed with Google!", {
-                description: "Please try again.",
+            toast.error(t("auth.signin.toast.googleError.title"), {
+                description: t("auth.signin.toast.googleError.description"),
             });
         }
     };
@@ -73,9 +76,7 @@ function Signin() {
                         </div>
 
                         <h1 className='text-[31.25px] font-extrabold text-primary leading-tight'>
-                            Where great events
-                            <br />
-                            begin.
+                            {t("auth.signin.title")}
                         </h1>
                     </header>
 
@@ -99,7 +100,7 @@ function Signin() {
                                     />
                                 </div>
                                 <span className='text-sm text-[#424242] leading-[25.6px] font-[400]'>
-                                    Sign in with Google
+                                    {t("auth.signin.googleSignIn")}
                                 </span>
                             </button>
                         </div>
@@ -107,7 +108,7 @@ function Signin() {
                         <div className='flex items-center my-6'>
                             <div className='flex-1 h-px bg-muted' />
                             <div className='px-4 text-sm text-text'>
-                                Or use Email
+                                {t("auth.signin.orUseEmail")}
                             </div>
                             <div className='flex-1 h-px bg-muted' />
                         </div>
@@ -128,7 +129,7 @@ function Signin() {
                                     htmlFor='email'
                                     className='absolute left-4 top-2 text-[#616161] text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:text-sm peer-focus:text-amber'
                                 >
-                                    Email
+                                    {t("common.form.email")}
                                 </label>
                             </div>
 
@@ -148,7 +149,7 @@ function Signin() {
                                     htmlFor='password'
                                     className='absolute left-4 top-2 text-[#616161] text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:text-sm peer-focus:text-amber'
                                 >
-                                    Password
+                                    {t("common.form.password")}
                                 </label>
 
                                 <button
@@ -158,7 +159,7 @@ function Signin() {
                                     }
                                     className='absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 peer-focus:text-amber'
                                 >
-                                    {showPassword ? "🙈" : "👁️"}
+                                    {showPassword ? <EyeOff /> : <Eye />}
                                 </button>
                             </div>
 
@@ -173,20 +174,20 @@ function Signin() {
                                     }`}
                                 >
                                     {loading
-                                        ? "Signing in..."
-                                        : "Let's Get Started"}
+                                        ? t("common.buttons.signingIn")
+                                        : t("common.buttons.letsGetStarted")}
                                 </button>
                             </div>
                         </form>
 
                         <div className='mt-6 text-center font-[12.8px] text-text'>
                             <h5>
-                                Not a member yet?{" "}
+                                {t("auth.signin.notMember")}{" "}
                                 <Link
                                     to='/register'
                                     className='text-primary underline font-[900]'
                                 >
-                                    REGISTER NOW
+                                    {t("auth.signin.registerNow")}
                                 </Link>
                             </h5>
                         </div>

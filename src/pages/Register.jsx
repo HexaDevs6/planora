@@ -1,26 +1,19 @@
-import {
-   createUserWithEmailAndPassword,
-   fetchSignInMethodsForEmail,
-   signInWithPopup,
-} from "firebase/auth";
-import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
-import { auth, db } from "@/lib/firebaseConfig";
-import { GoogleAuthProvider } from "firebase/auth";
+
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { db } from "@/lib/firebaseConfig";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Building2, Users, BriefcaseBusiness } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
-import CustomerSignUpFrom from "@/components/auth/CustomerSignUpFrom";
 import ProviderInfoFrom from "@/components/auth/ProviderInfoFrom";
-import VendorSignUpFrom from "@/components/auth/VendorSignUpFrom";
 import VendorInfoForm from "@/components/auth/VendorInfoForm";
-import ProviderSignUpFrom from "@/components/auth/ProviderSignUpFrom";
+import { useTranslation } from "react-i18next";
+import ClientInfoFrom from "@/components/auth/ClientInfoFrom";
+import CreateUserFrom from "@/components/auth/CreateUserFrom";
 
-const saveUserToFirestore = async (uid, formData, userType) => {
+export const saveUserToFirestore = async (uid, formData, userType) => {
    let data = {};
    switch (userType) {
       case "client":
@@ -68,9 +61,9 @@ const saveUserToFirestore = async (uid, formData, userType) => {
 
 const Register = () => {
    const [step, setStep] = useState(1);
-   const [userType, setUserType] = useState(""); // "client" or "vendor"
-   const [agreedToTerms, setAgreedToTerms] = useState(false);
-   const navigate = useNavigate();
+   const [userType, setUserType] = useState(""); // "client", "vendor", or "provider"
+   
+   const { t } = useTranslation();
    // Common fields
    const [formData, setFormData] = useState({
       fullName: "",
@@ -92,94 +85,33 @@ const Register = () => {
       service: "",
    });
 
-   const interestOptions = [
-      "Concerts & Music",
-      "Conferences & Business",
-      "Sports & Fitness",
-      "Art & Culture",
-      "Food & Dining",
-      "Technology",
-      "Networking",
-      "Education & Workshops",
-      "Entertainment",
-      "Community Events",
-   ];
-
    const usersTypes = [
       {
          type: "client",
-         title: "I'm a Client",
-         description:
-            "Browse events, book tickets, and hire service providers for your events",
+         title: t("auth.register.step1.client.title"),
+         description: t("auth.register.step1.client.description"),
          icon: <Users className="h-10 w-10" />,
-         list: [
-            {
-               en: "Discover amazing events",
-               ar: "اكتشف الأحداث الرائعة",
-            },
-            {
-               en: "Book event services",
-               ar: "احجز خدمات الأحداث",
-            },
-            {
-               en: "Manage your bookings",
-               ar: "إدارة الحجوزات",
-            },
-            {
-               en: "Get personalized recommendations",
-               ar: "احصل على توصيات مخصصة لك",
-            },
-         ],
+         features: t("auth.register.step1.client.features", {
+            returnObjects: true,
+         }),
       },
       {
          type: "vendor",
-         title: "I'm a Vendor",
-         description:
-            "Offer your services, manage bookings, and grow your event business",
+         title: t("auth.register.step1.vendor.title"),
+         description: t("auth.register.step1.vendor.description"),
          icon: <Building2 className="h-10 w-10" />,
-         list: [
-            {
-               en: "List your services",
-               ar: "أضف خدماتك",
-            },
-            {
-               en: "Receive booking requests",
-               ar: "استقبل طلبات الحجوزات",
-            },
-            {
-               en: "Manage your bookings",
-               ar: "إدارة الحجوزات",
-            },
-            {
-               en: "Get personalized recommendations",
-               ar: "احصل على توصيات مخصصة لك",
-            },
-         ],
+         features: t("auth.register.step1.vendor.features", {
+            returnObjects: true,
+         }),
       },
       {
          type: "provider",
-         title: "I'm a Provider",
-         description:
-            "Offer your services, manage bookings, and grow your event business",
+         title: t("auth.register.step1.provider.title"),
+         description: t("auth.register.step1.provider.description"),
          icon: <BriefcaseBusiness className="h-10 w-10" />,
-         list: [
-            {
-               en: "List your services",
-               ar: "أضف خدماتك",
-            },
-            {
-               en: "Receive booking requests",
-               ar: "استقبل طلبات الحجوزات",
-            },
-            {
-               en: "Manage your bookings",
-               ar: "إدارة الحجوزات",
-            },
-            {
-               en: "Get personalized recommendations",
-               ar: "احصل على توصيات مخصصة لك",
-            },
-         ],
+         features: t("auth.register.step1.provider.features", {
+            returnObjects: true,
+         }),
       },
    ];
 
@@ -198,15 +130,15 @@ const Register = () => {
 
    const validateStep1 = () => {
       if (!userType) {
-         toast.error("Please select whether you're a client or vendor");
+         toast.error(t("auth.register.toast.validation.selectUserType"));
          return false;
       }
       return true;
    };
 
    const validateStep2 = () => {
-      if (userType === "client" && formData.interests.length === 0) {
-         toast.warning("Please select at least one interest");
+      if (userType === "client" && (formData.interests.length === 0 || !formData.fullName)) {
+         toast.warning(t("auth.register.toast.validation.selectInterestsAndFullName"));
          return false;
       }
 
@@ -216,7 +148,7 @@ const Register = () => {
             !formData.serviceCategory ||
             !formData.businessDescription)
       ) {
-         toast.warning("Please fill in all required business information");
+         toast.warning(t("auth.register.toast.validation.fillBusinessInfo"));
          return false;
       }
 
@@ -224,31 +156,7 @@ const Register = () => {
          userType === "provider" &&
          (!formData.fullName || !formData.service || !formData.bio)
       ) {
-         toast.warning("Please fill in all required information");
-         return false;
-      }
-
-      return true;
-   };
-
-   const validateStep3 = () => {
-      const { email, password, confirmPassword } = formData;
-      if (!email || !password || !confirmPassword) {
-         toast.error("Please fill in all required fields");
-         return false;
-      }
-
-      if (password !== confirmPassword) {
-         toast.error("Passwords do not match");
-         return false;
-      }
-
-      if (password.length < 8) {
-         toast.warning("Password must be at least 8 characters");
-         return false;
-      }
-      if (!agreedToTerms) {
-         toast.warning("You must agree to the terms and conditions");
+         toast.warning(t("auth.register.toast.validation.fillRequiredInfo"));
          return false;
       }
 
@@ -256,6 +164,8 @@ const Register = () => {
    };
 
    const handleNext = () => {
+      console.log(userType);
+      
       if (step === 1 && validateStep1()) {
          setStep(2);
       } else if (step === 2 && validateStep2()) {
@@ -263,58 +173,7 @@ const Register = () => {
       }
    };
 
-   const handleSubmit = async (e) => {
-      console.log("handleSubmit");
 
-      e.preventDefault();
-
-      if (!validateStep3()) {
-         console.log("validateStep3 failed");
-
-         return;
-      }
-
-      try {
-         // check if email already exists in Firestore
-         const methods = await fetchSignInMethodsForEmail(auth, formData.email);
-         if (methods.length > 0) {
-            toast.error("Email already exists");
-            return;
-         }
-         // ✅ إنشاء مستخدم جديد في Firebase Authentication
-         const userCredential = await createUserWithEmailAndPassword(
-            auth,
-            formData.email,
-            formData.password
-         );
-         const user = userCredential.user;
-
-         // ✅ حفظ بيانات المستخدم في Firestore
-
-         await saveUserToFirestore(user.uid, formData, userType);
-
-         // ✅ إشعار نجاح
-         toast.success("Registration Successful!", {
-            description: `Welcome to Planora as a ${userType}!`,
-         });
-
-         // ✅ توجيه المستخدم بعد النجاح
-         setTimeout(() => {
-            if (userType === "vendor") {
-               navigate("/");
-            } else {
-               navigate("/user");
-            }
-         }, 1500);
-
-         setFormData("");
-      } catch (error) {
-         console.error("Error during registration:", error);
-         toast.error("Registration failed", {
-            description: error.message,
-         });
-      }
-   };
 
    return (
       <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-primary/5 flex items-center justify-center p-4">
@@ -327,17 +186,20 @@ const Register = () => {
                         Planora
                      </div>
                      <h1 className="text-3xl font-bold text-foreground mb-2">
-                        Create Account
+                        {t("auth.register.title")}
                      </h1>
                      <p className="text-muted-foreground">
-                        {step === 1 && "Choose your account type"}
+                        {step === 1 && t("auth.register.step1.subtitle")}
                         {step === 2 &&
                            userType === "client" &&
-                           "Tell us about your interests"}
+                           t("auth.register.step2.client.subtitle")}
                         {step === 2 &&
                            userType === "vendor" &&
-                           "Complete your business profile"}
-                        {step === 3 && "Enter your basic information"}
+                           t("auth.register.step2.vendor.subtitle")}
+                        {step === 2 &&
+                           userType === "provider" &&
+                           t("auth.register.step2.provider.subtitle")}
+                        {step === 3 && t("auth.register.step3.subtitle")}
                      </p>
                   </div>
 
@@ -366,6 +228,7 @@ const Register = () => {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                            {usersTypes.map((type, i) => (
                               <Card
+                                 key={i}
                                  className={`cursor-pointer transition-all duration-300 ${
                                     userType === type.type
                                        ? "border-primary shadow-accent bg-primary/5"
@@ -373,7 +236,7 @@ const Register = () => {
                                  }`}
                                  onClick={() => setUserType(type.type)}
                               >
-                                 <CardContent className="p-8 text-center space-y-4">
+                                 <CardContent className="px-4 py-6 text-center space-y-4">
                                     <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-primary text-primary mx-auto border border-primary">
                                        {type.icon}
                                     </div>
@@ -383,9 +246,9 @@ const Register = () => {
                                     <p className="text-sm text-muted-foreground">
                                        {type.description}
                                     </p>
-                                    <ul className="text-sm text-muted-foreground text-left space-y-2">
-                                       {type.list.map((item) => (
-                                          <li key={item.en}>• {item.en}</li>
+                                    <ul className="text-xs text-muted-foreground text-start space-y-1">
+                                       {type.features.map((feature, index) => (
+                                          <li key={index}>• {feature}</li>
                                        ))}
                                     </ul>
                                  </CardContent>
@@ -396,15 +259,21 @@ const Register = () => {
                         <div className="flex justify-between pt-4">
                            <Link to="/signin">
                               <Button variant="link">
-                                 Already have an account?
+                                 {t("auth.register.step1.alreadyHaveAccount")}
                               </Button>
                            </Link>
                            <Button
                               onClick={handleNext}
                               variant="amber"
                               size="lg"
+                              disabled={!userType}
+                              className={
+                                 !userType
+                                    ? "opacity-50 cursor-not-allowed"
+                                    : ""
+                              }
                            >
-                              Continue
+                              {t("common.buttons.continue")}
                            </Button>
                         </div>
                      </div>
@@ -414,55 +283,11 @@ const Register = () => {
                   {step === 2 && (
                      <div className="space-y-6 animate-fade-in">
                         {userType === "client" && (
-                           <>
-                              <div className="space-y-4">
-                                 <Label>
-                                    Your Interests * (Select at least one)
-                                 </Label>
-                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                    {interestOptions.map((interest) => (
-                                       <div
-                                          key={interest}
-                                          onClick={(e) => {
-                                             e.preventDefault();
-                                             toggleInterest(interest);
-                                          }}
-                                          className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
-                                             formData.interests.includes(
-                                                interest
-                                             )
-                                                ? "border-primary bg-primary/10"
-                                                : "border-border hover:border-primary/50"
-                                          }`}
-                                       >
-                                          <div className="flex items-center gap-2">
-                                             <span className="text-sm font-medium">
-                                                {interest}
-                                             </span>
-                                          </div>
-                                       </div>
-                                    ))}
-                                 </div>
-                              </div>
-
-                              <div className="space-y-2">
-                                 <Label htmlFor="eventPreferences">
-                                    Event Preferences (Optional)
-                                 </Label>
-                                 <Textarea
-                                    id="eventPreferences"
-                                    placeholder="Tell us about the types of events you typically attend or organize..."
-                                    value={formData.eventPreferences}
-                                    onChange={(e) =>
-                                       handleInputChange(
-                                          "eventPreferences",
-                                          e.target.value
-                                       )
-                                    }
-                                    rows={4}
-                                 />
-                              </div>
-                           </>
+                           <ClientInfoFrom
+                              formData={formData}
+                              handleInputChange={handleInputChange}
+                              toggleInterest={toggleInterest}
+                           />
                         )}
 
                         {userType === "vendor" && (
@@ -484,7 +309,7 @@ const Register = () => {
                               variant="outline"
                               type="button"
                            >
-                              Back
+                              {t("common.buttons.back")}
                            </Button>
                            <Button
                               type="button"
@@ -492,52 +317,22 @@ const Register = () => {
                               variant="amber"
                               size="lg"
                            >
-                              Continue
+                              {t("common.buttons.continue")}
                            </Button>
                         </div>
                      </div>
                   )}
 
                   {/* Step 3: Basic Information */}
-                  {step === 3 &&
-                     (userType === "client" ? (
-                        <CustomerSignUpFrom
-                           data={formData}
-                           setFormData={setFormData}
-                           handleNext={handleNext}
-                           setStep={setStep}
-                           handleSubmit={handleSubmit}
-                           step={step}
-                           userType={userType}
-                           agreedToTerms={agreedToTerms}
-                           setAgreedToTerms={setAgreedToTerms}
-                        />
-                     ) : userType === "vendor" ? (
-                        <VendorSignUpFrom
-                           data={formData}
-                           setFormData={setFormData}
-                           handleNext={handleNext}
-                           setStep={setStep}
-                           handleSubmit={handleSubmit}
-                           step={step}
-                           userType={userType}
-                           agreedToTerms={agreedToTerms}
-                           setAgreedToTerms={setAgreedToTerms}
-                        />
-                     ) : userType === "provider" ? (
-                        <ProviderSignUpFrom
-                           data={formData}
-                           setFormData={setFormData}
-                           handleNext={handleNext}
-                           setStep={setStep}
-                           handleSubmit={handleSubmit}
-                           step={step}
-                           userType={userType}
-                           agreedToTerms={agreedToTerms}
-                           setAgreedToTerms={setAgreedToTerms}
-                           handleInputChange={handleInputChange}
-                        />
-                     ) : null)}
+                  {step === 3 && (
+                     <CreateUserFrom
+                        data={formData}
+                        setFormData={setFormData}
+                        setStep={setStep}
+                        step={step}
+                        userType={userType}                        
+                     />
+                  )}
                </CardContent>
             </Card>
          </div>
