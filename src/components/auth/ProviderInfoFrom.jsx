@@ -17,11 +17,12 @@ const ProviderInfoFrom = ({ formData, handleInputChange }) => {
                      id="fullname"
                      name="fullname"
                      placeholder="Your Full Name"
+                     className="pl-10 text-content"
                      value={formData.fullName}
                      onChange={(e) =>
                         handleInputChange("fullName", e.target.value)
                      }
-                     className="h-10 shadow-none"
+                     
                      required
                   />
                </div>
@@ -59,9 +60,11 @@ const ProviderInfoFrom = ({ formData, handleInputChange }) => {
                <Textarea
                   id="bio"
                   placeholder="Tell us about yourself, your background, experience, and what you’re passionate about..."
+                  className="text-content"
                   value={formData.bio}
                   onChange={(e) =>
                      handleInputChange("bio", e.target.value)
+
                   }
                   rows={5}
                   required

@@ -8,8 +8,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { t } from "i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { signOut } from "firebase/auth";
-import { auth } from "@/lib/firebaseConfig";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
     DropdownMenu,
@@ -17,23 +15,15 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
+import { handleSignOut } from "@/components/auth/handleSignOut";
+
 function NavBar() {
     const [isOpen, setIsOpen] = useState(false);
     const { user } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const handleSignOut = async () => {
-        try {
-            await signOut(auth);
-            navigate("/signin");
-            dispatch(clearUser());
-            toast.success("Signed out successfully!");
-        } catch (error) {
-            console.error("Error during sign out:", error);
-            toast.error("Failed to sign out. Please try again.");
-        }
-    };
+
 
     const toggleMenu = () => setIsOpen(!isOpen);
     return (
@@ -105,8 +95,8 @@ function NavBar() {
                                                 {user.displayName
                                                     ? user.displayName[0].toUpperCase()
                                                     : user.email
-                                                    ? user.email[0].toUpperCase()
-                                                    : "U"}
+                                                        ? user.email[0].toUpperCase()
+                                                        : "U"}
                                             </AvatarFallback>
                                         </Avatar>
                                     </DropdownMenuTrigger>
@@ -126,11 +116,12 @@ function NavBar() {
                                             </Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem
-                                            onClick={handleSignOut}
+                                            onClick={() => handleSignOut(dispatch, navigate)}
                                             className='text-amper focus:text-amper/80 hover:bg-red-600/10'
                                         >
                                             Logout
                                         </DropdownMenuItem>
+
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             )}
