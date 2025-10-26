@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Building2, Users, BriefcaseBusiness } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
-import ProviderInfoFrom from "@/components/auth/ProviderInfoFrom";
 import VendorInfoForm from "@/components/auth/VendorInfoForm";
 import { useTranslation } from "react-i18next";
 import ClientInfoFrom from "@/components/auth/ClientInfoFrom";
@@ -38,16 +37,6 @@ export const saveUserToFirestore = async (uid, formData, userType) => {
             createdAt: serverTimestamp(),
          };
          break;
-      case "provider":
-         data = {
-            fullName: formData.fullName,
-            service: formData.service,
-            bio: formData.bio,
-            email: formData.email,
-            userType: userType,
-            createdAt: serverTimestamp(),
-         };
-         break;
    }
    try {
       await setDoc(doc(db, "users", uid), {
@@ -61,7 +50,7 @@ export const saveUserToFirestore = async (uid, formData, userType) => {
 
 const Register = () => {
    const [step, setStep] = useState(1);
-   const [userType, setUserType] = useState(""); // "client", "vendor", or "provider"
+   const [userType, setUserType] = useState(""); // "client", "vendor", or
    
    const { t } = useTranslation();
    // Common fields
@@ -104,15 +93,6 @@ const Register = () => {
             returnObjects: true,
          }),
       },
-      {
-         type: "provider",
-         title: t("auth.register.step1.provider.title"),
-         description: t("auth.register.step1.provider.description"),
-         icon: <BriefcaseBusiness className="h-10 w-10" />,
-         features: t("auth.register.step1.provider.features", {
-            returnObjects: true,
-         }),
-      },
    ];
 
    const handleInputChange = (field, value) => {
@@ -152,14 +132,6 @@ const Register = () => {
          return false;
       }
 
-      if (
-         userType === "provider" &&
-         (!formData.fullName || !formData.service || !formData.bio)
-      ) {
-         toast.warning(t("auth.register.toast.validation.fillRequiredInfo"));
-         return false;
-      }
-
       return true;
    };
 
@@ -196,9 +168,6 @@ const Register = () => {
                         {step === 2 &&
                            userType === "vendor" &&
                            t("auth.register.step2.vendor.subtitle")}
-                        {step === 2 &&
-                           userType === "provider" &&
-                           t("auth.register.step2.provider.subtitle")}
                         {step === 3 && t("auth.register.step3.subtitle")}
                      </p>
                   </div>
@@ -225,7 +194,7 @@ const Register = () => {
                   {/* Step 1: User Type Selection */}
                   {step === 1 && (
                      <div className="space-y-6 animate-fade-in">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                            {usersTypes.map((type, i) => (
                               <Card
                                  key={i}
@@ -292,12 +261,6 @@ const Register = () => {
 
                         {userType === "vendor" && (
                            <VendorInfoForm
-                              formData={formData}
-                              handleInputChange={handleInputChange}
-                           />
-                        )}
-                        {userType === "provider" && (
-                           <ProviderInfoFrom
                               formData={formData}
                               handleInputChange={handleInputChange}
                            />

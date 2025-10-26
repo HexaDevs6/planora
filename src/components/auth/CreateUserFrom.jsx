@@ -43,8 +43,6 @@ const CreateUserFrom = ({
             return t("auth.register.step1.client.title");
          case "vendor":
             return t("auth.register.step1.vendor.title");
-         case "provider":
-            return t("auth.register.step1.provider.title");
       }
    };
 
