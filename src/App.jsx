@@ -20,6 +20,8 @@ import PublicRoute from "@/components/guards/PublicRoute";
 import Events from "./pages/Events";
 import Services from "./pages/Services";
 import EventDetails from "./pages/EventDetails";
+import HostLayout from "./layout/HostLayout";
+import HostOverview from "./components/HostBoard/HostOverview";
 
 function App() {
     useDirection();
@@ -48,6 +50,7 @@ function App() {
                         <Route path='/signin' element={<Signin />} />
                         <Route path='/register' element={<Register />} />
                     </Route>
+
                     <Route
                         path='/user'
                         element={
@@ -64,6 +67,23 @@ function App() {
                         <Route path='settings' element={<UserSettings />} />
                         <Route path='tickets' element={<UserTickets />} />
                         <Route path='messages' element={<UserMessages />} />
+                        <Route path='create-event' element={<CreateEvent />} />
+                    </Route>
+
+                    <Route
+                        path='/host'
+                        element={
+                            <ProtectedRoute>
+                                <HostLayout />
+                            </ProtectedRoute>
+                        }
+                    >
+                        <Route
+                            index
+                            element={<Navigate to='overview' replace />}
+                        />
+                        <Route path='overview' element={<HostOverview />} />
+
                         <Route path='create-event' element={<CreateEvent />} />
                     </Route>
                 </Routes>

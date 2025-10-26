@@ -3,7 +3,6 @@ import { Link, NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import BoardCard from "../BoardCard";
 import { ArrowUpRightFromSquareIcon } from "lucide-react";
-import { seedPlanoraData } from "@/store/api/planoraSeeder";
 
 export default function UserOverview() {
     const userEventsData = {
@@ -37,14 +36,12 @@ export default function UserOverview() {
                         <h2 className='text-3xl font-bold text-primary mb-2 '>
                             Upcoming Events
                         </h2>
-                        <Button variant='primary' size='lg' className='text-center font-bold'>
-                            <Link to='/user/create-event'>
-                                + New Event
-                            </Link>
-                        </Button>
-                        <Button onClick={seedPlanoraData} variant='primary'  className='text-center font-bold'>
-                            Push dummy data
-                        </Button>
+                        <Link to='/events'>
+                            <Button variant='outline'>
+                                View All <ArrowUpRightFromSquareIcon />
+                            </Button>
+                        </Link>
+        
                     </div>
                     <div className='upcoming-events__cards flex  items-start flex-nowrap overflow-x-auto gap-4 py-4'>
                         <div className='flex-shrink-0 min-w-[300px]'>

@@ -28,29 +28,7 @@ export default function Sidebar({ sideLinks, subtitle }) {
     const userRole = user.userRole;
     const userAvatar = user.photoURL || "https://i.pravatar.cc/100";
 
-    const menuItems = sideLinks || [
-        {
-            icon: <LayoutDashboard size={20} />,
-            label: "Overview",
-            path: "/user/overview",
-        },
-        {
-            icon: <Calendar size={20} />,
-            label: "Events & Tickets",
-            path: "/user/tickets",
-        },
-        {
-            icon: <MessageSquareTextIcon size={20} />,
-            label: "Messages",
-            path: "/user/messages",
-        },
-        {
-            icon: <Settings size={20} />,
-            label: "Settings",
-            path: "/user/settings",
-        },
-    ];
-
+    
     return (
         <div
             className={`${
@@ -90,7 +68,7 @@ export default function Sidebar({ sideLinks, subtitle }) {
 
                 {/* Menu Items */}
                 <ul className='space-y-2 border-t border-gray-700 pt-4 '>
-                    {menuItems.map((item, index) => (
+                    {sideLinks.map((item, index) => (
                         <li key={index}>
                             <NavLink
                                 to={item.path}
