@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function RecentMessages({ messages = [] }) {
     return (
@@ -8,12 +9,12 @@ export default function RecentMessages({ messages = [] }) {
                 <h3 className='text-base font-semibold text-gray-900 dark:text-gray-100'>
                     Recent Messages
                 </h3>
-                <a
-                    href='#'
+                <Link
+                    to= '/host/messages'
                     className='text-primary dark:text-amber text-sm font-semibold hover:underline'
                 >
                     View All
-                </a>
+                </Link>
             </div>
 
             {/* Messages List */}
