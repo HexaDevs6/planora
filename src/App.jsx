@@ -22,6 +22,9 @@ import Services from "./pages/Services";
 import EventDetails from "./pages/EventDetails";
 import HostLayout from "./layout/HostLayout";
 import HostOverview from "./components/HostBoard/HostOverview";
+import HostEvents from "./components/HostBoard/EventsTable";
+import HostMessages from "./components/HostBoard/HostMessages";
+import HostSettings from "./components/HostBoard/HostSettings";
 
 function App() {
     useDirection();
@@ -83,7 +86,9 @@ function App() {
                             element={<Navigate to='overview' replace />}
                         />
                         <Route path='overview' element={<HostOverview />} />
-
+                        <Route path='settings' element={<HostSettings />} />
+                        <Route path='events' element={<HostEvents />} />
+                        <Route path='messages' element={<HostMessages />} />
                         <Route path='create-event' element={<CreateEvent />} />
                     </Route>
                 </Routes>

@@ -13,7 +13,7 @@ export default function UserLayout() {
         {
             icon: <Calendar size={20} />,
             label: "Events",
-            path: "/host/tickets",
+            path: "/host/events",
         },
         {
             icon: <MessageSquareTextIcon size={20} />,

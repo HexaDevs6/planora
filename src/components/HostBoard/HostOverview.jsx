@@ -81,7 +81,7 @@ export default function UserOverview() {
                             Insights
                         </h2>
                     </div>
-                    <div className='host-stats__content p-4'>
+                    <div className='host-stats__content '>
                         <Stats stats={hostStats} />
                     </div>
                 </div>
