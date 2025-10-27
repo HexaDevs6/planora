@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "@/components/Sidebar";
 import { Calendar, LayoutDashboard, MessageSquareTextIcon, Plus, Settings } from "lucide-react";
 
-export default function UserLayout() {
+export default function HostLayout() {
     const sideLinks = [
         {
             icon: <LayoutDashboard size={20} />,
@@ -41,7 +41,7 @@ export default function UserLayout() {
                 <Sidebar sideLinks={sideLinks} />
             </div>
             {/* Content area */}
-            <main className='flex-1 overflow-y-auto ml-16 md:ml-0 p-2 md:p-6 transition-all duration-300 bg-background '>
+            <main className='flex-1 overflow-y-auto p-2 md:p-6 transition-all duration-300 bg-background '>
                 <Outlet />
             </main>
         </div>
