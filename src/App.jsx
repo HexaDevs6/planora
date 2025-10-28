@@ -20,6 +20,7 @@ import PublicRoute from "@/components/guards/PublicRoute";
 import Events from "./pages/Events";
 import Services from "./pages/Services";
 import EventDetails from "./pages/EventDetails";
+import ServiceDetails from "./pages/ServiceDetails";
 
 function App() {
     useDirection();
@@ -37,6 +38,7 @@ function App() {
                         <Route path="/events/:eventId" element={<EventDetails />} />
                         <Route path="/events" element={<Events/>}/>
                         <Route path="/services" element={<Services/>}/>
+                        <Route path="/services/:serviceId" element={<ServiceDetails />}/>
                     </Route>
                     <Route
                         element={

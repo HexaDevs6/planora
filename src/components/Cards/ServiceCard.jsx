@@ -72,7 +72,7 @@ const ServiceCard = ({
 
         <div className="flex items-center justify-between pt-2 border-t">
           <div className="text-sm font-semibold text-primary">{priceRange}</div>
-          <Link to={`/marketplace/${id}`}>
+          <Link to={`/services/${id}`}>
             <Button variant="hero" size="sm">
               View Service
             </Button>

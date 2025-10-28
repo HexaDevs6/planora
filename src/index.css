@@ -208,6 +208,10 @@ button {
   cursor: pointer;
 }
 
+.gradient-card {
+  @apply bg-white dark:bg-violet-light bg-gradient-to-tr from-amber/20 border border-amber/50 via-violet/10 to-amber/20;
+}
+
 
 .upcoming-events__cards::-webkit-scrollbar {
   height: 8px;
