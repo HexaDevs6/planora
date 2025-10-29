@@ -7,20 +7,28 @@ import CircularText from "../ui/shadcn-io/circular-text/index";
 import { t } from "i18next";
 
 function HeroSection() {
-    const heroImages = [
-        "/images/homeHero/hero1.webp",
-        "/images/homeHero/hero2.webp",
-        "/images/homeHero/hero3.webp",
-        "/images/homeHero/hero4.webp",
-        "/images/homeHero/hero5.webp",
+  const heroImages = [
+    "/images/homeHero/hero1.webp",
+    "/images/homeHero/hero2.webp",
+    "/images/homeHero/hero3.webp",
+    "/images/homeHero/hero4.webp",
+    "/images/homeHero/hero5.webp",
+  ];
 
-      <div className=" md:start-20 absolute z-10 max-w-5xl px-4 sm:px-8 text-start flex flex-col gap-7">
+  return (
+    <section className="relative w-full h-screen flex items-center justify-center overflow-hidden">
+      {/* الخلفية المتغيرة */}
+      <AutoFadeCarousel images={heroImages} />
+
+      {/* المحتوى النصي */}
+      <div className="md:start-20 absolute z-10 max-w-5xl px-4 sm:px-8 text-start flex flex-col gap-7">
         <img
-          className=" hidden md:block w-100"
+          className="hidden md:block w-100"
           src="PlanoraYellowTypo.png"
           alt="LogoPLanora"
         />
-        <div className="lg:text-5xl flex flex-col items-start text-3xl font-bold mb-4 leading-tight drop-shadow-[0px_4px_4px_rgba(0,0,0,0.25)] text-violet ">
+
+        <div className="lg:text-5xl flex flex-col items-start text-3xl font-bold mb-4 leading-tight drop-shadow-[0px_4px_4px_rgba(0,0,0,0.25)] text-violet">
           {t("hero.slogan")}{" "}
           <FlipWords
             words={t("hero.flipWords").split(" ")}
@@ -28,8 +36,8 @@ function HeroSection() {
             dir="ltr"
             className="text-amber font-semibold drop-shadow-2xl lg:text-6xl py-2"
           />
-          {""}
         </div>
+
         <SplittingText
           className="lg:text-2xl text-lg mb-4 font-semibold drop-shadow-6xl text-secondary dark:text-foreground leading-relaxed md:w-[75%]"
           text={[t("hero.description")]}
@@ -49,7 +57,7 @@ function HeroSection() {
               size: "CTA",
             })} text-background font-bold hover:text-primary transition-all duration-300`}
           >
-            {t("common.button.getStarted")}
+            {t("common.buttons.getStarted")}
           </Button>
 
           <Button
@@ -58,11 +66,12 @@ function HeroSection() {
               size: "CTA",
             })}
           >
-            {t("common.button.contactUs")}
+            {t("common.buttons.contactUs")}
           </Button>
         </div>
       </div>
 
+      {/* الدائرة المتحركة */}
       <CircularText
         text={t("hero.rotating")}
         onHover="speedUp"

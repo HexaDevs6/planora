@@ -4,7 +4,7 @@ import * as React from "react";
 
 export default function AutoFadeCarousel({
     images = [],
-    delay = 1000,
+    delay = 3000,
     className = "",
 }) {
     const [current, setCurrent] = React.useState(0);
