@@ -30,7 +30,7 @@ function NavBar() {
     return (
         <>
             <nav className='navbar navbar-expand-lg  fixed top-0 z-50 w-full drop-shadow-lg  backdrop-blur supports-[backdrop-filter]:bg-background/25 [&_*]:no-underline'>
-                <div className=' flex justify-evenly  items-center dark:text-foreground '>
+                <div className='flex justify-evenly items-center text-foreground '>
                     {/* Menu icon for mobile */}
                     <button
                         onClick={toggleMenu}
@@ -78,7 +78,7 @@ function NavBar() {
                         <div className='nav__toggles flex gap-2'>
                             {!user ? (
                                 // المستخدم مش داخل 👇
-                                <Button variant='glass' size='sm'>
+                                <Button variant='glass' size='sm' className='text-foreground'>
                                     <Link to='/signin'>
                                         <User2Icon />
                                     </Link>

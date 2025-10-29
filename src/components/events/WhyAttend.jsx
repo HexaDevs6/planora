@@ -3,7 +3,7 @@ import React from "react";
 
 const WhyAttend = ({lang = "en"}) => {
    return (
-      <section className="bg-primary/5 dark:bg-primary/10 rounded-xl p-6 shadow-sm">
+      <section className="gradient-card rounded-xl p-6 shadow-sm">
          <h3 className="text-2xl font-bold mb-4 text-gradient-amber">
             {lang === "en" ? "Why Attend?" : "لماذا الحضور؟"}
          </h3>
