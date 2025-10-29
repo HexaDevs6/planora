@@ -70,7 +70,7 @@ const EventCountdown = ({ details, lang = "en" }) => {
 
    return (
       <div
-         className={`bg-white dark:bg-violet-light rounded-xl shadow-lg p-6 ${
+         className={`gradient-card rounded-xl p-6 ${
             lang === "ar" ? "text-right font-[Cairo]" : "text-left"
          }`}
       >

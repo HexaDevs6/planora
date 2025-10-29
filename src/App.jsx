@@ -25,6 +25,7 @@ import HostOverview from "./components/HostBoard/HostOverview";
 import HostEvents from "./components/HostBoard/EventsTable";
 import HostMessages from "./components/HostBoard/HostMessages";
 import HostSettings from "./components/HostBoard/HostSettings";
+import ServiceDetails from "./pages/ServiceDetails";
 
 function App() {
     useDirection();
@@ -42,6 +43,7 @@ function App() {
                         <Route path="/events/:eventId" element={<EventDetails />} />
                         <Route path="/events" element={<Events/>}/>
                         <Route path="/services" element={<Services/>}/>
+                        <Route path="/services/:serviceId" element={<ServiceDetails />}/>
                     </Route>
                     <Route
                         element={

@@ -1,7 +1,6 @@
 import React from "react";
 import {
    CalendarDays,
-   CalendarPlus2,
    Clock4,
    CreditCard,
    MapPin,
@@ -33,7 +32,7 @@ const Details = ({ details, lang = "en" }) => {
    const formattedTime = `${formatTime(start)} - ${formatTime(end)}`;
 
    return (
-      <div className="bg-white dark:bg-violet-light rounded-xl shadow-lg p-6 mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <div className="gradient-card rounded-xl p-6 mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 flex-grow w-full">
             {/* Date */}
             <div className="flex items-center gap-2">
@@ -87,11 +86,6 @@ const Details = ({ details, lang = "en" }) => {
                </div>
             </div>
          </div>
-
-         {/* <button className="px-6 py-3 rounded-lg bg-amber-dark text-white font-bold shadow-lg hover:bg-secondary-accent/90 flex items-center gap-2">
-            <CalendarPlus2 />
-            {lang === "ar" ? "أضف إلى التقويم" : "Add to Calendar"}
-         </button> */}
       </div>
    );
 };

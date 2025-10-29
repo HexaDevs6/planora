@@ -8,11 +8,11 @@ import { t } from "i18next";
 
 function HeroSection() {
     const heroImages = [
-        "https://images.pexels.com/photos/3760093/pexels-photo-3760093.jpeg",
-        "https://images.pexels.com/photos/705792/pexels-photo-705792.jpeg",
-        "https://images.pexels.com/photos/15777271/pexels-photo-15777271.jpeg",
-        "https://images.pexels.com/photos/159213/hall-congress-architecture-building-159213.jpeg",
-        "https://images.pexels.com/photos/2623869/pexels-photo-2623869.jpeg",
+        "/images/homeHero/hero1.webp",
+        "/images/homeHero/hero2.webp",
+        "/images/homeHero/hero3.webp",
+        "/images/homeHero/hero4.webp",
+        "/images/homeHero/hero5.webp",
 
     ];
     return (
@@ -56,7 +56,7 @@ function HeroSection() {
                             size: "CTA",
                         })}
                     >
-                        {t("button.getStarted")}
+                        {t("common.buttons.getStarted")}
                     </Button>
                     <Button
                         className={buttonVariants({
@@ -64,7 +64,7 @@ function HeroSection() {
                             size: "CTA",
                         })}
                     >
-                        {t("button.contactUs")}
+                        {t("common.buttons.contactUs")}
                     </Button>
                 </div>
             </div>

@@ -1,4 +1,4 @@
-import EventHero from "@/components/events/EventHero";
+import EventHero from "@/components/DetailsHero";
 import Details from "@/components/events/Details";
 
 import React from "react";
@@ -10,6 +10,7 @@ import EventCountdown from "@/components/events/EventCountdown";
 // import QuickInfo from "@/components/events/QuickInfo";
 import { Facebook, Instagram, Twitter } from "lucide-react";
 import { useDirection } from "@/hooks/useDirection";
+import DetailsHero from "@/components/DetailsHero";
 
 const event = {
    id: 12,
@@ -75,7 +76,7 @@ const EventDetails = () => {
       <main>
          <div className="container">
             {/* hero */}
-            <EventHero lang={lang} img={event.img} title={event.title} />
+            <DetailsHero lang={lang} img={event.img} title={event.title} />
             {/* details */}
             <Details lang={lang} details={event.details} />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -92,7 +93,7 @@ const EventDetails = () => {
                   <Location lang={lang} />
                   <WhyAttend lang={lang} />
                   <VendorInfo lang={lang} />
-                  <section className="bg-primary/5 dark:bg-primary/10 rounded-xl p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+                  <section className="gradient-card rounded-xl p-8 flex flex-col md:flex-row items-center justify-between gap-6">
                      <div>
                         <h3 className="text-2xl font-bold text-gradient-amber">
                            {lang === "en" ? "Ready to Innovate?" : "هل أنت مستعد للابتكار؟"}
@@ -117,7 +118,7 @@ const EventDetails = () => {
                <div className="md:col-span-1 space-y-8">
                   <EventCountdown details={event.details} lang={lang} />
                   {/* <QuickInfo /> */}
-                  <div className="bg-white dark:bg-violet-light rounded-xl shadow-lg p-6 text-center">
+                  <div className="gradient-card rounded-xl p-6 text-center">
                      <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
                         {lang === "en"?"Share This Event" : "شارك هذا الحدث"}
                      </h4>
