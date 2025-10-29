@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import BoardCard from "../BoardCard";
 import { ArrowUpRightFromSquareIcon } from "lucide-react";
-import { seedPlanoraData } from "@/store/api/planoraSeeder";
 
 export default function UserOverview() {
   const userEventsData = {
@@ -28,66 +27,102 @@ export default function UserOverview() {
     ],
   };
 
-  return (
-    <>
-      <div className="overview bg-background flex flex-col gap-12 transition-all duration-300 ease-in-out">
-        {/* Upcoming Events */}
-        <div className="upcoming-events">
-          <div className="upcoming-events__header flex justify-between items-center">
-            <h2 className="text-3xl font-bold text-primary mb-2">
-              Upcoming Events
-            </h2>
-            <div className="flex gap-3">
-              <Button
-                variant="primary"
-                size="lg"
-                className="text-center font-bold bg-primary text-primary-foreground hover:opacity-90"
-              >
-                <Link to="/user/create-event">+ New Event</Link>
-              </Button>
-              <Button
-                onClick={seedPlanoraData}
-                variant="primary"
-                className="text-center font-bold bg-primary text-primary-foreground hover:opacity-90"
-              >
-                Push dummy data
-              </Button>
-            </div>
-          </div>
+    return (
+        <>
+            <div className='overview bg-background flex flex-col gap-12 transition-all duration-300 ease-in-out '>
+                <div className='upcoming-events'>
+                    <div className=' upcoming-events__header flex flex-col items-start md:flex-row md:items-center gap-2 justify-between'>
+                        <h2 className='text-3xl font-bold text-primary mb-2 '>
+                            Upcoming Events
+                        </h2>
+                        <Link to='/events'>
+                            <Button variant='outline'>
+                                View All <ArrowUpRightFromSquareIcon />
+                            </Button>
+                        </Link>
+                    </div>
+                    <div className='upcoming-events__cards flex  items-start flex-nowrap overflow-x-auto gap-4 py-4'>
+                        <div className='flex-shrink-0 min-w-[300px]'>
+                            <BoardCard />
+                        </div>
+                        <div className='flex-shrink-0 min-w-[300px]'>
+                            <BoardCard />
+                        </div>
+                        <div className='flex-shrink-0 min-w-[300px]'>
+                            <BoardCard />
+                        </div>
+                        <div className='flex-shrink-0 min-w-[300px]'>
+                            <BoardCard />
+                        </div>
+                    </div>
+                </div>
 
-          <div className="upcoming-events__cards flex items-start flex-nowrap overflow-x-auto gap-4 py-4">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="flex-shrink-0 min-w-[300px]">
-                <BoardCard />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Past & Saved Events */}
-        <div className="user-highlights grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div className="user-highlights__events space-y-4 col-span-2">
-            {/* Past Events */}
-            <div className="past-events space-y-2">
-              <h3 className="text-2xl font-bold text-primary">Past Events</h3>
-              <div className="bg-card rounded-md p-4 shadow-sm space-y-4 border border-border">
-                {userEventsData.past.map((event, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-center justify-between p-3 rounded-md hover:bg-accent/30 transition-colors"
-                  >
-                    <div className="flex flex-col md:flex-row items-center gap-4">
-                      <img
-                        src={event.img}
-                        alt={event.title}
-                        className="w-16 h-16 object-cover rounded-md"
-                      />
-                      <div>
-                        <h4 className="font-bold text-primary">
-                          {event.title}
-                        </h4>
-                        <p className="text-sm text-content">{event.date}</p>
-                      </div>
+                <div className='user-highlights grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+                    <div className='user-highlights__events space-y-4 col-span-2'>
+                        <div className='past-events space-y-2'>
+                            <h3 className='text-2xl font-bold text-primary '>
+                                Past Events
+                            </h3>
+                            <div className='bg-card  rounded-md p-4 soft-shadow space-y-4'>
+                                {userEventsData.past.map((event, idx) => (
+                                    <div
+                                        key={idx}
+                                        className='flex items-center justify-between p-3 rounded-sm hover:bg-amber-light dark:hover:bg-gray-800 transition-colors'
+                                    >
+                                        <div className='flex flex-col md:flex-row text-center md:text-start items-center gap-4'>
+                                            <img
+                                                src={event.img}
+                                                alt={event.title}
+                                                className='w-16 h-16 object-cover rounded-sm'
+                                            />
+                                            <div>
+                                                <h4 className='font-bold text-primary'>
+                                                    {event.title}
+                                                </h4>
+                                                <p className='text-sm text-text'>
+                                                    {event.date}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <Button variant='ghost'>
+                                            <ArrowUpRightFromSquareIcon />
+                                        </Button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        <div className='saved-events space-y-2'>
+                            <h3 className='text-2xl font-bold text-primary '>
+                                Saved Events
+                            </h3>
+                            <div className='bg-card  rounded-md p-4 soft-shadow space-y-4'>
+                                {userEventsData.saved.map((event, idx) => (
+                                    <div
+                                        key={idx}
+                                        className='flex text-center md:text-start items-center justify-between p-3 rounded-sm hover:bg-amber-light dark:hover:bg-gray-800 transition-colors'
+                                    >
+                                        <div className='flex flex-col md:flex-row items-center gap-4'>
+                                            <img
+                                                src={event.img}
+                                                alt={event.title}
+                                                className='w-16 h-16 object-cover rounded-sm'
+                                            />
+                                            <div>
+                                                <h4 className='font-bold text-primary'>
+                                                    {event.title}
+                                                </h4>
+                                                <p className='text-sm text-text'>
+                                                    {event.date}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <Button variant='ghost'>
+                                            <ArrowUpRightFromSquareIcon />
+                                        </Button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                     </div>
                     <Button
                       variant="ghost"

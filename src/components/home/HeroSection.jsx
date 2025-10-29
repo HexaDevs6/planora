@@ -7,17 +7,12 @@ import CircularText from "../ui/shadcn-io/circular-text/index";
 import { t } from "i18next";
 
 function HeroSection() {
-  const heroImages = [
-    "https://images.pexels.com/photos/3760093/pexels-photo-3760093.jpeg",
-    "https://images.pexels.com/photos/705792/pexels-photo-705792.jpeg",
-    "https://images.pexels.com/photos/15777271/pexels-photo-15777271.jpeg",
-    "https://images.pexels.com/photos/159213/hall-congress-architecture-building-159213.jpeg",
-    "https://images.pexels.com/photos/2623869/pexels-photo-2623869.jpeg",
-  ];
-  return (
-    <section className=" relative h-[100vh] overflow-hidden flex items-center justify-start text-white">
-      <AutoFadeCarousel images={heroImages} delay={5000} />
-      <div className=" h-[inherit] absolute inset-0  bg-[linear-gradient(to_top,var(--color-violet)_0%,var(--color-violet)_15%,#B9B9B9_100%)] opacity-50 "></div>
+    const heroImages = [
+        "/images/homeHero/hero1.webp",
+        "/images/homeHero/hero2.webp",
+        "/images/homeHero/hero3.webp",
+        "/images/homeHero/hero4.webp",
+        "/images/homeHero/hero5.webp",
 
       <div className=" md:start-20 absolute z-10 max-w-5xl px-4 sm:px-8 text-start flex flex-col gap-7">
         <img
@@ -54,7 +49,7 @@ function HeroSection() {
               size: "CTA",
             })} text-background font-bold hover:text-primary transition-all duration-300`}
           >
-            {t("button.getStarted")}
+            {t("common.button.getStarted")}
           </Button>
 
           <Button
@@ -63,7 +58,7 @@ function HeroSection() {
               size: "CTA",
             })}
           >
-            {t("button.contactUs")}
+            {t("common.button.contactUs")}
           </Button>
         </div>
       </div>

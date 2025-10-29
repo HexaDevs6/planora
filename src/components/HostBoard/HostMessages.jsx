@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import i18n from "@/i18n";
 
-export default function UserMessages() {
+export default function HostMessages() {
   const conversations = [
     {
       id: 1,
@@ -63,11 +63,11 @@ export default function UserMessages() {
       <div>
         <header className="flex items-center justify-between whitespace-nowrap border-b border-gray-200 dark:border-white px-6 py-5 bg-content-light dark:bg-content-dark shadow-subtle">
           <div className="flex items-center gap-2 text-sm text-primary ">
-            <Link className="text-semibold" to={"/user/overview"}>
+            <Link className="text-semibold" to={"/host/overview"}>
               Dashboard
             </Link>
             <span className="text-primary">/</span>
-            <Link to={"/user/messages"} className="font-semibold text-primary ">
+            <Link to={"/host/messages"} className="font-semibold text-primary ">
               Messages
             </Link>
           </div>
@@ -216,14 +216,14 @@ export default function UserMessages() {
                       proposals?
                     </p>
                   </div>
-                  <span class="text-xs text-text-body-light dark:text-text-body-dark self-start">
+                  <span className="text-xs text-text-body-light dark:text-text-body-dark self-start">
                     2:40 PM
                   </span>
                 </div>
               </div>
               <div className="flex gap-3 items-end justify-end mt-5">
                 <div className="flex flex-col gap-1 max-w-md">
-                  <div class="bg-primary text-white p-3 rounded-lg rounded-br-sm shadow-subtle">
+                  <div className="bg-primary text-white p-3 rounded-lg rounded-br-sm shadow-subtle">
                     <p className="text-sm text-white dark:text-violet">
                       Hi Jane! Yes, I've looked them over. 'Gourmet Delights'
                       looks promising. What are your thoughts on their
