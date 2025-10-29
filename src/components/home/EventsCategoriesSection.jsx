@@ -50,37 +50,38 @@ export default function EventsCategoriesSection() {
     ];
 
     return (
-        <section className='py-16 bg-secondary'>
-            <div className='container'>
-                <div className='eventsCategories__header text-center'>
-                    <h2 className='font-bold text-4xl text-violet dark:text-foreground  text-shadow-lg drop-shadow-[0px_4px_4px_rgba(0,0,0,0.25)]'>
-                        {t("categories.title")}
-                    </h2>
-                </div>
-                <div className='eventsCategories__content grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 pt-16 gap-6'>
-                    {handleCategories.map((el) => (
-                        <div
-                            key={el.id}
-                            className='relative shadow-lg group cursor-pointer overflow-hidden'
-                        >
-                            <img
-                                src={el.imgSrc}
-                                className='w-full'
-                                alt='Concerts'
-                            />
-                            <div className='absolute flex justify-center items-center flex-col gap-4 p-6 bg-[linear-gradient(to_bottom,rgba(169,158,173,0.3)_0%,rgba(51,12,47,0.5)_100%)] h-full inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500  text-white text-center'>
-                                {el.icon}
-                                <h4 className='font-medium text-[32px] '>
-                                    {el.title}
-                                </h4>
-                                <p className='font-medium text-xl'>
-                                    {el.description}
-                                </p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </section>
+        <section className="py-16 bg-background dark:bg-[var(--color-violet-dark)] transition-colors duration-500">
+  <div className="container">
+    <div className="eventsCategories__header text-center">
+      <h2 className="font-bold text-4xl text-primary dark:text-accent drop-shadow-[0px_4px_4px_rgba(0,0,0,0.25)]">
+        {t("categories.title")}
+      </h2>
+    </div>
+
+    <div className="eventsCategories__content grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 pt-16 gap-6">
+      {handleCategories.map((el) => (
+        <div
+          key={el.id}
+          className="relative shadow-lg group cursor-pointer overflow-hidden rounded-lg"
+        >
+          <img
+            src={el.imgSrc}
+            className="w-full rounded-lg object-cover"
+            alt={el.title}
+          />
+          <div className="absolute flex justify-center items-center flex-col gap-4 p-6 
+              bg-[linear-gradient(to_bottom,rgba(169,158,173,0.3)_0%,rgba(51,12,47,0.6)_100%)] 
+              h-full inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 
+              text-white text-center rounded-lg">
+            {el.icon}
+            <h4 className="font-medium text-[32px]">{el.title}</h4>
+            <p className="font-medium text-xl">{el.description}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
     );
 }

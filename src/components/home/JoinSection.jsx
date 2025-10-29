@@ -3,30 +3,50 @@ import React from "react";
 
 export default function JoinSection() {
   return (
-    <section className="static md:relative flex justify-center items-center">
-      <div className="static md:absolute min-w-full md:min-w-70 -top-0 md:-top-50 drop-shadow-none md:drop-shadow-[0px_4px_4px_rgba(0,0,0,0.25)] bg-secondary py-12 px-2 md:px-30 rounded-0 md:rounded-sm text-center flex justify-center items-center flex-col gap-6">
-        <h1 className="font-bold text-violet text-2xl md:text-3xl">
-          {t("footer.newstitle")}
-        </h1>
-        <p className="text-[16px] md:text-xl text-primary">
-          {t("footer.newssubtitle")}
-        </p>
-        <form className="flex rounded-sm overflow-hidden">
-          <input
-            type="email"
-            placeholder={t("common.form.email")}
-            className="bg-violet-200 text-violet placeholder-violet/70 transition-all duration-500 px-4 py-3 outline-none focus:bg-violet-100 pr-1"
-            required
-          />
-          <button
-            type="submit"
-            className="bg-violet text-white px-6 py-3 transition-all duration-500 font-medium hover:bg-violet/90"
-          >
-            {t("common.buttons.join")}
-          </button>
-        </form>
-      </div>
-      
-    </section>
+<section className="static md:relative flex justify-center items-center">
+  <div
+    className="static md:absolute min-w-full md:min-w-70 -top-0 md:-top-50
+    bg-[#F7E9FF] dark:bg-[rgba(51,12,47,0.9)]
+    border border-border/10 shadow-[0_4px_20px_rgba(0,0,0,0.08)]
+    py-12 px-6 md:px-24 rounded-none md:rounded-xl
+    text-center flex justify-center items-center flex-col gap-6
+    transition-colors duration-500"
+  >
+    <h1 className="font-bold text-primary dark:text-accent text-2xl md:text-3xl drop-shadow-sm">
+      {t("footer.newstitle")}
+    </h1>
+
+    <p className="text-[16px] md:text-xl text-content dark:text-foreground/90 max-w-xl mx-auto">
+      {t("footer.newssubtitle")}
+    </p>
+
+    <form className="flex flex-col sm:flex-row rounded-lg overflow-hidden shadow-sm bg-transparent border border-border/20">
+      <input
+        type="email"
+        placeholder={t("common.form.email")}
+        className="bg-white/70 dark:bg-white/10 text-primary dark:text-foreground placeholder:text-content/70
+        px-4 py-3 outline-none w-full sm:w-auto focus:bg-white/80 dark:focus:bg-white/20
+        transition-all duration-500"
+        required
+      />
+
+      {/* Glass Effect Button */}
+      <button
+        type="submit"
+        className="px-6 py-3 font-semibold
+        text-primary dark:text-white
+        bg-[rgba(51,12,47,0.15)] dark:bg-[rgba(167,123,189,0.25)]
+        backdrop-blur-md border border-[rgba(51,12,47,0.2)] dark:border-[rgba(167,123,189,0.3)]
+        hover:bg-[rgba(51,12,47,0.25)] dark:hover:bg-[rgba(167,123,189,0.4)]
+        hover:shadow-[0_0_12px_rgba(167,123,189,0.5)]
+        transition-all duration-500 rounded-r-lg"
+      >
+        {t("common.buttons.join")}
+      </button>
+    </form>
+  </div>
+</section>
+
+
   );
 }
