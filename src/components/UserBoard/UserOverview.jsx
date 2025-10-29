@@ -3,7 +3,6 @@ import { Link, NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import BoardCard from "../BoardCard";
 import { ArrowUpRightFromSquareIcon } from "lucide-react";
-import { seedPlanoraData } from "@/store/api/planoraSeeder";
 
 export default function UserOverview() {
     const userEventsData = {
@@ -28,23 +27,19 @@ export default function UserOverview() {
         ],
     };
 
-
     return (
         <>
             <div className='overview bg-background flex flex-col gap-12 transition-all duration-300 ease-in-out '>
                 <div className='upcoming-events'>
-                    <div className=' upcoming-events__header flex justify-between'>
+                    <div className=' upcoming-events__header flex flex-col items-start md:flex-row md:items-center gap-2 justify-between'>
                         <h2 className='text-3xl font-bold text-primary mb-2 '>
                             Upcoming Events
                         </h2>
-                        <Button variant='primary' size='lg' className='text-center font-bold'>
-                            <Link to='/user/create-event'>
-                                + New Event
-                            </Link>
-                        </Button>
-                        <Button onClick={seedPlanoraData} variant='primary'  className='text-center font-bold'>
-                            Push dummy data
-                        </Button>
+                        <Link to='/events'>
+                            <Button variant='outline'>
+                                View All <ArrowUpRightFromSquareIcon />
+                            </Button>
+                        </Link>
                     </div>
                     <div className='upcoming-events__cards flex  items-start flex-nowrap overflow-x-auto gap-4 py-4'>
                         <div className='flex-shrink-0 min-w-[300px]'>
@@ -74,7 +69,7 @@ export default function UserOverview() {
                                         key={idx}
                                         className='flex items-center justify-between p-3 rounded-sm hover:bg-amber-light dark:hover:bg-gray-800 transition-colors'
                                     >
-                                        <div className='flex flex-col md:flex-row items-center gap-4'>
+                                        <div className='flex flex-col md:flex-row text-center md:text-start items-center gap-4'>
                                             <img
                                                 src={event.img}
                                                 alt={event.title}
@@ -104,7 +99,7 @@ export default function UserOverview() {
                                 {userEventsData.saved.map((event, idx) => (
                                     <div
                                         key={idx}
-                                        className='flex  items-center justify-between p-3 rounded-sm hover:bg-amber-light dark:hover:bg-gray-800 transition-colors'
+                                        className='flex text-center md:text-start items-center justify-between p-3 rounded-sm hover:bg-amber-light dark:hover:bg-gray-800 transition-colors'
                                     >
                                         <div className='flex flex-col md:flex-row items-center gap-4'>
                                             <img

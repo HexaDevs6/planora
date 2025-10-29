@@ -1,35 +1,37 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "@/components/Sidebar";
-import {
-    Calendar,
-    LayoutDashboard,
-    MessageSquareTextIcon,
-    Settings,
-} from "lucide-react";
+import { Calendar, LayoutDashboard, MessageSquareTextIcon, Plus, Settings } from "lucide-react";
 
-export default function UserLayout() {
+export default function HostLayout() {
     const sideLinks = [
         {
             icon: <LayoutDashboard size={20} />,
             label: "Overview",
-            path: "/user/overview",
+            path: "/host/overview",
         },
         {
             icon: <Calendar size={20} />,
-            label: "Events & Tickets",
-            path: "/user/tickets",
+            label: "Events",
+            path: "/host/events",
         },
         {
             icon: <MessageSquareTextIcon size={20} />,
             label: "Messages",
-            path: "/user/messages",
+            path: "/host/messages",
         },
+        {
+            icon: <Plus size={20} />,
+            label: "New Event",
+            path: "/host/create-event",
+        },
+
         {
             icon: <Settings size={20} />,
             label: "Settings",
-            path: "/user/settings",
+            path: "/host/settings",
         },
+
     ];
 
     return (
@@ -39,9 +41,7 @@ export default function UserLayout() {
                 <Sidebar sideLinks={sideLinks} />
             </div>
             {/* Content area */}
-            <main
-                className="flex-1 overflow-y-auto p-2 md:p-6 transition-all duration-300 bg-background "
-            >
+            <main className='flex-1 overflow-y-auto p-2 md:p-6 transition-all duration-300 bg-background '>
                 <Outlet />
             </main>
         </div>
