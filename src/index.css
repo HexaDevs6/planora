@@ -247,6 +247,10 @@
   @apply mx-auto px-4;
 }
 
+.gradient-card {
+  @apply bg-white dark:bg-violet-light bg-gradient-to-tr from-amber/20 border border-amber/50 via-violet/10 to-amber/20;
+}
+
 button {
   cursor: pointer;
 }
