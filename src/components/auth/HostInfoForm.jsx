@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useTranslation } from "react-i18next";
 
 
-const VendorInfoForm = ({ formData, handleInputChange }) => {
+const HostInfoForm = ({ formData, handleInputChange }) => {
    const { businessName, serviceCategory, businessDescription, facebook, instagram } = formData;
    const { t, i18n } = useTranslation();
    
@@ -44,12 +44,12 @@ const VendorInfoForm = ({ formData, handleInputChange }) => {
       <>
          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2 ">
-               <Label htmlFor="businessName">{t("auth.vendorInfo.businessName.label")}</Label>
+               <Label htmlFor="businessName">{t("auth.hostInfo.businessName.label")}</Label>
                <div className="relative">
                   <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                   <Input
                      id="businessName"
-                     placeholder={t("auth.vendorInfo.businessName.placeholder")}
+                     placeholder={t("auth.hostInfo.businessName.placeholder")}
                      value={businessName ? businessName : ""}
                      onChange={(e) =>
                         handleInputChange("businessName", e.target.value)
@@ -61,10 +61,10 @@ const VendorInfoForm = ({ formData, handleInputChange }) => {
             </div>
 
             <div className="space-y-2 ">
-               <Label htmlFor="serviceCategory">{t("auth.vendorInfo.category.label")}</Label>
+               <Label htmlFor="serviceCategory">{t("auth.hostInfo.category.label")}</Label>
                <div className="relative">
                   <Select
-                     value={serviceCategory ? serviceCategory : t("auth.vendorInfo.category.placeholder")}
+                     value={serviceCategory ? serviceCategory : t("auth.hostInfo.category.placeholder")}
                      onValueChange={(value) =>
                         handleInputChange("serviceCategory", value)
                      }
@@ -74,11 +74,11 @@ const VendorInfoForm = ({ formData, handleInputChange }) => {
                         id="serviceCategory"
                         className="w-full pl-10 h-10 rounded-md border border-input px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                      >
-                        {serviceCategory ? serviceCategory : t("auth.vendorInfo.category.placeholder")}
+                        {serviceCategory ? serviceCategory : t("auth.hostInfo.category.placeholder")}
                      </SelectTrigger>
                      <SelectContent>
-                        <SelectItem value={t("auth.vendorInfo.category.placeholder")}>
-                           {t("auth.vendorInfo.category.placeholder")}
+                        <SelectItem value={t("auth.hostInfo.category.placeholder")}>
+                           {t("auth.hostInfo.category.placeholder")}
                         </SelectItem>
                         {currentCategoryOptions.map((cat) => (
                            <SelectItem key={cat} value={cat}>
@@ -92,11 +92,11 @@ const VendorInfoForm = ({ formData, handleInputChange }) => {
 
             <div className="space-y-2 md:col-span-2">
                <Label htmlFor="businessDescription">
-                  {t("auth.vendorInfo.businessDescription.label")}
+                  {t("auth.hostInfo.businessDescription.label")}
                </Label>
                <Textarea
                   id="businessDescription"
-                  placeholder={t("auth.vendorInfo.businessDescription.placeholder")}
+                  placeholder={t("auth.hostInfo.businessDescription.placeholder")}
                   value={businessDescription ? businessDescription : ""}
                   onChange={(e) =>
                      handleInputChange("businessDescription", e.target.value)
@@ -108,12 +108,12 @@ const VendorInfoForm = ({ formData, handleInputChange }) => {
 
             <div className="space-y-2">
                <Label htmlFor="facebook">
-                  <Facebook size={15} /> {t("auth.vendorInfo.socialMedia.facebook.label")}
+                  <Facebook size={15} /> {t("auth.hostInfo.socialMedia.facebook.label")}
                </Label>
                <Input
                   id="facebook"
                   type="url"
-                  placeholder={t("auth.vendorInfo.socialMedia.facebook.placeholder")}
+                  placeholder={t("auth.hostInfo.socialMedia.facebook.placeholder")}
                   value={facebook ? facebook : ""}
                   onChange={(e) =>
                      handleInputChange("facebook", e.target.value)
@@ -122,12 +122,12 @@ const VendorInfoForm = ({ formData, handleInputChange }) => {
             </div>
             <div className="space-y-2 ">
                <Label htmlFor="instagram">
-                  <Instagram size={15} /> {t("auth.vendorInfo.socialMedia.instagram.label")}
+                  <Instagram size={15} /> {t("auth.hostInfo.socialMedia.instagram.label")}
                </Label>
                <Input
                   id="instagram"
                   type="url"
-                  placeholder={t("auth.vendorInfo.socialMedia.instagram.placeholder")}
+                  placeholder={t("auth.hostInfo.socialMedia.instagram.placeholder")}
                   value={instagram ? instagram : ""}
                   onChange={(e) =>
                      handleInputChange("instagram", e.target.value)
@@ -139,4 +139,4 @@ const VendorInfoForm = ({ formData, handleInputChange }) => {
    );
 };
 
-export default VendorInfoForm;
+export default HostInfoForm;

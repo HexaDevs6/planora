@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Building2, Users, BriefcaseBusiness } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
-import VendorInfoForm from "@/components/auth/VendorInfoForm";
+import HostInfoForm from "@/components/auth/HostInfoForm";
 import { useTranslation } from "react-i18next";
 import ClientInfoFrom from "@/components/auth/ClientInfoFrom";
 import CreateUserFrom from "@/components/auth/CreateUserFrom";
@@ -15,7 +15,7 @@ import CreateUserFrom from "@/components/auth/CreateUserFrom";
 export const saveUserToFirestore = async (uid, formData, userType) => {
    let data = {};
    switch (userType) {
-      case "client":
+      case "client": 
          data = {
             fullName: formData.fullName,
             email: formData.email,
@@ -26,10 +26,10 @@ export const saveUserToFirestore = async (uid, formData, userType) => {
             createdAt: serverTimestamp(),
          };
          break;
-      case "vendor":
+      case "host":
          data = {
-            businessName: formData.businessName, //
-            category: formData.category, //
+            businessName: formData.fullName, //
+            category: formData.interests, //
             businessDescription: formData.businessDescription,
             facebook: formData.facebook,
             instagram: formData.instagram,
@@ -50,7 +50,7 @@ export const saveUserToFirestore = async (uid, formData, userType) => {
 
 const Register = () => {
    const [step, setStep] = useState(1);
-   const [userType, setUserType] = useState(""); // "client", "vendor", or
+   const [userType, setUserType] = useState(""); // "client", "host", or
    
    const { t } = useTranslation();
    // Common fields
@@ -63,7 +63,7 @@ const Register = () => {
       // Client-specific
       interests: [],
       eventPreferences: "",
-      // Vendor-specific
+      // host-specific
       businessName: "",
       serviceCategory: "",
       businessDescription: "",
@@ -85,11 +85,11 @@ const Register = () => {
          }),
       },
       {
-         type: "vendor",
-         title: t("auth.register.step1.vendor.title"),
-         description: t("auth.register.step1.vendor.description"),
+         type: "host",
+         title: t("auth.register.step1.host.title"),
+         description: t("auth.register.step1.host.description"),
          icon: <Building2 className="h-10 w-10" />,
-         features: t("auth.register.step1.vendor.features", {
+         features: t("auth.register.step1.host.features", {
             returnObjects: true,
          }),
       },
@@ -123,7 +123,7 @@ const Register = () => {
       }
 
       if (
-         userType === "vendor" &&
+         userType === "host" &&
          (!formData.businessName ||
             !formData.serviceCategory ||
             !formData.businessDescription)
@@ -166,8 +166,8 @@ const Register = () => {
                            userType === "client" &&
                            t("auth.register.step2.client.subtitle")}
                         {step === 2 &&
-                           userType === "vendor" &&
-                           t("auth.register.step2.vendor.subtitle")}
+                           userType === "host" &&
+                           t("auth.register.step2.host.subtitle")}
                         {step === 3 && t("auth.register.step3.subtitle")}
                      </p>
                   </div>
@@ -248,7 +248,7 @@ const Register = () => {
                      </div>
                   )}
 
-                  {/* Step 2: Client-Specific or Vendor-Specific */}
+                  {/* Step 2: Client-Specific or host-Specific */}
                   {step === 2 && (
                      <div className="space-y-6 animate-fade-in">
                         {userType === "client" && (
@@ -259,8 +259,8 @@ const Register = () => {
                            />
                         )}
 
-                        {userType === "vendor" && (
-                           <VendorInfoForm
+                        {userType === "host" && (
+                           <HostInfoForm
                               formData={formData}
                               handleInputChange={handleInputChange}
                            />

@@ -272,8 +272,8 @@
             "Get personalized recommendations"
           ]
         },
-        "vendor": {
-          "title": "I'm a Vendor",
+        "host": {
+          "title": "I'm a Host",
           "description": "Offer your services, manage bookings, and grow your event business",
           "features": [
             "List your services",
@@ -301,7 +301,7 @@
           "eventPreferencesLabel": "Event Preferences (Optional)",
           "eventPreferencesPlaceholder": "Tell us about the types of events you typically attend or organize..."
         },
-        "vendor": {
+        "host": {
           "subtitle": "Complete your business profile"
         },
         "provider": {
@@ -313,7 +313,7 @@
       },
       "toast": {
         "validation": {
-          "selectUserType": "Please select whether you're a client or vendor",
+          "selectUserType": "Please select whether you're a client or host",
           "selectInterestsAndFullName": "Please select at least one interest and fill in your full name",
           "fillBusinessInfo": "Please fill in all required business information",
           "fillRequiredInfo": "Please fill in all required information"
@@ -390,7 +390,7 @@
         "placeholder": "Tell us about yourself, your background, experience, and what you're passionate about..."
       }
     },
-    "vendorInfo": {
+    "hostInfo": {
       "businessName": {
         "label": "Business/Company Name *",
         "placeholder": "Your Business Name"

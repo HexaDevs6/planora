@@ -1,19 +1,25 @@
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/lib/firebaseConfig";
+import { supabase } from "@/lib/supabaseClient";
 import { setUser, clearUser, setLoading } from "./authSlice";
 
+// ✅ Start listening to Supabase auth state changes
 export const startAuthListener = (store) => {
-
   store.dispatch(setLoading(true));
 
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      const userjson = user.toJSON();
-      console.log("user", user.toJSON());
-      
-      store.dispatch(setUser(userjson));
-    } else {
-      store.dispatch(clearUser());
+  const { data: listener } = supabase.auth.onAuthStateChange(
+    (event, session) => {
+      console.log("Auth event:", event);
+
+      if (session?.user) {
+        store.dispatch(setUser(session.user));
+      } else {
+        store.dispatch(clearUser());
+      }
+
+      store.dispatch(setLoading(false));
     }
-  });
+  );
+
+  return () => {
+    listener?.subscription?.unsubscribe?.();
+  };
 };
