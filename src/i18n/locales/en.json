@@ -632,5 +632,60 @@
       },
       "viewMore": "Load More"
     }
+  },
+  "planoraAi": {
+    "title": "Planora AI",
+    "subtitle": "Your Event Assistant",
+    "initScreen": {
+      "title": "Planora AI",
+      "subtitle": "AI-Powered Voice Assistant for Events",
+      "apiKeyLabel": "Gemini API Key",
+      "apiKeyPlaceholder": "Enter your Gemini API key",
+      "initButton": "Initialize Planora AI",
+      "howToGet": "How to get your API key:",
+      "step1": "Visit Google AI Studio",
+      "step2": "Sign in with your Google account",
+      "step3": "Click \"Create API Key\"",
+      "step4": "Copy and paste it above",
+      "envNote": "Or set VITE_GEMINI_API_KEY in your .env.local file"
+    },
+    "info": {
+      "whatICanHelp": "What I Can Help With:",
+      "help1": "Discover upcoming events",
+      "help2": "Find events by category",
+      "help3": "Get event details & pricing",
+      "help4": "Learn about Planora features",
+      "help5": "Booking & ticketing help",
+      "howToUse": "How to Use:",
+      "usage1": "Tap the microphone to speak",
+      "usage2": "Ask about events or services",
+      "usage3": "I only answer Planora queries",
+      "usage4": "Toggle sound for voice responses"
+    },
+    "footer": {
+      "scopeNote": "Planora AI only answers questions about Planora events and services"
+    },
+    "voiceChat": {
+      "startConversation": "Start a conversation",
+      "tapMic": "Click the microphone button to ask about Planora events",
+      "listening": "Listening... Speak now",
+      "processing": "Processing your request...",
+      "tapToStart": "Tap the microphone to start speaking",
+      "thinking": "Thinking...",
+      "clearChat": "Clear chat",
+      "disableVoice": "Disable voice responses",
+      "enableVoice": "Enable voice responses",
+      "speechNotSupported": "Speech recognition not supported in this browser"
+    },
+    "toast": {
+      "ready": "Planora AI is ready to help!",
+      "initError": "Failed to initialize AI. Please check your API key.",
+      "requireApiKey": "Please enter a valid API key",
+      "requireInit": "Please initialize Planora AI first",
+      "outsideScope": "This question is outside Planora's scope",
+      "errorResponse": "Failed to get response. Please try again.",
+      "chatCleared": "Chat cleared"
+    },
+    "welcomeMessage": "Hello! I'm Planora AI. I can help you discover amazing events, book tickets, and answer questions about our platform. What would you like to know?"
   }
 }

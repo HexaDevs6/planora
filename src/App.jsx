@@ -26,6 +26,7 @@ import HostEvents from "./components/HostBoard/EventsTable";
 import HostMessages from "./components/HostBoard/HostMessages";
 import HostSettings from "./components/HostBoard/HostSettings";
 import ServiceDetails from "./pages/ServiceDetails";
+import PlanoraAi from "./pages/PlanoraAi";
 
 function App() {
     useDirection();
@@ -44,6 +45,7 @@ function App() {
                         <Route path="/events" element={<Events/>}/>
                         <Route path="/services" element={<Services/>}/>
                         <Route path="/services/:serviceId" element={<ServiceDetails />}/>
+                        <Route path="/planora-ai" element={<PlanoraAi />}/>
                     </Route>
                     <Route
                         element={
