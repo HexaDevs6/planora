@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Mic, MicOff, Volume2, VolumeX, Loader2, MessageCircle, Trash2, Send, Keyboard } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { textToSpeech, playAudio, initializeElevenLabs } from '../services/elevenLabsService';
+import { textToSpeech, initializeElevenLabs } from '@/services/elevenLabsService';
 
 const VoiceChat = ({ onSendMessage, isProcessing, messages, onClearChat }) => {
   const { t, i18n } = useTranslation();
@@ -13,17 +13,18 @@ const VoiceChat = ({ onSendMessage, isProcessing, messages, onClearChat }) => {
   const [isGeneratingSpeech, setIsGeneratingSpeech] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [isSpeechSupported, setIsSpeechSupported] = useState(true);
-  const [speechEnabled, setSpeechEnabled] = useState(true);
+  const [speechEnabled, setSpeechEnabled] = useState(false);
   const [interimTranscript, setInterimTranscript] = useState('');
   const [elevenLabsReady, setElevenLabsReady] = useState(false);
-  const [userInteracted, setUserInteracted] = useState(false);
   const [textInput, setTextInput] = useState('');
   const [inputMode, setInputMode] = useState('voice'); // 'voice' or 'text'
   
   const recognitionRef = useRef(null);
   const currentAudioRef = useRef(null);
   const messagesEndRef = useRef(null);
+  const messagesContainerRef = useRef(null);
   const textInputRef = useRef(null);
+  const finalTranscriptRef = useRef('');
 
   useEffect(() => {
     // Check for speech recognition support
@@ -46,6 +47,7 @@ const VoiceChat = ({ onSendMessage, isProcessing, messages, onClearChat }) => {
       setIsListening(true);
       setTranscript('');
       setInterimTranscript('');
+      finalTranscriptRef.current = '';
     };
 
     recognitionRef.current.onresult = (event) => {
@@ -63,6 +65,7 @@ const VoiceChat = ({ onSendMessage, isProcessing, messages, onClearChat }) => {
 
       setInterimTranscript(interim);
       if (final) {
+        finalTranscriptRef.current = final;
         setTranscript(final);
       }
     };
@@ -72,9 +75,11 @@ const VoiceChat = ({ onSendMessage, isProcessing, messages, onClearChat }) => {
       setInterimTranscript('');
       
       // If we have a transcript, send it
-      if (transcript) {
-        handleSendTranscript(transcript);
+      if (finalTranscriptRef.current.trim()) {
+        console.log('📤 Auto-submitting transcript:', finalTranscriptRef.current);
+        handleSendTranscript(finalTranscriptRef.current);
         setTranscript('');
+        finalTranscriptRef.current = '';
       }
     };
 
@@ -127,10 +132,15 @@ const VoiceChat = ({ onSendMessage, isProcessing, messages, onClearChat }) => {
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, isSpeaking, isGeneratingSpeech, isListening]);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTo({
+        top: messagesContainerRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
   };
 
   const handleSendTranscript = (text) => {
@@ -142,8 +152,6 @@ const VoiceChat = ({ onSendMessage, isProcessing, messages, onClearChat }) => {
   const handleTextSubmit = (e) => {
     e?.preventDefault();
     if (textInput.trim() && !isProcessing) {
-      // Mark user interaction
-      setUserInteracted(true);
       
       // Send message
       onSendMessage(textInput.trim());
@@ -173,9 +181,6 @@ const VoiceChat = ({ onSendMessage, isProcessing, messages, onClearChat }) => {
       alert(t('planoraAi.voiceChat.speechNotSupported') + '. Please use Chrome, Edge, or Safari.');
       return;
     }
-
-    // Mark that user has interacted (enables audio playback)
-    setUserInteracted(true);
 
     // Stop any ongoing audio
     stopSpeaking();
@@ -239,7 +244,7 @@ const VoiceChat = ({ onSendMessage, isProcessing, messages, onClearChat }) => {
       };
 
       await audio.play();
-      
+
     } catch (error) {
       console.error('❌ ElevenLabs TTS Error:', error);
       setIsGeneratingSpeech(false);
@@ -247,7 +252,7 @@ const VoiceChat = ({ onSendMessage, isProcessing, messages, onClearChat }) => {
       
       // Handle specific errors
       if (error.name === 'NotAllowedError') {
-        console.warn('⚠️ Audio playback blocked. User needs to interact with the page first.');
+        console.warn('⚠️ Audio playback blocked by browser autoplay policy. Speech will work after user interaction (click mic, type, etc.).');
       } else if (error.message.includes('quota')) {
         console.error('⚠️ ElevenLabs quota exceeded. Voice responses temporarily disabled.');
       }
@@ -264,8 +269,6 @@ const VoiceChat = ({ onSendMessage, isProcessing, messages, onClearChat }) => {
   };
 
   const toggleSpeech = () => {
-    // Mark user interaction
-    setUserInteracted(true);
     
     if (isSpeaking) {
       stopSpeaking();
@@ -273,21 +276,20 @@ const VoiceChat = ({ onSendMessage, isProcessing, messages, onClearChat }) => {
     setSpeechEnabled(!speechEnabled);
   };
 
-  // Auto-speak AI responses (only after user interaction)
+  // Auto-speak AI responses
   useEffect(() => {
-    if (messages.length > 0 && userInteracted) {
+    if (messages.length > 0) {
       const lastMessage = messages[messages.length - 1];
       if (lastMessage.role === 'assistant' && speechEnabled) {
-        // Small delay to ensure message is displayed first
-        setTimeout(() => speakText(lastMessage.content), 300);
+        speakText(lastMessage.content);
       }
     }
-  }, [messages, speechEnabled, userInteracted]);
+  }, [messages, speechEnabled]);
 
   return (
     <div className="flex flex-col h-full">
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-4">
+      <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-6 space-y-4">
         <AnimatePresence mode="popLayout">
           {messages.length === 0 ? (
             <motion.div
@@ -366,9 +368,9 @@ const VoiceChat = ({ onSendMessage, isProcessing, messages, onClearChat }) => {
         {/* Speaking Indicator - Awesome Animation */}
         {isSpeaking && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             className="flex justify-center my-4"
           >
             <div className="relative bg-gradient-amber/20 backdrop-blur border-2 border-amber rounded-2xl px-6 py-4 shadow-lg shadow-amber/30 overflow-hidden">
@@ -376,7 +378,6 @@ const VoiceChat = ({ onSendMessage, isProcessing, messages, onClearChat }) => {
               <motion.div
                 className="absolute inset-0 bg-amber/10 rounded-2xl"
                 animate={{
-                  scale: [1, 1.05, 1],
                   opacity: [0.3, 0.6, 0.3],
                 }}
                 transition={{
@@ -389,7 +390,7 @@ const VoiceChat = ({ onSendMessage, isProcessing, messages, onClearChat }) => {
               {/* Content */}
               <div className="relative z-10 flex items-center gap-4">
                 {/* Animated Waveform Bars (Left) */}
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1 h-6">
                   {[...Array(5)].map((_, i) => (
                     <motion.div
                       key={i}

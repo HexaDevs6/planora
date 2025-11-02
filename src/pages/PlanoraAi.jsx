@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Sparkles, AlertCircle, Settings, Info } from "lucide-react";
-import VoiceChat from "../components/VoiceChat";
+import VoiceChat from "@/components/VoiceChat";
 import {
    initializeGemini,
    sendMessage,
