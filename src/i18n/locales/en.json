@@ -235,7 +235,7 @@
     },
     "signin": {
       "title": "Where great events begin.",
-      "googleSignIn": "Sign in with Google",
+      "googleSignIn": "Sign in with Google ",
       "orUseEmail": "Or use Email",
       "notMember": "Not a member yet?",
       "registerNow": "REGISTER NOW",
@@ -298,8 +298,8 @@
         "client": {
           "subtitle": "Tell us about your interests",
           "interestsLabel": "Your Interests * (Select at least one)",
-          "eventPreferencesLabel": "Event Preferences (Optional)",
-          "eventPreferencesPlaceholder": "Tell us about the types of events you typically attend or organize..."
+          "eventPreferencesLabel": "About You (Optional)",
+          "eventPreferencesPlaceholder": "Tell us about the types of events you typically attend..."
         },
         "host": {
           "subtitle": "Complete your business profile"

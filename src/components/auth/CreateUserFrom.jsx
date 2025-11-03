@@ -9,36 +9,18 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { registerUserWithEmail, registerUserWithGoogle } from "@/store/authThunks";
-// import { resetAuthState } from "@/store/authSlice";
+import { registerUserWithEmail, saveUserInfo } from "@/store/authThunks";
 
-const CreateUserForm = ({ data, setFormData, setStep, step, userType }) => {
-   const { email, phone, password, confirmPassword } = data;
+const CreateUserForm = ({ formData, setStep, step, userType, handleInputChange }) => {
    const { t } = useTranslation();
    const dispatch = useDispatch();
    const navigate = useNavigate();
-   const { loading, error, user } = useSelector((state) => state.auth);
+   const { email, password, confirmPassword, phone,categories } = formData;
+   const { loading } = useSelector((state) => state.auth);
 
    const [agreedToTerms, setAgreedToTerms] = useState(false);
 
-   // 🔹 Handle Input
-   const handleInputChange = (field, value) => {
-      setFormData((prev) => ({ ...prev, [field]: value }));
-   };
-
-   // 🔹 Translate user type
-   const getUserTypeTranslation = () => {
-      switch (userType) {
-         case "client":
-            return t("auth.register.step1.client.title");
-         case "host":
-            return t("auth.register.step1.host.title");
-         default:
-            return "";
-      }
-   };
-
-   // 🔹 Validate inputs
+   // ✅ Validate form fields
    const validateForm = () => {
       if (!email || !password || !confirmPassword) {
          toast.error(t("common.validation.fillAllFields"));
@@ -59,51 +41,47 @@ const CreateUserForm = ({ data, setFormData, setStep, step, userType }) => {
       return true;
    };
 
-   // 🔹 Handle Email Sign Up
+   // ✅ Handle Email Sign Up
    const handleSubmit = async (e) => {
       e.preventDefault();
-      if (!validateForm()) return;
+      if (!validateForm() || loading) return;
 
-      const resultAction = await dispatch(
-         registerUserWithEmail({ email, password, phone, userType })
-      );
+      try {
+         // 1️⃣ إنشاء الحساب في Supabase Auth
+         const { success, user, error } = await dispatch(
+            registerUserWithEmail(email, password )
+         );
 
-      if (registerUserWithEmail.fulfilled.match(resultAction)) {
-         toast.success(t("auth.register.toast.success.title"), {
-            description:
-               t("auth.register.toast.success.description") +
-               " " +
-               getUserTypeTranslation(),
-         });
-         navigate("/user");
-      } else {
-         toast.error(t("auth.register.toast.error.title"), {
-            description: resultAction.payload || resultAction.error.message,
-         });
+         if (!success || !user) {
+            toast.error(error || t("common.errors.somethingWentWrong"));
+            return;
+         }
+
+         // 2️⃣ حفظ البيانات الإضافية
+         const { success: infoSuccess, error: infoError } = await dispatch(
+            saveUserInfo({
+               userId: user.id,
+               userInfo: { ...formData },
+               categories: categories || [],
+               role: userType,
+            })
+         );
+
+         if (infoSuccess) {
+            toast.success(t("auth.register.toast.success.title"));
+            navigate("/"); // 🔹 توجيه المستخدم بعد التسجيل
+         } else {
+            toast.error(infoError || t("common.errors.somethingWentWrong"));
+         }
+      } catch (err) {
+         console.error(err);
+         toast.error(t("common.errors.somethingWentWrong"));
       }
-
-      // dispatch(resetAuthState());
    };
 
-   // 🔹 Handle Google Sign Up
+   // ✅ Handle Google Sign Up (placeholder)
    const handleGoogleSignUp = async () => {
-      const resultAction = await dispatch(registerUserWithGoogle({ userType }));
-
-      if (registerUserWithGoogle.fulfilled.match(resultAction)) {
-         toast.success(t("auth.form.toast.googleSuccess.title"), {
-            description:
-               t("auth.form.toast.googleSuccess.description") +
-               " " +
-               getUserTypeTranslation(),
-         });
-         navigate("/user");
-      } else {
-         toast.error(t("auth.form.toast.googleError.title"), {
-            description: resultAction.payload || resultAction.error.message,
-         });
-      }
-
-      dispatch(resetAuthState());
+      toast.info(t("auth.form.googleSignUpComingSoon"));
    };
 
    return (
@@ -125,6 +103,7 @@ const CreateUserForm = ({ data, setFormData, setStep, step, userType }) => {
                : t("auth.form.googleSignUp")}
          </Button>
 
+         {/* Divider */}
          <div className="relative">
             <Separator />
             <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-sm text-muted-foreground">
@@ -137,6 +116,7 @@ const CreateUserForm = ({ data, setFormData, setStep, step, userType }) => {
             onSubmit={handleSubmit}
             className="grid grid-cols-1 md:grid-cols-2 gap-4 text-foreground"
          >
+            {/* Email */}
             <div className="space-y-2">
                <Label htmlFor="email">{t("common.form.email")} *</Label>
                <div className="relative">
@@ -153,6 +133,7 @@ const CreateUserForm = ({ data, setFormData, setStep, step, userType }) => {
                </div>
             </div>
 
+            {/* Phone */}
             <div className="space-y-2">
                <Label htmlFor="phone">{t("common.form.phone")}</Label>
                <div className="relative">
@@ -168,6 +149,7 @@ const CreateUserForm = ({ data, setFormData, setStep, step, userType }) => {
                </div>
             </div>
 
+            {/* Password */}
             <div className="space-y-2">
                <Label htmlFor="password">{t("common.form.password")} *</Label>
                <div className="relative">
@@ -186,6 +168,7 @@ const CreateUserForm = ({ data, setFormData, setStep, step, userType }) => {
                </div>
             </div>
 
+            {/* Confirm Password */}
             <div className="space-y-2">
                <Label htmlFor="confirmPassword">
                   {t("common.form.confirmPassword")} *
@@ -206,7 +189,7 @@ const CreateUserForm = ({ data, setFormData, setStep, step, userType }) => {
                </div>
             </div>
 
-            {/* 🔹 Terms */}
+            {/* Terms */}
             <div className="flex items-start space-x-2 pt-4 md:col-span-2">
                <Checkbox
                   id="terms"
@@ -229,7 +212,7 @@ const CreateUserForm = ({ data, setFormData, setStep, step, userType }) => {
                </label>
             </div>
 
-            {/* 🔹 Buttons */}
+            {/* Buttons */}
             <div className="flex justify-between pt-4 md:col-span-2">
                <Button
                   onClick={() => setStep(step === 1 ? 1 : step - 1)}
@@ -243,6 +226,7 @@ const CreateUserForm = ({ data, setFormData, setStep, step, userType }) => {
                   variant="amber"
                   size="lg"
                   disabled={loading}
+                  className={loading ? "opacity-70 cursor-not-allowed" : ""}
                >
                   {loading ? (
                      <>
@@ -255,6 +239,10 @@ const CreateUserForm = ({ data, setFormData, setStep, step, userType }) => {
                </Button>
             </div>
          </form>
+         {console.log(`User Type: ${userType}`)}
+         {console.log(`Form Data: ${formData}`)}
+         {console.log(`Form Data: ${categories}`)}
+         
       </div>
    );
 };

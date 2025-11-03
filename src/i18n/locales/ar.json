@@ -233,7 +233,7 @@
     },
     "signin": {
       "title": "من هنا تبدأ قصص النجاح!",
-      "googleSignIn": "تسجيل الدخول عبر جوجل",
+      "googleSignIn": " تسجيل الدخول عبر جوجل ",
       "orUseEmail": "أو استخدم البريد الإلكتروني",
       "notMember": "لست عضواً بعد؟",
       "registerNow": "سجل الآن",
@@ -296,8 +296,8 @@
         "client": {
           "subtitle": "أخبرنا عن اهتماماتك",
           "interestsLabel": "اهتماماتك * (اختر واحد على الأقل)",
-          "eventPreferencesLabel": "تفضيلات الفعاليات (اختياري)",
-          "eventPreferencesPlaceholder": "أخبرنا عن أنواع الفعاليات التي تحضرها أو تنظمها عادة..."
+          "eventPreferencesLabel": "نبذة عنك (اختياري)",
+          "eventPreferencesPlaceholder": "أخبرنا مثلاً عن أنواع الفعاليات التي تحب ان تحضرها..."
         },
         "host": {
           "subtitle": "أكمل ملفك التجاري"

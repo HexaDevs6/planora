@@ -9,6 +9,7 @@ import { Button } from "./ui/button";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import avatarPlaceholderImg from "@/assets/user_placeholder3.png";
 import {
     DropdownMenu,
     DropdownMenuTrigger,
@@ -23,8 +24,6 @@ function NavBar() {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const navigate = useNavigate();
-
-
 
     const toggleMenu = () => setIsOpen(!isOpen);
     return (
@@ -78,7 +77,11 @@ function NavBar() {
                         <div className='nav__toggles flex gap-2'>
                             {!user ? (
                                 // المستخدم مش داخل 👇
-                                <Button variant='glass' size='sm' className='text-foreground'>
+                                <Button
+                                    variant='glass'
+                                    size='sm'
+                                    className='text-foreground'
+                                >
                                     <Link to='/signin'>
                                         <User2Icon />
                                     </Link>
@@ -89,26 +92,29 @@ function NavBar() {
                                     <DropdownMenuTrigger asChild>
                                         <Avatar className='cursor-pointer'>
                                             <AvatarImage
-                                                src={user.photoURL || ""}
-                                                alt={user.displayName || ""}
+                                                src={
+                                                    user.avatar ||
+                                                    avatarPlaceholderImg
+                                                }
+                                                alt={user.full_name || ""}
                                             />
                                             <AvatarFallback>
-                                                {user.displayName
-                                                    ? user.displayName[0].toUpperCase()
+                                                {user.avatar
+                                                    ? user.full_name[0].toUpperCase()
                                                     : user.email
-                                                        ? user.email[0].toUpperCase()
-                                                        : "U"}
+                                                    ? user.email[0].toUpperCase()
+                                                    : "U"}
                                             </AvatarFallback>
                                         </Avatar>
                                     </DropdownMenuTrigger>
 
                                     <DropdownMenuContent
                                         align='end'
-                                        className='w-40'
+                                        className='w-fit'
                                     >
                                         <DropdownMenuItem asChild>
-                                            <Link to='/user/overview'>
-                                                Dashboard
+                                            <Link to={`/user/overview`}>
+                                                {user?.full_name}'s Dashboard
                                             </Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem asChild>
@@ -117,12 +123,17 @@ function NavBar() {
                                             </Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem
-                                            onClick={() => handleSignOut(dispatch, navigate, t)}
+                                            onClick={() =>
+                                                handleSignOut(
+                                                    dispatch,
+                                                    navigate,
+                                                    t
+                                                )
+                                            }
                                             className='text-amper focus:text-amper/80 hover:bg-red-600/10'
                                         >
                                             Logout
                                         </DropdownMenuItem>
-
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             )}

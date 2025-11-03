@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { ArrowRight, X, LogOut, Home } from "lucide-react";
+import { ArrowRight, X, LogOut, Home, UserCircle2Icon, User2 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
@@ -8,6 +8,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { handleSignOut } from "@/components/auth/handleSignOut";
 import LanguageSwitcher from "./LanguageSwitcher";
 import ThemeToggle from "./ThemeToggle";
+import  avatarPlaceholderImg  from "@/assets/user_placeholder3.png";
+
 
 export default function Sidebar({ sideLinks }) {
     // 🔹 Sidebar state (open/close)
@@ -23,9 +25,10 @@ export default function Sidebar({ sideLinks }) {
     const toggleSidebar = () => setIsOpen(!isOpen);
 
     // 🔹 Extract user data
-    const userName = user?.displayName || user?.email?.split("@")[0] || "User";
-    const userRole = user?.userRole || "Guest";
-    const userAvatar = user?.photoURL || "https://i.pravatar.cc/100";
+    const userName = user?.full_name || user?.email?.split("@")[0];
+    //capitalize role
+    const userRole = user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1);
+    const userAvatar = user?.avatar || avatarPlaceholderImg ; ;
 
     // 🔹 Memoized data to avoid unnecessary re-renders
     const links = useMemo(() => sideLinks, [sideLinks]);

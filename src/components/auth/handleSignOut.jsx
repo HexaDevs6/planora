@@ -1,9 +1,7 @@
 // src/auth/handleSignOut.js
 import Swal from "sweetalert2";
-import { signOut } from "firebase/auth";
 import { toast } from "sonner";
-import { clearUser } from "@/store/authSlice";
-import { auth } from "@/lib/firebaseConfig";
+import { signOut } from "@/store/authThunks";
 
 export const handleSignOut = async (dispatch, navigate, t) => {
   const swalWithCustomStyles = Swal.mixin({
@@ -63,8 +61,7 @@ export const handleSignOut = async (dispatch, navigate, t) => {
     .then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await signOut(auth);
-          dispatch(clearUser());
+          await dispatch(signOut());
           navigate("/");
 
           toast.success(t("auth.signout.toast.success.title"), {
