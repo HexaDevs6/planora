@@ -6,5 +6,5 @@ export default function PublicRoute({ children }) {
 
   if (loading) return <div className="p-4 text-center">Loading...</div>;
 
-  return !user ? children : <Navigate to="/user" replace />;
+  return !user ? children : <Navigate to="/" replace />;
 }

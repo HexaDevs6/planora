@@ -1,13 +1,16 @@
 import { useState } from "react";
-import img from "@/assets/sign-img.png";
+import img from "@/assets/3d-render-secure-login-password-illustration.png";
 import img1 from "@/assets/logosiginin.png";
 import logoLight from "/LogoBasicLight.png";
 import { Link, useNavigate } from "react-router-dom";
-import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
-import { auth, provider } from "@/lib/firebaseConfig";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
-import { Eye, EyeOff } from "lucide-react";
+import { Building2, Chrome, Eye, EyeOff, User2, Users } from "lucide-react";
+
+// Redux + Thunks (Supabase)
+import { useDispatch } from "react-redux";
+import {  signInWithEmail } from "@/store/authThunks";
+import { Button } from "@/components/ui/button";
 
 function Signin() {
     const [showPassword, setShowPassword] = useState(false);
@@ -15,55 +18,37 @@ function Signin() {
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const navigate = useNavigate();
     const { t } = useTranslation();
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const dispatch = useDispatch();
 
-        try {
-            setLoading(true);
+    // ✅ Handle email/password sign-in
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
 
-            await signInWithEmailAndPassword(auth, email, password);
-            toast.success(t("auth.signin.toast.success.title"), {
-                description: t("auth.signin.toast.success.description"),
-            });
-            setLoading(false);
+  try {
+    // استخدم unwrap عشان تحصل على النتيجة مباشرة أو throw error
+    const result = await dispatch(signInWithEmail({ email, password })).unwrap();
 
-            setTimeout(() => {
-                navigate("/user/overview");
-            }, 1500);
-        } catch (error) {
-            console.log("login failed with email:", error.message);
-            toast.error(t("auth.signin.toast.error.title"), {
-                description: t("auth.signin.toast.error.description"),
-            });
-        } finally {
-            setLoading(false);
-        }
-    };
-    const handleGoogleSignIn = async () => {
-        try {
-            await signInWithPopup(auth, provider);
-            toast.success(t("auth.signin.toast.googleSuccess.title"), {
-                description: t("auth.signin.toast.googleSuccess.description"),
-            });
+    toast.success(t("auth.signin.toast.success.title"), {
+      description: t("auth.signin.toast.success.description"),
+    });
+  } catch (error) {
+    console.error("Sign in failed:", error);
+    toast.error(t("auth.signin.toast.error.title"), {
+      description: error,
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
-            setTimeout(() => {
-                navigate("/user/overview");
-            }, 1500);
-        } catch (error) {
-            console.log("Sign-in failed with Google:", error.message);
 
-            toast.error(t("auth.signin.toast.googleError.title"), {
-                description: t("auth.signin.toast.googleError.description"),
-            });
-        }
-    };
 
     return (
         <div className='flex flex-col font-poppins md:flex-row min-h-screen bg-background pt-16'>
             {/* Left column - form */}
-            <div className='w-full md:w-1/2 flex items-start justify-center px-8 md:px-20 py-12 md:py-16'>
+            <div className='w-full md:w-1/2 flex items-start justify-center px-8  py-12'>
                 <div className='w-full max-w-lg'>
                     <header className='mb-10'>
                         <div className='flex items-center mb-6'>
@@ -81,29 +66,10 @@ function Signin() {
                     </header>
 
                     <main>
-                        {/* Google Sign-In Button */}
-                        <div className='mb-6 flex items-center justify-center'>
-                            <button
-                                onClick={handleGoogleSignIn}
-                                disabled={loading}
-                                className={`w-full flex items-center justify-center gap-3 bg-[#D6CED5] rounded-sm py-4 px-6 text-[#424242] hover:bg-gray-100 ${
-                                    loading
-                                        ? "opacity-70 cursor-not-allowed"
-                                        : ""
-                                }`}
-                            >
-                                <div className='w-[24px] h-[24px] flex items-center justify-center rounded-full bg-[white]'>
-                                    <img
-                                        src='https://www.svgrepo.com/show/355037/google.svg'
-                                        alt='Google'
-                                        className='w-[15px] h-[15px] bg-[white]'
-                                    />
-                                </div>
-                                <span className='text-sm text-[#424242] leading-[25.6px] font-[400]'>
-                                    {t("auth.signin.googleSignIn")}
-                                </span>
-                            </button>
-                        </div>
+                        {/* ✅ Google Sign-In Buttons (Client & Host) */}
+                        <Button variant='outline' className='w-full' >
+                            <Chrome  /> {t("auth.signin.googleSignIn")}
+                        </Button>
 
                         <div className='flex items-center my-6'>
                             <div className='flex-1 h-px bg-muted' />
@@ -196,8 +162,8 @@ function Signin() {
             </div>
 
             {/* Right column - image */}
-            <div className='w-full md:w-1/2 flex items-center justify-center px-8'>
-                <div className='w-[420px] h-[600px]'>
+            <div className='hidden md:w-1/2 md:flex items-center justify-center'>
+                <div className=''>
                     <img
                         src={img}
                         alt='Register'

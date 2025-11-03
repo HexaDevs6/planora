@@ -4,7 +4,7 @@ import Details from "@/components/events/Details";
 import React from "react";
 import WhyAttend from "@/components/events/WhyAttend";
 import Highlights from "@/components/events/Highlights";
-import VendorInfo from "@/components/events/VendorInfo";
+import HostInfo from "@/components/events/HostInfo";
 import Location from "@/components/events/Location";
 import EventCountdown from "@/components/events/EventCountdown";
 // import QuickInfo from "@/components/events/QuickInfo";
@@ -92,7 +92,7 @@ const EventDetails = () => {
                   <Highlights lang={lang} highlights={event.highlights} />
                   <Location lang={lang} />
                   <WhyAttend lang={lang} />
-                  <VendorInfo lang={lang} />
+                  <HostInfo lang={lang} />
                   <section className="gradient-card rounded-xl p-8 flex flex-col md:flex-row items-center justify-between gap-6">
                      <div>
                         <h3 className="text-2xl font-bold text-gradient-amber">

@@ -233,7 +233,7 @@
     },
     "signin": {
       "title": "من هنا تبدأ قصص النجاح!",
-      "googleSignIn": "تسجيل الدخول عبر جوجل",
+      "googleSignIn": " تسجيل الدخول عبر جوجل ",
       "orUseEmail": "أو استخدم البريد الإلكتروني",
       "notMember": "لست عضواً بعد؟",
       "registerNow": "سجل الآن",
@@ -270,8 +270,8 @@
             "احصل على توصيات مخصصة"
           ]
         },
-        "vendor": {
-          "title": "أنا بائع",
+        "host": {
+          "title": "أنا مُضيف",
           "description": "اعرض خدماتك، أدر الحجوزات، ونمّي عملك في مجال الفعاليات",
           "features": [
             "أضف خدماتك",
@@ -296,10 +296,10 @@
         "client": {
           "subtitle": "أخبرنا عن اهتماماتك",
           "interestsLabel": "اهتماماتك * (اختر واحد على الأقل)",
-          "eventPreferencesLabel": "تفضيلات الفعاليات (اختياري)",
-          "eventPreferencesPlaceholder": "أخبرنا عن أنواع الفعاليات التي تحضرها أو تنظمها عادة..."
+          "eventPreferencesLabel": "نبذة عنك (اختياري)",
+          "eventPreferencesPlaceholder": "أخبرنا مثلاً عن أنواع الفعاليات التي تحب ان تحضرها..."
         },
-        "vendor": {
+        "host": {
           "subtitle": "أكمل ملفك التجاري"
         },
         "provider": {
@@ -388,7 +388,7 @@
         "placeholder": "أخبرنا عن نفسك، خلفيتك، خبرتك، وما أنت شغوف به..."
       }
     },
-    "vendorInfo": {
+    "hostInfo": {
       "businessName": {
         "label": "اسم الشركة/المؤسسة *",
         "placeholder": "اسم شركتك"
