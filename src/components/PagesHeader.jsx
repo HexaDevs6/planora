@@ -6,16 +6,20 @@ import { Input } from "./ui/input";
 import { Select, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { SelectContent } from "@radix-ui/react-select";
 import { useDispatch, useSelector } from "react-redux";
-import { setSearchQuery } from "@/store/searchSlice";
-export default function PagesHeader({ img, title, subtitle , search }) {
+import { setSearchQuery } from "@/store/searchAndFilterEventsSlice";
+import { setServiceSearchQuery } from "@/store/searchAndFilterServiceSlice";
+export default function PagesHeader({ img, title, subtitle, search, type }) {
   img = img || SecondHeaderImg;
 
   const [sortBy, setSortBy] = useState();
 
-    const dispatch = useDispatch();
-  const query = useSelector((state) => state.search.query);
+  const dispatch = useDispatch();
+  const query =
+    type === "event"
+      ? useSelector((state) => state.eventsSearchAndFilter.query)
+      : useSelector((state) => state.servicesSearchAndFilter.queryService);
 
-  // const filterSearch = eventsArr.filter(el => el.title.toLowerCase().trim().includes(searchQuery.toLowerCase().trim()))
+  const setQuery = type === "event" ? setSearchQuery : setServiceSearchQuery;
 
   return (
     <header
@@ -42,14 +46,14 @@ export default function PagesHeader({ img, title, subtitle , search }) {
                 type="text"
                 placeholder={search}
                 value={query}
-                onChange={(e) => dispatch(setSearchQuery(e.target.value))}
+                onChange={(e) => dispatch(setQuery(e.target.value))}
                 className="pl-10 h-12 border focus:outline-amber-300"
               />
             </div>
             <div className="relative">
               <Select value={sortBy} onValueChange={setSortBy}>
                 <SelectTrigger className="sm:w-[100px]">
-                  <SelectValue  placeholder="Sort by" />
+                  <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
                 <SelectContent className="top-0 left-0 w-50 absolute">
                   <SelectItem

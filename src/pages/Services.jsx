@@ -2,17 +2,11 @@ import CategoryCard from "@/components/Cards/CategoryCard";
 import PagesHeader from "@/components/PagesHeader";
 import { t } from "i18next";
 import {
-  Briefcase,
   Camera,
   ChartGantt,
   Disc3,
-  Dumbbell,
-  GraduationCap,
   Grid3x3,
-  Music,
-  Palette,
   SprayCan,
-  Users,
   Utensils,
   VenetianMask,
 } from "lucide-react";
@@ -23,15 +17,13 @@ import photographerImage from "@/assets/service-photographer.jpg";
 import plannerImage from "@/assets/service-planner.jpg";
 import djImage from "@/assets/service-dj.jpg";
 import cateringImage from "@/assets/service-catering.jpg";
-
-import EventCard from "@/components/Cards/EventCard";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@/components/ui/button";
-import { setVisibleCount } from "@/store/searchSlice";
+import { setServiceFilterQuery, setServiceVisibleCount  } from "@/store/searchAndFilterServiceSlice";
 import ServiceCard from "@/components/Cards/ServiceCard";
 
 export default function Services() {
-  const query = useSelector((state) => state.search.query.toLowerCase().trim());
+  const query = useSelector((state) => state.servicesSearchAndFilter.queryService.toLowerCase().trim());
   const dispatch = useDispatch();
   const services = [
     {
@@ -132,7 +124,7 @@ export default function Services() {
     },
   ];
 
-  const filterQuery = useSelector((state) => state.search.filter.toLowerCase());
+  const filterQuery = useSelector((state) => state.servicesSearchAndFilter.filterService.toLowerCase());
   console.log(filterQuery);
 
   const filterSearch =
@@ -141,7 +133,7 @@ export default function Services() {
       : services
           .filter((el) => el.title.toLowerCase().trim().includes(query))
           .filter((el) => el.category.toLowerCase() === filterQuery);
-  const visibleEvents = useSelector((state) => state.search.visibleCount);
+  const visibleEvents = useSelector((state) => state.servicesSearchAndFilter.visibleCountService);
 
   const categories = [
     {
@@ -189,19 +181,11 @@ export default function Services() {
         search={`${t("servicesPage.header.search")}`}
         title={`${t("servicesPage.header.title")}`}
         subtitle={`${t("servicesPage.header.subTitle")}`}
+        type="service"
       />
       <main className="flex-1">
-        <section className="py-16 md:pt-20 bg-muted/30">
+        <section className="py-16 md:pt-10 bg-muted/30">
           <div className="container px-4 md:px-6">
-            <div className="text-center space-y-4 mb-12">
-              <h2 className="text-3xl text-primary md:text-4xl font-bold">
-                {t("eventsPage.category.title")}
-              </h2>
-              <p className="text-lg text-text max-w-2xl mx-auto">
-                {t("eventsPage.category.subTitle")}
-              </p>
-            </div>
-
             <div className="grid grid-cols-2 mb-10 md:grid-cols-3 lg:grid-cols-7 gap-4 md:gap-6">
               {categories.map((category, index) => (
                 <div
@@ -209,12 +193,12 @@ export default function Services() {
                   className="animate-scale-in"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  <CategoryCard {...category} />
+<CategoryCard {...category} type="service" />
                 </div>
               ))}
             </div>
 
-            <div className="py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="py-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {viewService.map((el) => (
                 <ServiceCard
                   key={el.id}
@@ -234,7 +218,7 @@ export default function Services() {
             {visibleEvents < filterSearch.length && (
               <div className="w-fit mx-auto">
                 <Button
-                  onClick={() => dispatch(setVisibleCount())}
+                  onClick={() => dispatch(setServiceVisibleCount())}
                   size="CTA"
                   variant="amber"
                 >
@@ -242,29 +226,27 @@ export default function Services() {
                 </Button>
               </div>
             )}
-
-            
           </div>
           <section className="py-16 mt-15 bg-amber">
-              <div className="container px-4 md:px-6">
-                <div className="max-w-3xl mx-auto text-center space-y-6 text-white">
-                  <h2 className="text-3xl md:text-4xl font-bold">
-                    Are You a Service Provider?
-                  </h2>
-                  <p className="text-lg text-white/90">
-                    Join our marketplace and connect with thousands of event
-                    organizers looking for professional services
-                  </p>
-                  <Button
-                    variant="primary"
-                    size="lg"
-                    className="text-white hover:scale-105 transition-transform"
-                  >
-                    Become a Provider
-                  </Button>
-                </div>
+            <div className="container px-4 md:px-6">
+              <div className="max-w-3xl mx-auto text-center space-y-6 text-white">
+                <h2 className="text-3xl md:text-4xl font-bold">
+                  Are You a Service Provider?
+                </h2>
+                <p className="text-lg text-white/90">
+                  Join our marketplace and connect with thousands of event
+                  organizers looking for professional services
+                </p>
+                <Button
+                  variant="primary"
+                  size="lg"
+                  className="text-white hover:scale-105 transition-transform"
+                >
+                  Become a Provider
+                </Button>
               </div>
-            </section>
+            </div>
+          </section>
         </section>
       </main>
     </div>
