@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import img from "@/assets/3d-render-secure-login-password-illustration.png";
 import img1 from "@/assets/logosiginin.png";
 import logoLight from "/LogoBasicLight.png";
@@ -9,7 +9,7 @@ import { Building2, Chrome, Eye, EyeOff, User2, Users } from "lucide-react";
 
 // Redux + Thunks (Supabase)
 import { useDispatch } from "react-redux";
-import {  signInWithEmail } from "@/store/authThunks";
+import { checkGoogleUser, signInWithEmail, signInWithGoogle } from "@/store/authThunks";
 import { Button } from "@/components/ui/button";
 
 function Signin() {
@@ -18,30 +18,49 @@ function Signin() {
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
 
+    const navigate = useNavigate();
+
     const { t } = useTranslation();
     const dispatch = useDispatch();
 
     // ✅ Handle email/password sign-in
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
 
-  try {
-    // استخدم unwrap عشان تحصل على النتيجة مباشرة أو throw error
-    const result = await dispatch(signInWithEmail({ email, password })).unwrap();
+        try {
+            // استخدم unwrap عشان تحصل على النتيجة مباشرة أو throw error
+            const result = await dispatch(signInWithEmail({ email, password })).unwrap();
 
-    toast.success(t("auth.signin.toast.success.title"), {
-      description: t("auth.signin.toast.success.description"),
+            toast.success(t("auth.signin.toast.success.title"), {
+                description: t("auth.signin.toast.success.description"),
+            });
+        } catch (error) {
+            console.error("Sign in failed:", error);
+            toast.error(t("auth.signin.toast.error.title"), {
+                description: error,
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleGoogleSignIn = async () => {
+    dispatch(signInWithGoogle());
+
+    };
+
+  useEffect(() => {
+    // بعد الرجوع من Google OAuth
+    dispatch(checkGoogleUser()).then((res) => {
+      const payload = res.payload;
+      if (payload?.needsRegistration) {
+        navigate("/register");
+      } else if (payload?.user) {
+        navigate("/"); // ✅ يروح للهوم بس لما يتأكد إنه مستخدم قديم
+      }
     });
-  } catch (error) {
-    console.error("Sign in failed:", error);
-    toast.error(t("auth.signin.toast.error.title"), {
-      description: error,
-    });
-  } finally {
-    setLoading(false);
-  }
-};
+  }, [dispatch, navigate]);
 
 
 
@@ -67,8 +86,8 @@ const handleSubmit = async (e) => {
 
                     <main>
                         {/* ✅ Google Sign-In Buttons (Client & Host) */}
-                        <Button variant='outline' className='w-full' >
-                            <Chrome  /> {t("auth.signin.googleSignIn")}
+                        <Button variant='outline' className='w-full' onClick={handleGoogleSignIn} >
+                            <Chrome /> {t("auth.signin.googleSignIn")}
                         </Button>
 
                         <div className='flex items-center my-6'>
@@ -133,11 +152,10 @@ const handleSubmit = async (e) => {
                                 <button
                                     type='submit'
                                     disabled={loading}
-                                    className={`w-full bg-violet hover:brightness-110 text-white font-semibold py-4 rounded-md shadow-inner flex items-center justify-center gap-2 ${
-                                        loading
-                                            ? "opacity-70 cursor-not-allowed"
-                                            : ""
-                                    }`}
+                                    className={`w-full bg-violet hover:brightness-110 text-white font-semibold py-4 rounded-md shadow-inner flex items-center justify-center gap-2 ${loading
+                                        ? "opacity-70 cursor-not-allowed"
+                                        : ""
+                                        }`}
                                 >
                                     {loading
                                         ? t("common.buttons.signingIn")

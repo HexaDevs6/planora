@@ -58,6 +58,133 @@ export const signInWithEmail = createAsyncThunk(
         }
     }
 );
+
+// ✅ الخطوة 1: تسجيل الدخول بجوجل (يفتح الـ popup)
+export const signInWithGoogle = createAsyncThunk(
+    "auth/signInWithGoogle",
+    async (_, { rejectWithValue, dispatch }) => {
+        dispatch(setLoading(true));
+        try {
+            const { data, error } = await supabase.auth.signInWithOAuth({
+                provider: "google",
+                options: {
+                    redirectTo: window.location.origin, // مهم جدًا
+                },
+            });
+
+            if (error) throw error;
+            return { success: true };
+        } catch (error) {
+            console.error("Google sign-in error:", error.message);
+            return rejectWithValue(error.message);
+        } finally {
+            dispatch(setLoading(false));
+        }
+    }
+);
+
+// ✅ الخطوة 2: بعد الرجوع من جوجل، نتحقق من وجود المستخدم في قاعدة البيانات
+export const checkGoogleUser = createAsyncThunk(
+    "auth/checkGoogleUser",
+    async (_, { rejectWithValue, dispatch }) => {
+        dispatch(setLoading(true));
+        try {
+            const { data: { user }, error } = await supabase.auth.getUser();
+            if (error) throw error;
+
+            if (!user) throw new Error("No user returned from Google.");
+
+            // Check if exists in DB
+            const { data: existingUser, error: fetchError } = await supabase
+                .from("users")
+                .select("*")
+                .eq("id", user.id)
+                .maybeSingle();
+            if (fetchError) throw fetchError;
+
+            if (existingUser) {
+                dispatch(setUser({ ...user, ...existingUser }));
+                return { success: true, user: { ...user, ...existingUser } };
+            } else {
+                return { success: false, needsRegistration: true, user };
+            }
+        } catch (error) {
+            console.error("Check Google user error:", error.message);
+            return rejectWithValue(error.message);
+        } finally {
+            dispatch(setLoading(false));
+        }
+    }
+);
+
+
+// ✅ Register new Google user with extra info (for Register)
+export const registerUserWithGoogleData = createAsyncThunk(
+    "auth/registerUserWithGoogleData",
+    async ({ formData, role }, { dispatch, rejectWithValue }) => {
+        dispatch(setLoading(true));
+        try {
+            // Step 1: تسجيل الدخول بجوجل
+            const { data, error } = await supabase.auth.signInWithOAuth({
+                provider: "google",
+                options: {
+                    redirectTo: window.location.origin,
+                    skipBrowserRedirect: false,
+                },
+            });
+            if (error) throw error;
+
+            // Step 2: جلب بيانات المستخدم من Supabase بعد الرجوع
+            const { data: userSession } = await supabase.auth.getUser();
+            const user = userSession?.user;
+            if (!user) throw new Error("Google user not found after sign-up.");
+
+            const { fullName, bio, facebook, instagram, categories, location } =
+                formData;
+
+            // Step 3: إدخال البيانات كلها في جدول users
+            const { error: insertError } = await supabase.from("users").insert([
+                {
+                    id: user.id,
+                    email: user.email,
+                    full_name: fullName || user.user_metadata?.full_name,
+                    avatar: user.user_metadata?.avatar_url || null,
+                    bio: bio || null,
+                    facebook_url: facebook || null,
+                    instagram_url: instagram || null,
+                    location: location || null,
+                    role,
+                },
+            ]);
+            if (insertError) throw insertError;
+
+            // Step 4: ربط التصنيفات لو موجودة
+            if (categories && categories.length > 0) {
+                const inserts = categories.map((catId) => ({
+                    user_id: user.id,
+                    category_id: catId,
+                }));
+                const { error: catError } = await supabase
+                    .from("user_categories")
+                    .insert(inserts);
+                if (catError) throw catError;
+            }
+
+            // Step 5: حفظ المستخدم في Redux
+            dispatch(setUser({ ...user, ...formData, role }));
+
+            return { success: true, user: { ...user, ...formData, role } };
+        } catch (error) {
+            console.error("Google registration error:", error.message);
+            return rejectWithValue(error.message);
+        } finally {
+            dispatch(setLoading(false));
+        }
+    }
+);
+
+
+
 // ✅ Save or update user info
 export const saveUserInfo =
     ({ userId, userInfo, categories, role }) =>
