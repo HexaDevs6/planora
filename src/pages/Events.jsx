@@ -22,10 +22,15 @@ import networkingImage from "@/assets/event-networking.jpg";
 import EventCard from "@/components/Cards/EventCard";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@/components/ui/button";
-import { setVisibleCount } from "@/store/searchSlice";
+import {
+  setFilterQuery,
+  setVisibleCount,
+} from "@/store/searchAndFilterEventsSlice";
 
 export default function Events() {
-  const query = useSelector((state) => state.search.query.toLowerCase().trim());
+  const query = useSelector((state) =>
+    state.eventsSearchAndFilter.query.toLowerCase().trim()
+  );
   const dispatch = useDispatch();
   const allEvents = [
     {
@@ -150,7 +155,9 @@ export default function Events() {
     },
   ];
 
-  const filterQuery = useSelector((state) => state.search.filter.toLowerCase());
+  const filterQuery = useSelector((state) =>
+    state.eventsSearchAndFilter.filter.toLowerCase()
+  );
   console.log(filterQuery);
 
   const filterSearch =
@@ -159,7 +166,9 @@ export default function Events() {
       : allEvents
           .filter((el) => el.title.toLowerCase().trim().includes(query))
           .filter((el) => el.category.toLowerCase() === filterQuery);
-  const visibleEvents = useSelector((state) => state.search.visibleCount);
+  const visibleEvents = useSelector(
+    (state) => state.eventsSearchAndFilter.visibleCount
+  );
 
   const categories = [
     {
@@ -207,19 +216,11 @@ export default function Events() {
         search={`${t("eventsPage.header.search")}`}
         title={`${t("eventsPage.header.title")}`}
         subtitle={`${t("eventsPage.header.subTitle")}`}
+        type="event"
       />
       <main className="flex-1">
-        <section className="py-16 md:py-20 bg-muted/30">
+        <section className="py-16 md:py-10 bg-muted/30">
           <div className="container px-4 md:px-6">
-            <div className="text-center space-y-4 mb-12">
-              <h2 className="text-3xl text-primary md:text-4xl font-bold">
-                {t("eventsPage.category.title")}
-              </h2>
-              <p className="text-lg text-text max-w-2xl mx-auto">
-                {t("eventsPage.category.subTitle")}
-              </p>
-            </div>
-
             <div className="grid grid-cols-2 mb-10 md:grid-cols-3 lg:grid-cols-7 gap-4 md:gap-6">
               {categories.map((category, index) => (
                 <div
@@ -227,12 +228,12 @@ export default function Events() {
                   className="animate-scale-in"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  <CategoryCard {...category} />
+                  <CategoryCard {...category} type="event" />
                 </div>
               ))}
             </div>
 
-            <div className="py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="py-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {viewEvents.map((el) => (
                 <EventCard
                   key={el.id}
