@@ -27,6 +27,8 @@ import HostMessages from "./components/HostBoard/HostMessages";
 import HostSettings from "./components/HostBoard/HostSettings";
 import ServiceDetails from "./pages/ServiceDetails";
 import PlanoraAi from "./pages/PlanoraAi";
+import ChatWidget from "./components/ChatWidget";
+
 
 function App() {
     useDirection();
@@ -35,6 +37,8 @@ function App() {
         <main>
             <BrowserRouter>
                 <Toaster richColors position='top-right' />
+                 <ChatWidget />
+
 
                 <Routes>
                     <Route element={<MainLayout />}>

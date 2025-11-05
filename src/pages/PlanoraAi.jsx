@@ -117,7 +117,7 @@ const PlanoraAi = () => {
    // Show error screen if API key is missing
    if (apiKeyMissing) {
       return (
-         <div className="min-h-screen bg-background flex items-center justify-center p-4 pt-20">
+         <div className="min-h-screen bg-background flex items-center justify-center p-4 p-20">
             <motion.div
                initial={{ opacity: 0, y: 20 }}
                animate={{ opacity: 1, y: 0 }}
@@ -217,7 +217,7 @@ const PlanoraAi = () => {
    }
 
    return (
-      <div className="min-h-screen bg-background pt-20">
+      <div className="min-h-screen bg-background ">
          {/* Header */}
          <div className="border-b border-border bg-card/50 backdrop-blur">
             <div className="container mx-auto px-4 py-4">
