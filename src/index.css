@@ -254,7 +254,6 @@
 button {
   cursor: pointer;
 }
-
 /* ---------------- Scrollbar ---------------- */
 .upcoming-events__cards::-webkit-scrollbar {
   height: 8px;

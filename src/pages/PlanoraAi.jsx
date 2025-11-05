@@ -9,6 +9,38 @@ import {
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 
+export const MissingApiKeyScreen = ({ currentLang }) => {
+   return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+         <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-2xl w-full"
+         >
+            <div className="bg-card border-2 border-destructive rounded-2xl p-8 shadow-xl">
+               <div className="flex items-center justify-center mb-6">
+                  <div className="relative">
+                     <AlertCircle className="w-20 h-20 text-destructive" />
+                  </div>
+               </div>
+
+               <h1 className="text-3xl font-bold text-center mb-2 text-destructive">
+                  {currentLang === "ar"
+                     ? "مفتاح API مفقود"
+                     : "API Key Missing"}
+               </h1>
+               <p className="text-center text-muted-foreground mb-6">
+                  {currentLang === "ar"
+                     ? "يرجى إعداد مفتاح Gemini API في ملف .env.local"
+                     : "Please configure Gemini API Key in .env.local file"}
+               </p>
+
+            </div>
+         </motion.div>
+      </div>
+   )
+}
+
 const PlanoraAi = () => {
    const { t, i18n } = useTranslation();
    const currentLang = i18n.language;
@@ -114,106 +146,11 @@ const PlanoraAi = () => {
       toast.success(t("planoraAi.toast.chatCleared"));
    };
 
+
+
    // Show error screen if API key is missing
    if (apiKeyMissing) {
-      return (
-         <div className="min-h-screen bg-background flex items-center justify-center p-4 p-20">
-            <motion.div
-               initial={{ opacity: 0, y: 20 }}
-               animate={{ opacity: 1, y: 0 }}
-               className="max-w-2xl w-full"
-            >
-               <div className="bg-card border-2 border-destructive rounded-2xl p-8 shadow-xl">
-                  <div className="flex items-center justify-center mb-6">
-                     <div className="relative">
-                        <AlertCircle className="w-20 h-20 text-destructive" />
-                     </div>
-                  </div>
-
-                  <h1 className="text-3xl font-bold text-center mb-2 text-destructive">
-                     {currentLang === "ar"
-                        ? "مفتاح API مفقود"
-                        : "API Key Missing"}
-                  </h1>
-                  <p className="text-center text-muted-foreground mb-6">
-                     {currentLang === "ar"
-                        ? "يرجى إعداد مفتاح Gemini API في ملف .env.local"
-                        : "Please configure Gemini API Key in .env.local file"}
-                  </p>
-
-                  <div className="bg-muted rounded-lg p-6 mb-6">
-                     <h3 className="font-semibold mb-3 flex items-center gap-2">
-                        <Settings className="w-5 h-5 text-amber" />
-                        {currentLang === "ar"
-                           ? "خطوات الإعداد:"
-                           : "Setup Instructions:"}
-                     </h3>
-
-                     <ol className="space-y-3 text-sm">
-                        <li className="flex gap-3">
-                           <span className="font-bold text-amber">1.</span>
-                           <div>
-                              {currentLang === "ar"
-                                 ? "احصل على مفتاح API من"
-                                 : "Get your API key from"}{" "}
-                              <a
-                                 href="https://makersuite.google.com/app/apikey"
-                                 target="_blank"
-                                 rel="noopener noreferrer"
-                                 className="text-amber hover:underline font-medium"
-                              >
-                                 Google AI Studio
-                              </a>
-                           </div>
-                        </li>
-
-                        <li className="flex gap-3">
-                           <span className="font-bold text-amber">2.</span>
-                           <div>
-                              {currentLang === "ar"
-                                 ? "أنشئ ملف .env.local في المجلد الجذري للمشروع"
-                                 : "Create a .env.local file in the project root directory"}
-                           </div>
-                        </li>
-
-                        <li className="flex gap-3">
-                           <span className="font-bold text-amber">3.</span>
-                           <div>
-                              {currentLang === "ar"
-                                 ? "أضف السطر التالي إلى الملف:"
-                                 : "Add this line to the file:"}
-                              <div className="mt-2 p-3 bg-background rounded font-mono text-xs">
-                                 VITE_GEMINI_API_KEY=your_api_key_here
-                              </div>
-                           </div>
-                        </li>
-
-                        <li className="flex gap-3">
-                           <span className="font-bold text-amber">4.</span>
-                           <div>
-                              {currentLang === "ar"
-                                 ? "أعد تشغيل خادم التطوير:"
-                                 : "Restart the development server:"}
-                              <div className="mt-2 p-3 bg-background rounded font-mono text-xs">
-                                 npm run dev
-                              </div>
-                           </div>
-                        </li>
-                     </ol>
-                  </div>
-
-                  <div className="flex items-start gap-3 p-4 bg-amber/10 border border-amber/30 rounded-lg">
-                     <Info className="w-5 h-5 text-amber flex-shrink-0 mt-0.5" />
-                     <p className="text-sm text-muted-foreground">
-                        {currentLang === "ar"
-                           ? "ملف .env.local موجود في .gitignore ولن يتم رفعه إلى Git. احتفظ بمفتاح API الخاص بك آمناً!"
-                           : "The .env.local file is in .gitignore and will not be committed to Git. Keep your API key secure!"}
-                     </p>
-                  </div>
-               </div>
-            </motion.div>
-         </div>
-      );
+      return <MissingApiKeyScreen currentLang={currentLang} />
    }
 
    return (
