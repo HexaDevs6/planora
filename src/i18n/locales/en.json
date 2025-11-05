@@ -1,370 +1,70 @@
 {
-  "common": {
-    "buttons": {
-      "login": "Login",
-      "register": "Register",
-      "logout": "Logout",
-      "submit": "Submit",
-      "cancel": "Cancel",
-      "more": "More",
-      "close": "Close",
-      "search": "Search",
-      "edit": "Edit",
-      "delete": "Delete",
-      "create": "Create",
-      "update": "Update",
-      "save": "Save",
-      "apply": "Apply",
-      "getStarted": "Get Started",
-      "contactUs": "Contact Us",
-      "join": "Join",
-      "follow": "Follow",
-      "explore": "Explore More",
-      "bookNow": "Book Now",
-      "back": "Back",
-      "continue": "Continue",
-      "creating": "Creating Account...",
-      "signingIn": "Signing in...",
-      "letsGetStarted": "Let's Get Started"
-    },
-    "form": {
-      "email": "Email",
-      "password": "Password",
-      "confirmPassword": "Confirm Password",
-      "fullName": "Full Name",
-      "phone": "Phone Number",
-      "name": "Name",
-      "address": "Address",
-      "city": "City",
-      "country": "Country",
-      "state": "State",
-      "zip": "Zip",
-      "description": "Description",
-      "title": "Title",
-      "subtitle": "Subtitle",
-      "date": "Date",
-      "time": "Time",
-      "duration": "Duration",
-      "price": "Price",
-      "capacity": "Capacity",
-      "category": "Category",
-      "location": "Location",
-      "image": "Image"
-    },
-    "validation": {
-      "required": "This field is required",
-      "emailInvalid": "Please enter a valid email address",
-      "passwordLength": "Password must be at least 8 characters",
-      "passwordsNoMatch": "Passwords do not match",
-      "fillAllFields": "Please fill in all required fields",
-      "agreeToTerms": "You must agree to the terms and conditions",
-      "emailExists": "Email already exists"
-    },
-    "toast": {
-      "success": "Success!",
-      "error": "Error!",
-      "warning": "Warning!",
-      "info": "Info!"
-    }
-  },
-  "nav": {
-    "home": "Home",
-    "about": "About",
-    "contact": "Contact",
-    "events": "Events",
-    "services": "Services"
-  },
-  "hero": {
-    "slogan": "WHERE ALL GREAT EVENTS BEGIN",
-    "description": "Organize, Discover, and Manage your awesome events effortlessly - one smart platform that connects ideas, people, and events.",
-    "flipWords": "Events Meetups Conference Workshops Festivals Exhibitions Weddings",
-    "rotating": "WELCOME • TO • PLANORA • PLATFORM • "
-  },
-  "cta": {
-    "title": "Ready to Transform Your Events?",
-    "add": "Add Events Details",
-    "share": "Share Your QR",
-    "enjoy": "Enjoy & Give Feedback"
-  },
-  "upcoming": {
-    "title": "Biggest Upcoming event Starts In",
-    "days": "Days",
-    "hours": "Hours",
-    "minutes": "Minutes",
-    "seconds": "Seconds"
-  },
-  "plan": {
-    "title": "Why Should You Plan With Planora?",
-    "subtitle": "Connecting People with smart and joy",
-    "services": "Our Services"
-  },
-  "categories": {
-    "title": "Events Categories",
-    "concerts": {
-      "title": "Concerts",
-      "subtitle": "Get ready for electrifying nights filled with rhythm, passion, and crowd vibes that move your soul."
-    },
-    "wedding": {
-      "title": "Wedding",
-      "subtitle": "From charming halls to luxury setups — we make every wedding a dream come true with seamless planning and perfect details."
-    },
-    "theaters": {
-      "title": "Theaters",
-      "subtitle": "Immerse yourself in the magic of live performances, captivating stories, and unforgettable moments in our theater."
-    },
-    "festivals": {
-      "title": "Festivals",
-      "subtitle": "Experience the vibrant energy of festivals, where music, art, and culture come together to create unforgettable moments."
-    },
-    "exhibitions": {
-      "title": "Exhibitions",
-      "subtitle": "Discover captivating exhibitions, captivating stories, and unforgettable moments in our theater."
-    },
-    "workshops": {
-      "title": "Workshops",
-      "subtitle": "Immerse yourself in the magic of live performances, captivating stories, and unforgettable moments in our theater."
-    },
-    "conferences": {
-      "title": "Conferences",
-      "subtitle": "Immerse yourself in the magic of live performances, captivating stories, and unforgettable moments in our theater."
-    }
-  },
-  "services": {
-    "photographers": {
-      "title": "Photographers",
-      "subtitle": "Capture moments that tell a story",
-      "desc": "Capture moments that tell a story"
-    },
-    "planners": {
-      "title": "Planners",
-      "subtitle": "Plan the perfect events"
-    },
-    "decorators": {
-      "title": "Decorators",
-      "subtitle": "Decorate the perfect events"
-    },
-    "designers": {
-      "title": "Designers",
-      "subtitle": "Design the perfect events"
-    },
-    "halls": {
-      "title": "Events Halls",
-      "subtitle": "Where Grandeur Meets Perfection",
-      "desc": "Experience the pinnacle of luxury and elegance in our Royal Halls — grand venues designed to host your most prestigious events with unmatched style, ambiance, and service."
-    },
-    "catering": {
-      "title": "Catering",
-      "subtitle": "Where Every Bite Tells a Story",
-      "desc": "Delight your guests with world-class catering, exquisite flavors, elegant presentation, and flawless service for every occasion."
-    },
-    "sound": {
-      "title": "Sound System",
-      "subtitle": "Feel the Beat",
-      "desc": "Turn up the energy with our professional DJs — bringing the perfect beats to make every moment unforgettable."
-    },
-    "venues": {
-      "title": "Venues",
-      "subtitle": "Plan the perfect events"
-    },
-    "video": {
-      "title": "Video Production",
-      "subtitle": "Plan the perfect events"
-    }
-  },
-  "feats": {
-    "1": {
-      "title": "Easy Booking",
-      "subtitle": "Fast & secure ticketing"
-    },
-    "2": {
-      "title": "Smart Search",
-      "subtitle": "Find events instantly"
-    },
-    "3": {
-      "title": "Services Marketplace",
-      "subtitle": "Hire photographers, planners, decorators & more"
-    },
-    "4": {
-      "title": "Notifications",
-      "subtitle": "Stay updated & never miss out"
-    },
-    "5": {
-      "title": "AI Powered",
-      "subtitle": "Ai Suggestions and Helper"
-    },
-    "6": {
-      "title": "Rating & Blog",
-      "subtitle": "feedback for events & service providers"
-    }
-  },
-  "footer": {
-    "newstitle": "Ready to Transform Your Events?",
-    "newssubtitle": "Join event hosts and attendees who trust Planora",
-    "platform": "Platform",
-    "features": "Features",
-    "events": "Events",
-    "signup": "Sign Up",
-    "about": "About",
-    "blog": "Blog",
-    "qa": "Q&A",
-    "contact": "Contact",
-    "privacy": "Privacy Policy",
-    "terms": "Terms & Conditions",
-    "support": "Support",
-    "resources": "Resources",
-    "copyright": "© 2025 Planora. All rights reserved | HexaDevs Team."
-  },
-  "auth": {
-    "signout": {
-      "alert": {
-        "title": "Log out of Planora?",
-        "text": "You can always sign in again later.",
-        "confirmButton": "Yes, log me out",
-        "cancelButton": "Cancel"
-      },
-      "toast": {
-        "success": {
-          "title": "Signed out successfully!",
-          "description": "You've been logged out of your account."
+    "common": {
+        "buttons": {
+            "login": "Login",
+            "register": "Register",
+            "logout": "Logout",
+            "submit": "Submit",
+            "cancel": "Cancel",
+            "more": "More",
+            "close": "Close",
+            "search": "Search",
+            "edit": "Edit",
+            "delete": "Delete",
+            "create": "Create",
+            "update": "Update",
+            "save": "Save",
+            "apply": "Apply",
+            "getStarted": "Get Started",
+            "contactUs": "Contact Us",
+            "join": "Join",
+            "follow": "Follow",
+            "explore": "Explore More",
+            "bookNow": "Book Now",
+            "back": "Back",
+            "continue": "Continue",
+            "creating": "Creating Account...",
+            "signingIn": "Signing in...",
+            "letsGetStarted": "Let's Get Started"
         },
-        "error": {
-          "title": "Sign-out failed",
-          "description": "Please try again later."
-        }
-      }
-    },
-    "signin": {
-      "title": "Where great events begin.",
-      "googleSignIn": "Sign in with Google ",
-      "orUseEmail": "Or use Email",
-      "notMember": "Not a member yet?",
-      "registerNow": "REGISTER NOW",
-      "toast": {
-        "success": {
-          "title": "Login Successful!",
-          "description": "Welcome back to Planora!"
+        "form": {
+            "email": "Email",
+            "password": "Password",
+            "confirmPassword": "Confirm Password",
+            "fullName": "Full Name",
+            "phone": "Phone Number",
+            "name": "Name",
+            "address": "Address",
+            "city": "City",
+            "country": "Country",
+            "state": "State",
+            "zip": "Zip",
+            "description": "Description",
+            "title": "Title",
+            "subtitle": "Subtitle",
+            "date": "Date",
+            "time": "Time",
+            "duration": "Duration",
+            "price": "Price",
+            "capacity": "Capacity",
+            "category": "Category",
+            "location": "Location",
+            "image": "Image"
         },
-        "error": {
-          "title": "Login failed!",
-          "description": "Please check your email and password."
-        },
-        "googleSuccess": {
-          "title": "Signed in with Google!",
-          "description": "Welcome to Planora!"
-        },
-        "googleError": {
-          "title": "Sign-In failed with Google!",
-          "description": "Please try again."
-        }
-      }
-    },
-    "register": {
-      "title": "Create Account",
-      "step1": {
-        "subtitle": "Choose your account type",
-        "client": {
-          "title": "I'm a Client",
-          "description": "Browse events, book tickets, and hire service providers for your events",
-          "features": [
-            "Discover amazing events",
-            "Book event services",
-            "Manage your bookings",
-            "Get personalized recommendations"
-          ]
-        },
-        "host": {
-          "title": "I'm a Host",
-          "description": "Offer your services, manage bookings, and grow your event business",
-          "features": [
-            "List your services",
-            "Receive booking requests",
-            "Manage your bookings",
-            "Get personalized recommendations"
-          ]
-        },
-        "provider": {
-          "title": "I'm a Provider",
-          "description": "Offer your services, manage bookings, and grow your event business",
-          "features": [
-            "List your services",
-            "Receive booking requests",
-            "Manage your bookings",
-            "Get personalized recommendations"
-          ]
-        },
-        "alreadyHaveAccount": "Already have an account?"
-      },
-      "step2": {
-        "client": {
-          "subtitle": "Tell us about your interests",
-          "interestsLabel": "Your Interests * (Select at least one)",
-          "eventPreferencesLabel": "About You (Optional)",
-          "eventPreferencesPlaceholder": "Tell us about the types of events you typically attend..."
-        },
-        "host": {
-          "subtitle": "Complete your business profile"
-        },
-        "provider": {
-          "subtitle": "Complete your provider profile"
-        }
-      },
-      "step3": {
-        "subtitle": "Enter your basic information"
-      },
-      "toast": {
         "validation": {
-          "selectUserType": "Please select whether you're a client or host",
-          "selectInterestsAndFullName": "Please select at least one interest and fill in your full name",
-          "fillBusinessInfo": "Please fill in all required business information",
-          "fillRequiredInfo": "Please fill in all required information"
+            "required": "This field is required",
+            "emailInvalid": "Please enter a valid email address",
+            "passwordLength": "Password must be at least 8 characters",
+            "passwordsNoMatch": "Passwords do not match",
+            "fillAllFields": "Please fill in all required fields",
+            "agreeToTerms": "You must agree to the terms and conditions",
+            "emailExists": "Email already exists"
         },
-        "success": {
-          "title": "Registration Successful!",
-          "description": "Welcome to Planora as a"
-        },
-        "error": {
-          "title": "Registration failed",
-          "description": "An error occurred during registration"
-        }
-      }
-    },
-    "form": {
-      "googleSignUp": "Continue with Google",
-      "or": "or",
-      "fullName": {
-        "label": "Full Name *",
-        "placeholder": "John Doe"
-      },
-      "email": {
-        "label": "Email Address *",
-        "placeholder": "your@email.com"
-      },
-      "phone": {
-        "label": "Phone Number",
-        "placeholder": "+1 (555) 000-0000"
-      },
-      "password": {
-        "label": "Password *",
-        "placeholder": "Min. 8 characters"
-      },
-      "confirmPassword": {
-        "label": "Confirm Password *",
-        "placeholder": "Repeat password"
-      },
-      "terms": {
-        "text": "I agree to the",
-        "termsLink": "Terms of Service",
-        "and": "and",
-        "privacyLink": "Privacy Policy"
-      },
-      "toast": {
-        "googleSuccess": {
-          "title": "Signed in with Google!",
-          "description": "Welcome to Planora as a"
-        },
-        "googleError": {
-          "title": "Google Sign-In failed",
-          "description": "An error occurred during Google sign-in"
+        "toast": {
+            "success": "Success!",
+            "error": "Error!",
+            "warning": "Warning!",
+            "info": "Info!"
         }
     },
     "nav": {
@@ -429,27 +129,46 @@
             "subtitle": "Immerse yourself in the magic of live performances, captivating stories, and unforgettable moments in our theater."
         }
     },
-    "hostInfo": {
-      "businessName": {
-        "label": "Business/Company Name *",
-        "placeholder": "Your Business Name"
-      },
-      "category": {
-        "label": "Category *",
-        "placeholder": "Select a category"
-      },
-      "businessDescription": {
-        "label": "Business Description *",
-        "placeholder": "Describe your services, expertise, and what makes your business unique..."
-      },
-      "socialMedia": {
-        "facebook": {
-          "label": "Facebook URL",
-          "placeholder": "https://facebook.com/yourpage"
+    "services": {
+        "photographers": {
+            "title": "Photographers",
+            "subtitle": "Capture moments that tell a story",
+            "desc": "Capture moments that tell a story"
         },
-        "instagram": {
-          "label": "Instagram URL",
-          "placeholder": "https://instagram.com/yourprofile"
+        "planners": {
+            "title": "Planners",
+            "subtitle": "Plan the perfect events"
+        },
+        "decorators": {
+            "title": "Decorators",
+            "subtitle": "Decorate the perfect events"
+        },
+        "designers": {
+            "title": "Designers",
+            "subtitle": "Design the perfect events"
+        },
+        "halls": {
+            "title": "Events Halls",
+            "subtitle": "Where Grandeur Meets Perfection",
+            "desc": "Experience the pinnacle of luxury and elegance in our Royal Halls — grand venues designed to host your most prestigious events with unmatched style, ambiance, and service."
+        },
+        "catering": {
+            "title": "Catering",
+            "subtitle": "Where Every Bite Tells a Story",
+            "desc": "Delight your guests with world-class catering, exquisite flavors, elegant presentation, and flawless service for every occasion."
+        },
+        "sound": {
+            "title": "Sound System",
+            "subtitle": "Feel the Beat",
+            "desc": "Turn up the energy with our professional DJs — bringing the perfect beats to make every moment unforgettable."
+        },
+        "venues": {
+            "title": "Venues",
+            "subtitle": "Plan the perfect events"
+        },
+        "video": {
+            "title": "Video Production",
+            "subtitle": "Plan the perfect events"
         }
     },
     "feats": {
