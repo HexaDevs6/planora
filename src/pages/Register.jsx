@@ -23,7 +23,7 @@ const Register = () => {
       email: "",
       password: "",
       role: "",
-      fullName: "",
+      full_name: "",
       confirmPassword: "",
       phone: "",
       avatar: "",
@@ -77,14 +77,14 @@ const Register = () => {
    };
 
    const validateStep2 = () => {
-      if (userType === "client" && (formData.categories.length === 0 || !formData.fullName)) {
+      if (userType === "client" && (formData.categories.length === 0 || !formData.full_name)) {
          toast.warning(t("auth.register.toast.validation.selectInterestsAndFullName"));
          return false;
       }
 
       if (
          userType === "host" &&
-         (!formData.fullName ||
+         (!formData.full_name ||
             formData.categories.length === 0)
       ) {
          toast.warning(t("auth.register.toast.validation.fillBusinessInfo"));

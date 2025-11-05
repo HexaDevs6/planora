@@ -77,15 +77,15 @@ function NavBar() {
                         <div className='nav__toggles flex gap-2'>
                             {!user ? (
                                 // المستخدم مش داخل 👇
+                                <Link to='/signin'>
                                 <Button
                                     variant='glass'
                                     size='sm'
                                     className='text-foreground'
                                 >
-                                    <Link to='/signin'>
                                         <User2Icon />
-                                    </Link>
                                 </Button>
+                                    </Link>
                             ) : (
                                 // المستخدم داخل ✅
                                 <DropdownMenu>

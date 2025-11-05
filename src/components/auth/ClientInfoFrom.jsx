@@ -65,15 +65,15 @@ const ClientInfoForm = ({ formData, handleInputChange, toggleInterest }) => {
 
          {/* Full Name */}
          <div className='space-y-2'>
-            <Label htmlFor='fullName'>{t("common.form.fullName")} *</Label>
+            <Label htmlFor='full_name'>{t("common.form.fullName")} *</Label>
             <div className='relative'>
                <User className='absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground' />
                <Input
-                  id='fullName'
+                  id='full_name'
                   placeholder={t("auth.form.fullName.placeholder")}
-                  value={formData.fullName}
+                  value={formData.full_name}
                   onChange={(e) =>
-                     handleInputChange("fullName", e.target.value)
+                     handleInputChange("full_name", e.target.value)
                   }
                   className='pl-10'
                   required

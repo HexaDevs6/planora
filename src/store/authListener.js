@@ -2,8 +2,11 @@ import { supabase } from "@/lib/supabaseClient";
 import { setUser, clearUser } from "./authSlice";
 
 export const startAuthListener = async (store) => {
-  // ✅ أولاً: فحص الجلسة الحالية يدويًا
-  const { data: { session } } = await supabase.auth.getSession();
+
+  // ✅ Check existing session on app start
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
   if (session?.user) {
     try {
@@ -11,13 +14,12 @@ export const startAuthListener = async (store) => {
         .from("users")
         .select("*")
         .eq("id", session.user.id)
-        .single();
+        .maybeSingle();
 
       if (userData) {
-        store.dispatch(setUser({ ...session.user, ...userData }));
+        store.dispatch(setUser(userData)); // ✅ ONLY DB data
       } else {
-        // لو مفيش بيانات في users table
-        store.dispatch(setUser(session.user));
+        store.dispatch(clearUser());
       }
     } catch (err) {
       console.error("Initial session fetch error:", err.message);
@@ -27,7 +29,7 @@ export const startAuthListener = async (store) => {
     store.dispatch(clearUser());
   }
 
-  // ✅ ثانياً: الاستماع لتغيرات الحالة (sign in/out)
+  // ✅ Listen for auth state changes normally
   const { data: listener } = supabase.auth.onAuthStateChange(
     async (event, session) => {
       console.log("Auth event:", event);
@@ -43,12 +45,12 @@ export const startAuthListener = async (store) => {
             .from("users")
             .select("*")
             .eq("id", session.user.id)
-            .single();
+            .maybeSingle();
 
           if (userData) {
-            store.dispatch(setUser({ ...session.user, ...userData }));
+            store.dispatch(setUser(userData));
           } else {
-            store.dispatch(setUser(session.user));
+            store.dispatch(clearUser());
           }
         } catch (err) {
           console.error("Listener fetch error:", err.message);

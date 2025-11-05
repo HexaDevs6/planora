@@ -2,7 +2,7 @@ import React from "react";
 
 export default function Spinner() {
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-white">
+    <div className="flex flex-col items-center justify-center h-screen bg-background">
       <div className="w-30 h-30 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
       <img
         src="/favPlanora.svg"

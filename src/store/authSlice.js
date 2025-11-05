@@ -16,10 +16,17 @@ const authSlice = createSlice({
     reducers: {
         // تعيين المستخدم بعد تسجيل الدخول أو التسجيل
         setUser: (state, action) => {
-            state.user = action.payload;
-            state.isAuthenticated = !!action.payload;
+            let u = action.payload;
+
+            // 🛑 لو جاية من Supabase Auth وطلعت "authenticated"
+            if (u?.role === "authenticated") {
+                u = { ...u, role: null };
+            }
+
+            state.user = u;
+            state.isAuthenticated = !!u;
             state.error = null;
-            state.initialized = true; // ✅ أول مرة نحط user أو نحدثه → اعتبرنا النظام جاهز
+            state.initialized = true;
         },
 
         // أثناء تحميل البيانات

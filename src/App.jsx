@@ -33,17 +33,23 @@ function App() {
     return (
         <main>
             <BrowserRouter>
-                <Toaster richColors position='top-right' />
+                <Toaster richColors position='bottom-right' />
 
                 <Routes>
                     <Route element={<MainLayout />}>
                         <Route path='/' element={<Home />} />
                         <Route path='/about' element={<About />} />
                         <Route path='/contact' element={<Contact />} />
-                        <Route path="/events/:eventId" element={<EventDetails />} />
-                        <Route path="/events" element={<Events/>}/>
-                        <Route path="/services" element={<Services/>}/>
-                        <Route path="/services/:serviceId" element={<ServiceDetails />}/>
+                        <Route
+                            path='/events/:eventId'
+                            element={<EventDetails />}
+                        />
+                        <Route path='/events' element={<Events />} />
+                        <Route path='/services' element={<Services />} />
+                        <Route
+                            path='/services/:serviceId'
+                            element={<ServiceDetails />}
+                        />
                     </Route>
                     <Route
                         element={
