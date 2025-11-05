@@ -10,7 +10,7 @@ import { fetchCategories } from "@/store/fetchCategoriesThunk";
 import { useDirection } from "@/hooks/useDirection";
 
 const HostInfoForm = ({ formData, handleInputChange,toggleInterest }) => {
-   const { fullName, bio, facebook, instagram } = formData;
+   const { full_name, bio, facebook, instagram } = formData;
    const { t } = useTranslation();
    const { lang } = useDirection();
 
@@ -50,8 +50,8 @@ const HostInfoForm = ({ formData, handleInputChange,toggleInterest }) => {
                <Input
                   id="businessName"
                   placeholder={t("auth.hostInfo.businessName.placeholder")}
-                  value={fullName || ""}
-                  onChange={(e) => handleInputChange("fullName", e.target.value)}
+                  value={full_name || ""}
+                  onChange={(e) => handleInputChange("full_name", e.target.value)}
                   className="pl-10"
                   required
                />

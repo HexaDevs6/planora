@@ -1,10 +1,20 @@
 import { useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
+import Spinner from "../SpinnerLoader";
 
 export default function ProtectedRoute({ children }) {
-  const { user, loading } = useSelector((state) => state.auth);
+  const { user, initialized } = useSelector((state) => state.auth);
+  const location = useLocation();
 
-  if (loading) return <div className="p-4 text-center">Loading...</div>;
+  if (!initialized) return <Spinner />;
 
-  return user ? children : <Navigate to="/signin" replace />;
+  // لو معندوش session خالص
+  if (!user) return <Navigate to="/signin" replace />;
+
+  // 👇 أهم خطوة: لو معندوش role يروح يكمل بياناته
+  if (!user.role && location.pathname !== "/register") {
+    return <Navigate to="/register" replace />;
+  }
+
+  return children;
 }

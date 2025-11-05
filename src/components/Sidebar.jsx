@@ -1,6 +1,13 @@
 import React, { useState, useCallback, useMemo } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { ArrowRight, X, LogOut, Home, UserCircle2Icon, User2 } from "lucide-react";
+import {
+    ArrowRight,
+    X,
+    LogOut,
+    Home,
+    UserCircle2Icon,
+    User2,
+} from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
@@ -8,8 +15,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { handleSignOut } from "@/components/auth/handleSignOut";
 import LanguageSwitcher from "./LanguageSwitcher";
 import ThemeToggle from "./ThemeToggle";
-import  avatarPlaceholderImg  from "@/assets/user_placeholder3.png";
-
+import avatarPlaceholderImg from "@/assets/user_placeholder3.png";
 
 export default function Sidebar({ sideLinks }) {
     // 🔹 Sidebar state (open/close)
@@ -28,7 +34,8 @@ export default function Sidebar({ sideLinks }) {
     const userName = user?.full_name || user?.email?.split("@")[0];
     //capitalize role
     const userRole = user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1);
-    const userAvatar = user?.avatar || avatarPlaceholderImg ; ;
+
+    const userAvatar = user?.avatar || avatarPlaceholderImg  ;
 
     // 🔹 Memoized data to avoid unnecessary re-renders
     const links = useMemo(() => sideLinks, [sideLinks]);
@@ -77,6 +84,9 @@ export default function Sidebar({ sideLinks }) {
                     <div className='flex flex-col items-center mb-6 space-y-1'>
                         <motion.img
                             src={userAvatar}
+                            onError={(e) => {
+                                e.target.src = avatarPlaceholderImg;
+                            }}
                             alt='User Avatar'
                             className={`rounded-full border-2 border-violet-light transition-all duration-300 ${
                                 isOpen ? "w-16 h-16 mb-2" : "w-10 h-10"

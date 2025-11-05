@@ -10,12 +10,14 @@ import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUserWithEmail, saveUserInfo } from "@/store/authThunks";
+import { setLoading, setUser } from "@/store/authSlice";
+import { supabase } from "@/lib/supabaseClient";
 
 const CreateUserForm = ({ formData, setStep, step, userType, handleInputChange }) => {
    const { t } = useTranslation();
    const dispatch = useDispatch();
    const navigate = useNavigate();
-   const { email, password, confirmPassword, phone,categories } = formData;
+   const { email, password, confirmPassword, phone, categories } = formData;
    const { loading } = useSelector((state) => state.auth);
 
    const [agreedToTerms, setAgreedToTerms] = useState(false);
@@ -49,7 +51,7 @@ const CreateUserForm = ({ formData, setStep, step, userType, handleInputChange }
       try {
          // 1️⃣ إنشاء الحساب في Supabase Auth
          const { success, user, error } = await dispatch(
-            registerUserWithEmail(email, password )
+            registerUserWithEmail(email, password)
          );
 
          if (!success || !user) {
@@ -79,28 +81,131 @@ const CreateUserForm = ({ formData, setStep, step, userType, handleInputChange }
       }
    };
 
-   // ✅ Handle Google Sign Up (placeholder)
+   // ✅ Handle Google Sign Up 
    const handleGoogleSignUp = async () => {
-      toast.info(t("auth.form.googleSignUpComingSoon"));
+      if (!agreedToTerms) {
+         toast.warning(t("common.validation.agreeToTerms"));
+         return;
+      }
+
+      try {
+         setLoading(true);
+
+         // ✅ تسجيل الدخول بجوجل
+         const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: "google",
+            options: {
+               skipBrowserRedirect: true,
+            },
+         });
+
+         if (error) throw error;
+
+         // ✅ فتح نافذة البوب-أب
+         const popup = window.open(
+            data.url,
+            "googlePopup",
+            "width=500,height=600"
+         );
+
+         // ✅ استماع لحالة تسجيل الدخول
+         const { data: listener } = supabase.auth.onAuthStateChange(
+            async (event, session) => {
+               if (event === "SIGNED_IN") {
+                  listener.subscription.unsubscribe();
+                  popup?.close();
+
+                  const user = session?.user;
+                  console.log("user",user);
+                  
+                  if (!user) {
+                     toast.error(t("common.errors.somethingWentWrong"));
+                     setLoading(false);
+                     return;
+                  }
+
+                  // ✅ بناء بيانات المستخدم من الفورم + بيانات جوجل
+                  const userData = {
+                     id: user.id,
+                     email: user.email,
+                     full_name:
+                        formData.full_name?.trim() ||
+                        user.user_metadata?.full_name?.trim() ||
+                        user.user_metadata?.name?.trim() ||
+                        (user.email ? user.email.split("@")[0] : "User"),
+                     avatar:
+                        user.user_metadata?.avatar_url ||
+                        user.user_metadata?.picture ||
+                        null,
+                     phone: formData.phone || null,
+                     bio: formData.bio || null,
+                     facebook: formData.facebook || null,
+                     instagram: formData.instagram || null,
+                     location: formData.location || null,
+                  };
+
+                  console.log("userdata",userData);
+                  
+
+
+                  // ✅ تسجيل البيانات والكاتيجوريات باستخدام الـ thunk الجاهز
+                  const { success, error: infoError } = await dispatch(
+                     saveUserInfo({
+                        userId: user.id,
+                        userInfo: {...userData},
+                        categories: categories || [],
+                        role: userType,
+                     })
+                  );
+
+                  if (!success) {
+                     console.error(infoError);
+                     toast.error(t("common.errors.somethingWentWrong"));
+                     setLoading(false);
+                     return;
+                  }
+
+                  toast.success(t("auth.register.toast.success.title"));
+                  navigate(userType === "host" ? "/host" : "/user");
+                  setLoading(false);
+               }
+            }
+         );
+      } catch (err) {
+         console.error(err);
+         toast.error(t("common.errors.somethingWentWrong"));
+         setLoading(false);
+      }
    };
+
+
 
    return (
       <div className="space-y-6 animate-fade-in">
          {/* 🔹 Google Sign Up */}
          <Button
-            variant="ghost"
-            className="w-full text-primary"
+            variant="outline"
             onClick={handleGoogleSignUp}
-            disabled={loading}
+            disabled={loading || !agreedToTerms}
+            className={`w-full flex items-center justify-center gap-3 border-2 rounded-md py-4 transition-all
+      ${!agreedToTerms
+                  ? "opacity-60 cursor-not-allowed"
+                  : "hover:border-amber hover:bg-amber/10"
+               }`}
          >
             {loading ? (
-               <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+               <>
+                  <Loader2 className="h-5 w-5 animate-spin text-amber" />
+                  <span className="text-amber">جارٍ التسجيل...</span>
+               </>
             ) : (
-               <Chrome className="mr-2 h-5 w-5" />
+               <>
+                  <Chrome className="h-5 w-5 text-primary" />
+                  <span className="font-semibold text-primary">
+                     {t("auth.form.googleSignUp")}
+                  </span>
+               </>
             )}
-            {loading
-               ? t("common.buttons.creating")
-               : t("auth.form.googleSignUp")}
          </Button>
 
          {/* Divider */}
@@ -241,8 +346,8 @@ const CreateUserForm = ({ formData, setStep, step, userType, handleInputChange }
          </form>
          {console.log(`User Type: ${userType}`)}
          {console.log(`Form Data: ${formData}`)}
-         {console.log(`Form Data: ${categories}`)}
-         
+         {console.log(`categories: ${categories}`)}
+
       </div>
    );
 };
