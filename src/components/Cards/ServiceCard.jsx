@@ -6,15 +6,15 @@ import { Star, MapPin, CheckCircle } from "lucide-react";
 
 const ServiceCard = ({
   id,
-  title,
-  provider,
-  image,
-  category,
-  location,
-  rating,
-  reviews,
-  priceRange,
-  verified,
+  title   = "Service Title",
+  provider = "Unknown Provider",
+  image = "https://via.placeholder.com/300",
+  category = "General",
+  location = "Unknown",
+  rating = 0,
+  reviews = 0,
+  priceRange = "Contact for price",
+  verified = false,
 }) => {
   return (
     <Card className="group overflow-hidden border-0 shadow-card hover:shadow-hover transition-all duration-300 hover:scale-[1.02]">
