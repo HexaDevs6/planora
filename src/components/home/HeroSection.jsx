@@ -5,6 +5,8 @@ import { SplittingText } from "../ui/shadcn-io/splitting-text/index";
 import { FlipWords } from "../ui/shadcn-io/flip-words";
 import CircularText from "../ui/shadcn-io/circular-text/index";
 import { t } from "i18next";
+import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 function HeroSection() {
   const heroImages = [
@@ -21,9 +23,9 @@ function HeroSection() {
       <AutoFadeCarousel images={heroImages} />
 
       {/* المحتوى النصي */}
-      <div className="md:start-20 absolute z-10 max-w-5xl px-4 sm:px-8 text-start flex flex-col gap-7">
+      <div className=" bottom-3 lg:start-20 lg:bottom-15 absolute z-10 max-w-5xl px-4 text-start flex flex-col gap-1 md:gap-4">
         <img
-          className="hidden md:block w-100"
+          className="hidden md:block w-80"
           src="PlanoraYellowTypo.png"
           alt="LogoPLanora"
         />
@@ -51,23 +53,26 @@ function HeroSection() {
         />
 
         <div className="flex flex-col sm:flex-row justify-start gap-3 sm:gap-4">
-          <Button
-            className={`${buttonVariants({
-              variant: "primary",
-              size: "CTA",
-            })} text-background font-bold hover:text-primary transition-all duration-300`}
-          >
-            {t("common.buttons.getStarted")}
-          </Button>
-
-          <Button
-            className={buttonVariants({
-              variant: "glass",
-              size: "CTA",
-            })}
-          >
-            {t("common.buttons.contactUs")}
-          </Button>
+          <Link to={"./host/create-event"}>
+            <Button
+              className={`${buttonVariants({
+                variant: "primary",
+                size: "CTA",
+              })} text-background font-bold transition-all duration-300`}
+            >
+              {t("common.buttons.getStarted")}
+            </Button>
+          </Link>
+          <Link to={"/contact"}>
+            <Button
+              className={buttonVariants({
+                variant: "glass",
+                size: "CTA",
+              })}
+            >
+              {t("common.buttons.contactUs")}
+            </Button>
+          </Link>
         </div>
       </div>
 
