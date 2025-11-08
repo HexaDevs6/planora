@@ -26,8 +26,8 @@ const UserServices = () => {
    const lang = i18next.language;
    const user = useSelector((state) => state.auth.user);
    const dispatch = useDispatch();
-   const [services, setServices] = useState([]);
    const [loading, setLoading] = useState(true);
+   const [services, setServices] = useState([]);
 
    const formatDate = (dateString) => {
       return new Date(dateString).toLocaleDateString("en-US", {
@@ -50,6 +50,7 @@ const UserServices = () => {
          confirmButtonText: lang === "ar" ? "نعم" : "Yes",
          cancelButtonText: lang === "ar" ? "لا" : "No",
       }).then(async (result) => {
+         setLoading(true);
          if (result.isConfirmed) {
             const { data, error } = await supabase
                .from("services")
@@ -64,6 +65,7 @@ const UserServices = () => {
                toast.success(lang === "ar" ? "تم حذف الخدمة بنجاح!" : "Service deleted successfully!");
             }
          }
+         setLoading(false);
       });
    };
 
@@ -119,7 +121,7 @@ const UserServices = () => {
          }
       };
       fetchUserServices();
-   }, []);
+   }, [loading, user.id]);
 
    useEffect(() => {
       if (!categories || categories.length === 0) {
@@ -129,7 +131,7 @@ const UserServices = () => {
 
    return (
       <section className="min-h-screen bg-background p-4 md:p-8">
-         <div className="max-w-7xl mx-auto">
+         <div className="container">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
                <div>

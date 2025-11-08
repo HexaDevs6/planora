@@ -14,7 +14,7 @@ import {
    SelectTrigger,
    SelectValue,
 } from "@/components/ui/select";
-import i18next from "i18next";
+import { useDirection } from "@/hooks/useDirection";
 import DragZone from "@/components/services/DragZone";
 import { useSearchParams } from "react-router-dom";
 import Spinner from "@/components/SpinnerLoader";
@@ -26,9 +26,8 @@ export default function AddService() {
    const serviceId = searchParams.get("serviceId");
    const [originalData, setOriginalData] = useState(null);
    const navigate = useNavigate();
-
+   const { lang } = useDirection();
    const dispatch = useDispatch();
-   const lang = i18next.language;
    const user = useSelector((state) => state.auth.user);
    const { data: categories, loading: categoriesLoading } = useSelector(
       (state) => state.categories
@@ -480,6 +479,7 @@ export default function AddService() {
                      onChange={handleChangeImages}
                      acceptMultiple={true}
                      files={serviceId ? formData.images : null}
+                     maxFiles={5}
                   />
                </div>
 

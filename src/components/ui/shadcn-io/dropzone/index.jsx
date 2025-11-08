@@ -58,7 +58,7 @@ export const Dropzone = ({
       value={{ src, accept, maxSize, minSize, maxFiles }}>
       <Button
         className={cn(
-          'relative h-auto w-full flex-col overflow-hidden p-8',
+          'relative h-auto w-full flex-col overflow-hidden p-2 md:p-4 lg:p-8',
           isDragActive && 'outline-none ring-1 ring-ring',
           className
         )}

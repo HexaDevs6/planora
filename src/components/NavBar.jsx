@@ -113,7 +113,7 @@ function NavBar() {
                                         className='w-fit'
                                     >
                                         <DropdownMenuItem asChild>
-                                            <Link to={`/user/overview`}>
+                                            <Link to={user.role === 'host' ? `/host/overview` : `/user/overview`}>
                                                 {user?.full_name}'s Dashboard
                                             </Link>
                                         </DropdownMenuItem>
