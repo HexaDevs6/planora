@@ -31,6 +31,10 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import "swiper/css";
 import { fetchEvents } from "@/store/fetchEventsThunk";
+import { supabase } from "@/lib/supabaseClient";
+import loremImg from "@/assets/lorem.jfif";
+import { motion } from "framer-motion";
+
 export default function Events() {
   7;
   const query = useSelector((state) =>
@@ -42,7 +46,6 @@ export default function Events() {
   // get categories from supabase
   const { data, loading } = useSelector((state) => state.categories);
 
-  const filterData = data.filter((category) => category.type === "event");
   const icons = [
     Palette,
     Gift,
@@ -63,14 +66,25 @@ export default function Events() {
     Hammer,
   ];
 
+  const interestOptions = data
+    .filter((category) => category.type === "event")
+    .map((category) => ({
+      ...category,
+      displayName: currentLang === "ar" ? category.name_ar : category.name,
+    }));
+
   // get events from supabase
-  const { eventsData, eventsLoading } = useSelector((state) => state.events);
-  console.log(eventsData);
+  const {
+    items: eventsData,
+    loading: eventsLoading,
+    error,
+  } = useSelector((state) => state.events);
 
   useEffect(() => {
-    dispatch(fetchEvents());
-    dispatch(fetchCategories());
-  }, [dispatch]);
+    // Fetch only if data not loaded before
+    if (!eventsData.length) dispatch(fetchEvents());
+    if (!data.length) dispatch(fetchCategories());
+  }, [dispatch, eventsData.length, data.length]);
 
   // filter category
   const filterQuery = useSelector((state) =>
@@ -83,13 +97,34 @@ export default function Events() {
       ? eventsData.filter((el) => el.name.toLowerCase().trim().includes(query))
       : eventsData
           .filter((el) => el.name.toLowerCase().trim().includes(query))
-          .filter((el) => el.category.toLowerCase() === filterQuery);
+          .filter(
+            (el) =>
+              interestOptions
+                .filter((item) => item.id === el.category_id)[0]
+                ?.displayName.toLowerCase() === filterQuery
+          );
+
   const visibleEvents = useSelector(
     (state) => state.eventsSearchAndFilter.visibleCount
   );
 
   // get visible events from redux store
   const viewEvents = filterSearch.slice(0, visibleEvents);
+  // شيل يا مصطفى
+  function getPublicUrl(bucket, path) {
+    const { data } = supabase.storage.from(bucket).getPublicUrl(path);
+    return data?.publicUrl;
+  }
+
+  const handleThumbnail = function (el) {
+    if (el) {
+      if (el.startsWith("http")) {
+        return el;
+      } else {
+        return getPublicUrl("events", el);
+      }
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -138,7 +173,7 @@ export default function Events() {
                   </SwiperSlide>
 
                   {/* باقي الكاتيجوريز */}
-                  {filterData.map((category, index) => (
+                  {interestOptions.map((category, index) => (
                     <SwiperSlide key={category.name}>
                       <div
                         className="animate-scale-in"
@@ -166,22 +201,34 @@ export default function Events() {
               </p>
             ) : (
               <div className="py-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                {viewEvents.map((el) => (
-                  <EventCard
+                {viewEvents.map((el, i) => (
+                  <motion.div
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: i * 0.1 }}
                     key={el.id}
-                    id={el.id}
-                    title={currentLang === "ar" ? el.name_ar : el.name}
-                    image={el.thumbnail || "https://placehold.co/400x300"}
-                    date={
-                      el.date
-                        ? new Date(el.date).toLocaleDateString(currentLang)
-                        : "N/A"
-                    }
-                    location={el.location || "Unspecified"}
-                    category={el.category}
-                    price={el.is_free ? t("eventsPage.free") : `$${el.price}`}
-                    attendees={el.capacity}
-                  />
+                  >
+                    <EventCard
+                      key={el.id}
+                      id={el.id}
+                      title={currentLang === "ar" ? el.name_ar : el.name}
+                      // getPublicUrl("events", el.thumbnail)
+                      image={handleThumbnail(el.thumbnail) || loremImg}
+                      date={
+                        el.date
+                          ? new Date(el.date).toLocaleDateString(currentLang)
+                          : "N/A"
+                      }
+                      location={el.location || "Unspecified"}
+                      category={
+                        interestOptions.filter(
+                          (item) => item.id === el.category_id
+                        )[0]?.displayName
+                      }
+                      price={el.is_free ? t("eventsPage.free") : `$${el.price}`}
+                      attendees={el.capacity}
+                    />
+                  </motion.div>
                 ))}
               </div>
             )}
