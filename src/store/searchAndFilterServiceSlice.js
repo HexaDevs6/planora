@@ -17,7 +17,7 @@ const searchAndFilterServiceSlice = createSlice({
       state.visibleCountService = 6;
     },
     setServiceVisibleCount: (state) => {
-      state.visibleCountService += 3;
+      state.visibleCountService += 6;
     },
   },
 });

@@ -24,6 +24,9 @@ import { Autoplay } from "swiper/modules";
 // import "swiper/css";
 import { fetchCategories } from "@/store/fetchCategoriesThunk";
 import { fetchServices } from "@/store/fetchServicesThunk";
+import loremService from "@/assets/loremService.jfif";
+import { motion } from "framer-motion";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function Services() {
   const query = useSelector((state) =>
@@ -51,15 +54,22 @@ export default function Services() {
     Bus,
   ];
 
+  const interestOptions = data
+    .filter((category) => category.type === "service")
+    .map((category) => ({
+      ...category,
+      displayName: currentLang === "ar" ? category.name_ar : category.name,
+    }));
+
   // get services from supabase
-  const { servicesData, servicesLoading } = useSelector(
+  const { items: servicesData, loading:servicesLoading, error } = useSelector(
     (state) => state.services
   );
 
   useEffect(() => {
-    dispatch(fetchCategories());
-    dispatch(fetchServices());
-  }, [dispatch]);
+    if (!data.length) dispatch(fetchCategories());
+    if (!servicesData.length) dispatch(fetchServices());
+  }, [dispatch, servicesData.length, data.length]);
 
   // filter category
   const filterQuery = useSelector((state) =>
@@ -74,12 +84,34 @@ export default function Services() {
         )
       : servicesData
           .filter((el) => el.name.toLowerCase().trim().includes(query))
-          .filter((el) => el.category.toLowerCase() === filterQuery);
+          .filter(
+            (el) =>
+              interestOptions
+                .filter((item) => item.id === el.category_id)[0]
+                ?.displayName.toLowerCase() === filterQuery
+          );
+
   const visibleServices = useSelector(
     (state) => state.servicesSearchAndFilter.visibleCountService
   );
   // get visible services from redux store
   const viewService = filterSearch.slice(0, visibleServices);
+
+  // شيل يا مصطفى
+  function getPublicUrl(bucket, path) {
+    const { data } = supabase.storage.from(bucket).getPublicUrl(path);
+    return data?.publicUrl;
+  }
+
+  const handleThumbnail = function (el) {
+    if (el) {
+      if (el.startsWith("http")) {
+        return el;
+      } else {
+        return getPublicUrl("events", el);
+      }
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -128,7 +160,7 @@ export default function Services() {
                   </SwiperSlide>
 
                   {/* باقي الكاتيجوريز */}
-                  {filterData.map((category, index) => (
+                  {interestOptions.map((category, index) => (
                     <SwiperSlide key={category.name}>
                       <div
                         className="animate-scale-in"
@@ -173,28 +205,40 @@ export default function Services() {
               </p>
             ) : (
               <div className="py-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                {viewService.map((el) => (
-                  <ServiceCard
+                {viewService.map((el, i) => (
+                  <motion.div
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: i * 0.1 }}
                     key={el.id}
-                    id={el.id}
-                    title={currentLang === "ar" ? el.name_ar : el.name}
-                    image={el.thumbnail || "/https://placehold.co/400x300"}
-                    description={
-                      currentLang === "ar" ? el.description_ar : el.description
-                    }
-                    category={el.category}
-                    priceRange={
-                      el.price ? `$${el.price}` : t("servicesPage.free")
-                    }
-                    available={el.available}
-                    date={
-                      el.created_at
-                        ? new Date(el.created_at).toLocaleDateString(
-                            currentLang
-                          )
-                        : "N/A"
-                    }
-                  />
+                  >
+                    <ServiceCard
+                      id={el.id}
+                      title={currentLang === "ar" ? el.name_ar : el.name}
+                      image={handleThumbnail(el.thumbnail) || loremService}
+                      description={
+                        currentLang === "ar"
+                          ? el.description_ar
+                          : el.description
+                      }
+                      category={
+                        interestOptions.filter(
+                          (item) => item.id === el.category_id
+                        )[0]?.displayName
+                      }
+                      priceRange={
+                        el.price ? `$${el.price}` : t("servicesPage.free")
+                      }
+                      available={el.available}
+                      date={
+                        el.created_at
+                          ? new Date(el.created_at).toLocaleDateString(
+                              currentLang
+                            )
+                          : "N/A"
+                      }
+                    />
+                  </motion.div>
                 ))}
               </div>
             )}
