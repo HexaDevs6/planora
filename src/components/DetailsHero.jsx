@@ -3,7 +3,7 @@ import React from "react";
 const DetailsHero = ({
    lang,
    img = "https://placehold.co/800x400",
-   title = { ar: "العنوان باللغة العربية", en: "This is english title" },
+   title,
 }) => {
    return (
       <div className="hero mt-28">
@@ -13,7 +13,7 @@ const DetailsHero = ({
          >
             <div className="flex h-full items-end p-4 md:p-8 text-white bg-gradient-to-t from-white dark:from-violet-light via-transparent to-transparent">
                <h2 className="text-2xl md:text-3xl lg:text-5xl text-foreground font-bold">
-                  {title[lang]}
+                  {title}
                </h2>
             </div>
          </div>

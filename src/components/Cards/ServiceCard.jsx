@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -17,6 +19,27 @@ const ServiceCard = ({
   priceRange = "Contact for price",
   verified = false,
 }) => {
+  // Fetch provider data from supabase by provider_id
+
+  const [provider, setProvider] = useState("Unknown Provider");
+
+    const fetchProvider = async () => {
+      if (!provider_id) return;
+      const { data, error } = await supabase
+        .from("users").select("full_name").eq("id", provider_id).single();
+        
+        if (error) {
+          console.error(error);
+          setProvider("Unknown Provider");
+          return;
+        } else {
+          setProvider(data.full_name || "Unknown Provider");
+        }
+    };
+    useEffect(() => {
+      fetchProvider();
+    }, [provider_id]);
+
   return (
     <Card className="group overflow-hidden border-0 gap-4 shadow-card hover:shadow-hover transition-all duration-300 hover:scale-[1.02]">
       <div className="overflow-hidden aspect-square h-75 ">

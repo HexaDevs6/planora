@@ -90,7 +90,6 @@ export default function Events() {
   const filterQuery = useSelector((state) =>
     state.eventsSearchAndFilter.filter.toLowerCase()
   );
-  console.log(filterQuery);
 
   // apply search
   const filterSearch =
