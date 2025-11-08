@@ -279,7 +279,7 @@ export default function AddService() {
    // ✅ واجهة المستخدم
    return (
       <section className="min-h-screen justify-center items-center bg-background text-content transition-colors duration-500">
-         <div className="w-full bg-muted max-w-5xl mx-auto backdrop-blur-lg border border-content/20 shadow-lg rounded-[var(--radius)] p-8 md:p-12 transition-all duration-300">
+         <div className="w-full max-w-5xl mx-auto">
             <header className="text-center mb-10">
                <h1 className="text-3xl md:text-4xl font-bold text-primary mb-2">
                   {lang === "ar" ? "إضافة خدمة" : "Add Service"}
@@ -312,7 +312,7 @@ export default function AddService() {
                            ? "اكتب عنوان الخدمة بالإنجليزية"
                            : "Enter service title"
                      }
-                     className="bg-background shadow-none"
+                     className="bg-muted shadow-none"
                   />
                </div>
 
@@ -333,7 +333,7 @@ export default function AddService() {
                            ? "اكتب عنوان الخدمة بالعربية"
                            : "Enter service title in Arabic, what you are offering ?"
                      }
-                     className="bg-background shadow-none"
+                     className="bg-muted shadow-none"
                   />
                </div>
 
@@ -357,7 +357,7 @@ export default function AddService() {
                            ? "اكتب وصف الخدمة بالإنجليزية"
                            : "Enter service description in English, what you are offering ?"
                      }
-                     className="bg-background shadow-none"
+                     className="bg-muted shadow-none"
                   />
                </div>
 
@@ -379,7 +379,7 @@ export default function AddService() {
                            ? "اكتب وصف الخدمة بالعربية"
                            : "Enter service description in Arabic"
                      }
-                     className="bg-background shadow-none"
+                     className="bg-muted shadow-none"
                   />
                </div>
 
@@ -448,7 +448,7 @@ export default function AddService() {
                            ? 'على سبيل المثال "100" أو "0"'
                            : "e.g. 100 or 0"
                      }
-                     className="bg-background shadow-none"
+                     className="bg-muted shadow-none"
                   />
                </div>
 
