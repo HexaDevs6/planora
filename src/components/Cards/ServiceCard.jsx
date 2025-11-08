@@ -11,13 +11,13 @@ import loremService  from '@/assets/loremService.jfif';
 const ServiceCard = ({
   id,
   title = "Service Title",
-  provider = "Unknown Provider",
   image = "https://via.placeholder.com/300",
   category = "General",
   rating = 0,
   reviews = 0,
   priceRange = "Contact for price",
   verified = false,
+  provider_id = null,
 }) => {
   // Fetch provider data from supabase by provider_id
 

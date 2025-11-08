@@ -237,6 +237,7 @@ export default function Services() {
                             )
                           : "N/A"
                       }
+                      provider_id={el.client_id}
                     />
                   </motion.div>
                 ))}
