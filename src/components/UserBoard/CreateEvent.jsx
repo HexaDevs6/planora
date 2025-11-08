@@ -300,8 +300,8 @@ export default function PublishEvent() {
 
    // واجهة المستخدم
    return (
-      <section className="justify-center items-center bg-background text-content transition-colors duration-500">
-         <div className="w-full bg-muted max-w-5xl mx-auto backdrop-blur-lg border border-content/20 shadow-lg rounded-xl p-4 md:p-8 lg:p-12 transition-all duration-300">
+      <section className="justify-center items-center text-content transition-colors duration-500">
+         <div className="w-full max-w-4xl mx-auto">
             <header className="text-center mb-10">
                <h1 className="text-3xl md:text-4xl font-bold text-primary mb-2">
                   {lang === "ar" ? "نشر حدث" : "Publish Event"}

@@ -74,7 +74,7 @@ export default function UserOverview() {
 
     return (
         <>
-            <div className='overview bg-background flex flex-col gap-2 transition-all duration-300 ease-in-out '>
+            <div className='overview flex flex-col gap-2 transition-all duration-300 ease-in-out '>
                 <div className='host-stats'>
                     <div className=' host-stats__header flex justify-between'>
                         <h2 className='text-2xl font-bold text-primary mb-2 '>

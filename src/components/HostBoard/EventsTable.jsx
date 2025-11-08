@@ -17,6 +17,7 @@ const EventsTable = () => {
    const [events, setEvents] = useState([]);
    const user = useSelector((state) => state.auth.user);
    const [loading, setLoading] = useState(true);
+   const [loadingDelete, setLoadingDelete] = useState(false);
 
    const formatDate = (dateString) => {
       return new Date(dateString).toLocaleDateString("en-US", {
@@ -38,7 +39,7 @@ const EventsTable = () => {
          confirmButtonText: lang === "ar" ? "نعم" : "Yes",
          cancelButtonText: lang === "ar" ? "لا" : "No",
       }).then(async (result) => {
-			setLoading(true);
+			setLoadingDelete(true);
          if (result.isConfirmed) {
             const { data, error } = await supabase
                .from("events")
@@ -61,7 +62,7 @@ const EventsTable = () => {
                );
             }
          }
-         setLoading(false);
+         setLoadingDelete(false);
       });
    };
 
@@ -89,7 +90,7 @@ const EventsTable = () => {
          }
       };
       fetchUserEvents();
-   }, [loading, user.id]);
+   }, [user.id, loadingDelete]);
 
    useEffect(() => {
       if (!categories || categories.length === 0) {
@@ -143,14 +144,14 @@ const EventsTable = () => {
          </div>
 
          {/* Table */}
-         {events.length === 0 && !loading ? (
+         {events.length === 0 && !loading && !loadingDelete ? (
             <Card>
                <CardContent>
                   <EmptyState />
                </CardContent>
             </Card>
          ) : (
-            <Card>
+            <Card className="bg-background border rounded-xl overflow-hidden">
                <CardContent className={"p-0"}>
                   {loading ? (
                      <div className="flex-center py-16 px-4 min-h-[300px]">
@@ -199,7 +200,7 @@ const EventsTable = () => {
                                        </span>
                                     </td>
                                     <td className="py-4 px-4">
-                                       <div className="flex items-center gap-1 text-sm">
+                                       <div className="flex items-center gap-1 text-sm text-nowrap">
                                           <Calendar className="h-3 w-3 text-muted-foreground" />
                                           {formatDate(event.date)}
                                        </div>

@@ -6,7 +6,7 @@ import About from "./pages/About";
 import Signin from "./pages/Signin";
 import Register from "./pages/Register";
 import { Navigate } from "react-router-dom";
-import UserLayout from "./layout/UserLayout";
+import SidebarLayout from "./layout/SidebarLayout";
 import UserMessages from "./components/UserBoard/UserMessages";
 import UserOverview from "./components/UserBoard/UserOverview";
 import UserSettings from "./components/UserBoard/UserSettings";
@@ -20,7 +20,6 @@ import PublicRoute from "@/components/guards/PublicRoute";
 import Events from "./pages/Events";
 import Services from "./pages/Services";
 import EventDetails from "./pages/EventDetails";
-import HostLayout from "./layout/HostLayout";
 import HostOverview from "./components/HostBoard/HostOverview";
 import HostEvents from "./components/HostBoard/EventsTable";
 import HostMessages from "./components/HostBoard/HostMessages";
@@ -68,7 +67,7 @@ function App() {
                         path='/user'
                         element={
                             <ProtectedRoute>
-                                <UserLayout />
+                                <SidebarLayout />
                             </ProtectedRoute>
                         }
                     >
@@ -88,7 +87,7 @@ function App() {
                         path='/host'
                         element={
                             <ProtectedRoute>
-                                <HostLayout />
+                                <SidebarLayout />
                             </ProtectedRoute>
                         }
                     >

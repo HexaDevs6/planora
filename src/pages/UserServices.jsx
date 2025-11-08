@@ -27,6 +27,7 @@ const UserServices = () => {
    const user = useSelector((state) => state.auth.user);
    const dispatch = useDispatch();
    const [loading, setLoading] = useState(true);
+   const [loadingDelete, setLoadingDelete] = useState(false);
    const [services, setServices] = useState([]);
 
    const formatDate = (dateString) => {
@@ -50,7 +51,7 @@ const UserServices = () => {
          confirmButtonText: lang === "ar" ? "نعم" : "Yes",
          cancelButtonText: lang === "ar" ? "لا" : "No",
       }).then(async (result) => {
-         setLoading(true);
+         setLoadingDelete(true);
          if (result.isConfirmed) {
             const { data, error } = await supabase
                .from("services")
@@ -65,7 +66,7 @@ const UserServices = () => {
                toast.success(lang === "ar" ? "تم حذف الخدمة بنجاح!" : "Service deleted successfully!");
             }
          }
-         setLoading(false);
+         setLoadingDelete(false);
       });
    };
 
@@ -121,7 +122,7 @@ const UserServices = () => {
          }
       };
       fetchUserServices();
-   }, [loading, user.id]);
+   }, [user.id, loadingDelete]);
 
    useEffect(() => {
       if (!categories || categories.length === 0) {
@@ -153,7 +154,7 @@ const UserServices = () => {
             </div>
 
             {/* Services Table or Empty State */}
-            {services.length === 0 && !loading ? (
+            {services.length === 0 && !loading && !loadingDelete ? (
                <Card>
                   <CardContent>
                      <EmptyState />

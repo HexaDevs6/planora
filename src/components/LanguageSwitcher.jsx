@@ -33,7 +33,7 @@ const LanguageSwitcher = () => {
             variant='glass'
             size='sm'
             onClick={handleLanguageSwitch}
-            className='font-bold text-foreground'
+            className='font-bold text-foreground w-fit'
             role='switch'
             aria-checked={i18n.language === "ar"}
             aria-label={t("language.switch")}

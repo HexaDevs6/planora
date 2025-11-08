@@ -28,7 +28,7 @@ export default function UserOverview() {
   };
 
   return (
-    <div className="overview bg-background flex flex-col gap-12 transition-all duration-300 ease-in-out">
+    <div className="overview flex flex-col gap-12 transition-all duration-300 ease-in-out">
       {/* Upcoming Events */}
       <div className="upcoming-events">
         <div className="upcoming-events__header flex flex-col items-start md:flex-row md:items-center gap-2 justify-between">

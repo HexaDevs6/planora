@@ -10,7 +10,7 @@ export default function Stats({ stats = [] }) {
             {stats.map((item, i) => (
                 <div
                     key={i}
-                    className='flex flex-col gap-2 rounded-sm p-6 bg-card  shadow-sm border border-gray-100 dark:border-neutral-800 transition-all duration-200 hover:shadow-md'
+                    className='flex flex-col gap-2 rounded-xl p-6 bg-background border'
                 >
                     <p className='text-base font-medium text-gray-700 dark:text-gray-300'>
                         {item.label}
