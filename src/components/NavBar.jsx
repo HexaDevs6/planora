@@ -105,48 +105,24 @@ function NavBar() {
                     </Avatar>
                   </DropdownMenuTrigger>
 
-                                    <DropdownMenuContent
-                                        align='end'
-                                        className='w-fit'
-                                    >
-                                        <DropdownMenuItem asChild>
-                                            <Link to={user.role === 'host' ? `/host/overview` : `/user/overview`}>
-                                                {user?.full_name}'s Dashboard
-                                            </Link>
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem asChild>
-                                            <Link to='/user/settings'>
-                                                Settings
-                                            </Link>
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem
-                                            onClick={() =>
-                                                handleSignOut(
-                                                    dispatch,
-                                                    navigate,
-                                                    t
-                                                )
-                                            }
-                                            className='text-amper focus:text-amper/80 hover:bg-red-600/10'
-                                        >
-                                            Logout
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
-                            )}
-
-                            <ThemeToggle />
-                            <LanguageSwitcher />
-                        </div>
-                    </div>
-                </div>
-                {/* Mobile dropdown menu */}
-                {isOpen && (
-                    <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.4, ease: "easeInOut" }}
+                  <DropdownMenuContent align="end" className="w-fit">
+                    <DropdownMenuItem asChild>
+                      <Link
+                        to={
+                          user.role === "host"
+                            ? `/host/overview`
+                            : `/user/overview`
+                        }
+                      >
+                        {user?.full_name}'s Dashboard
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/user/settings">Settings</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => handleSignOut(dispatch, navigate, t)}
+                      className="text-amper focus:text-amper/80 hover:bg-red-600/10"
                     >
                       Logout
                     </DropdownMenuItem>
@@ -159,6 +135,7 @@ function NavBar() {
             </div>
           </div>
         </div>
+
         {/* Mobile dropdown menu */}
         {isOpen && (
           <motion.div
