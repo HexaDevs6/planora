@@ -17,7 +17,7 @@ const searchAndFilterEventsSlice = createSlice({
       state.visibleCount = 6;
     },
     setVisibleCount: (state) => {
-      state.visibleCount += 3;
+      state.visibleCount += 6;
     },
   },
 });

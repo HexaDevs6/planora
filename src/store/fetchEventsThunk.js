@@ -1,21 +1,22 @@
+// src/store/eventsThunks.js
+import { createAsyncThunk } from "@reduxjs/toolkit";
 import { supabase } from "@/lib/supabaseClient";
-import { setEvents, setLoading } from "./eventsSlice";
 
-export const fetchEvents = () => async (dispatch) => {
-  dispatch(setLoading(true));
-  try {
-    const { data, error } = await supabase
-      .from("events")
-      .select("*")
-      .order("created_at", { ascending: true });
-    if (error) throw error;
+// ✅ Fetch all events from Supabase
+export const fetchEvents = createAsyncThunk(
+  "events/fetchEvents",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data, error } = await supabase
+        .from("events")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-    dispatch(setEvents(data || []));
-    return { success: true, events: data || [] };
-  } catch (error) {
-    console.error("Fetch events error:", error.message);
-    return { success: false, error: error.message };
-  } finally {
-    dispatch(setLoading(false));
+      if (error) throw error;
+      return data || [];
+    } catch (err) {
+      console.error("Fetch events error:", err.message);
+      return rejectWithValue(err.message);
+    }
   }
-};
+);
