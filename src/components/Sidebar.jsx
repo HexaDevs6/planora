@@ -17,7 +17,7 @@ import LanguageSwitcher from "./LanguageSwitcher";
 import ThemeToggle from "./ThemeToggle";
 import avatarPlaceholderImg from "@/assets/user_placeholder3.png";
 
-export default function Sidebar({ sideLinks }) {
+export default function Sidebar({ sideLinks, lang }) {
     // 🔹 Sidebar state (open/close)
     const [isOpen, setIsOpen] = useState(false);
 
@@ -38,7 +38,10 @@ export default function Sidebar({ sideLinks }) {
     const userAvatar = user?.avatar || avatarPlaceholderImg  ;
 
     // 🔹 Memoized data to avoid unnecessary re-renders
-    const links = useMemo(() => sideLinks, [sideLinks]);
+    const links = useMemo(() => sideLinks.map((item) => ({
+        ...item,
+        label: lang === "ar" ? item.label.ar : item.label.en,
+    })), [sideLinks, lang]);
 
     // 🔹 Handle logout safely
     const handleLogout = useCallback(() => {

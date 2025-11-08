@@ -209,7 +209,7 @@ export default function HostMessages() {
                   alt="Acme Corp"
                 />
                 <div className="flex flex-col gap-1 max-w-md">
-                  <div class="bg-white dark:bg-violet p-3 rounded-lg rounded-bl-sm shadow-subtle">
+                  <div className="bg-white dark:bg-violet p-3 rounded-lg rounded-bl-sm shadow-subtle">
                     <p className="text-sm text-violet dark:text-white">
                       Hey, just following up on the catering options for the
                       "Summer Gala" event. Have you had a chance to review the
@@ -230,7 +230,7 @@ export default function HostMessages() {
                       vegetarian menu?
                     </p>
                   </div>
-                  <span class="text-xs text-text-body-light dark:text-text-body-dark self-end">
+                  <span className="text-xs text-text-body-light dark:text-text-body-dark self-end">
                     2:42 PM
                   </span>
                 </div>
@@ -247,13 +247,13 @@ export default function HostMessages() {
                   alt="Acme Corp"
                 />
                 <div className="flex flex-col gap-1 max-w-md">
-                  <div class="bg-white dark:bg-violet p-3 rounded-lg rounded-bl-sm shadow-subtle">
+                  <div className="bg-white dark:bg-violet p-3 rounded-lg rounded-bl-sm shadow-subtle">
                     <p className="text-sm text-violet dark:text-white">
                       Sure, that sounds great! Their options seem varied enough
                       to satisfy all our guests. Let's proceed with them.
                     </p>
                   </div>
-                  <span class="text-xs text-text-body-light dark:text-text-body-dark self-start">
+                  <span className="text-xs text-text-body-light dark:text-text-body-dark self-start">
                     2:45 PM
                   </span>
                 </div>

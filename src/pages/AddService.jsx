@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { supabase } from "@/lib/supabaseClient";
 import { toast } from "sonner";
 import { fetchCategories } from "@/store/fetchCategoriesThunk";
-import { validateEvent } from "@/utils/validation/eventValidation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -17,15 +16,18 @@ import {
 } from "@/components/ui/select";
 import { useDirection } from "@/hooks/useDirection";
 import DragZone from "@/components/services/DragZone";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
+import Spinner from "@/components/SpinnerLoader";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
-export default function PublishEvent() {
-	const [searchParams] = useSearchParams();
-   const eventId = searchParams.get("eventId");
-   const dispatch = useDispatch();
+export default function AddService() {
+   const [searchParams] = useSearchParams();
+   const serviceId = searchParams.get("serviceId");
+   const [originalData, setOriginalData] = useState(null);
+   const navigate = useNavigate();
    const { lang } = useDirection();
-	const navigate = useNavigate();
+   const dispatch = useDispatch();
    const user = useSelector((state) => state.auth.user);
    const { data: categories, loading: categoriesLoading } = useSelector(
       (state) => state.categories
@@ -38,96 +40,68 @@ export default function PublishEvent() {
       slug: "",
       description: "",
       description_ar: "",
-      location: "",
-      date: "",
-      end_date: "",
-      category: "",
-      capacity: "",
+      category_id: "",
       price: "",
-      status: "upcoming",
       thumbnail: null,
       images: [],
    });
 
-	const [originalData, setOriginalData] = useState(null);
-
-	useEffect(() => {
-      if (eventId) {
+   useEffect(() => {
+      if (serviceId) {
          setLoading(true);
          const fetchService = async () => {
             const { data, error } = await supabase
-               .from("events")
+               .from("services")
                .select("*")
-               .eq("id", eventId);
+               .eq("id", serviceId);
             if (error) {
                console.error(error);
                return;
             } else {
                console.log(data);
-               const event = data[0];
-               const eventData = {
-                  name: event.name,
-                  name_ar: event.name_ar,
-                  slug: event.slug,
-                  description: event.description,
-                  description_ar: event.description_ar,
-                  category: event.category_id,
-                  price: event.price,
-                  thumbnail: event.thumbnail,
-                  images: event.images,
-                  location: event.location,
-                  date: event.date,
-                  end_date: event.end_date,
-                  capacity: event.capacity,
-                  status: event.status,
+               const service = data[0];
+               const serviceData = {
+                  name: service.name,
+                  name_ar: service.name_ar,
+                  slug: service.slug,
+                  description: service.description,
+                  description_ar: service.description_ar,
+                  category_id: service.category_id,
+                  price: service.price,
+                  thumbnail: service.thumbnail,
+                  images: service.images,
                };
-               setFormData(eventData);
-               setOriginalData(eventData);
+               setFormData(serviceData);
+               setOriginalData(serviceData);
                setLoading(false);
             }
          };
          fetchService();
       }
-   }, [eventId]);
+   }, [serviceId]);
 
-	const handleCancel = () => {
-      Swal.fire({
-         title: lang === "ar" ? "هل أنت متأكد؟" : "Are you sure?",
-         text:
-            lang === "ar"
-               ? "لن تتمكن من التراجع عن هذا!"
-               : "You won't be able to revert this!",
-         icon: "warning",
-         showCancelButton: true,
-         confirmButtonText: lang === "ar" ? "نعم" : "Yes",
-         cancelButtonText: lang === "ar" ? "لا" : "No",
-      }).then((result) => {
-         if (result.isConfirmed) {
-            clearFormData();
-            navigate("/host/events");
-         }
-      });
-   };
-
-   // ✅ جلب التصنيفات من Supabase مرة واحدة
    useEffect(() => {
       if (!categories || categories.length === 0) {
          dispatch(fetchCategories());
       }
    }, [dispatch, categories]);
 
-   // ✅ تجهيز التصنيفات للعرض
-   const CategoryOptions =
-      categories
-         ?.filter((category) => category.type === "event")
-         ?.map((category) => ({
-            ...category,
-            displayName: lang === "ar" ? category.name_ar : category.name,
-         })) || [];
+   const [CategoryOptions, setCategoryOptions] = useState([]);
 
-   // ✅ التعامل مع إدخال المستخدم
+   useEffect(() => {
+      setCategoryOptions(
+         categories
+            ?.filter((category) => category.type === "service")
+            ?.map((category) => ({
+               ...category,
+               displayName: lang === "ar" ? category.name_ar : category.name,
+            })) || []
+      );
+   }, [categories, lang]);
+
    const handleChange = (e) => {
       const { id, value, type, files, checked } = e.target;
+
       setFormData({
          ...formData,
          [id]:
@@ -141,27 +115,51 @@ export default function PublishEvent() {
       });
    };
 
-	const clearFormData = () => {
+   const handleChangeThumbnail = (file) => {
+      setFormData({ ...formData, thumbnail: file });
+   };
+
+   const handleChangeImages = (files) => {
+      setFormData({ ...formData, images: files });
+   };
+
+   const clearFormData = () => {
       setFormData({
          name: "",
          name_ar: "",
          slug: "",
          description: "",
          description_ar: "",
-         category: "",
+         category_id: "",
          price: "",
-         capacity: "",
-         location: "",
-         date: "",
-         end_date: "",
          thumbnail: null,
          images: [],
       });
    };
 
-   // ✅ إرسال البيانات إلى Supabase
+   const handleCancel = () => {
+      Swal.fire({
+         title: lang === "ar" ? "هل أنت متأكد؟" : "Are you sure?",
+         text:
+            lang === "ar"
+               ? "لن تتمكن من التراجع عن هذا!"
+               : "You won't be able to revert this!",
+         icon: "warning",
+         showCancelButton: true,
+         confirmButtonText: lang === "ar" ? "نعم" : "Yes",
+         cancelButtonText: lang === "ar" ? "لا" : "No",
+      }).then((result) => {
+         if (result.isConfirmed) {
+            clearFormData();
+            navigate("/user/services");
+         }
+      });
+   };
+
    const handleSubmit = async (e) => {
       e.preventDefault();
+      console.log(formData);
+
       // const errors = validateEvent(formData);
       // if (Object.keys(errors).length > 0) {
       //    // عرض الأخطاء في toast
@@ -172,17 +170,6 @@ export default function PublishEvent() {
       try {
          setLoading(true);
 
-         // تجهيز التواريخ
-         const formattedDate = formData.date
-            ? new Date(formData.date).toISOString()
-            : new Date().toISOString();
-
-         const formattedEndDate = formData.end_date
-            ? new Date(formData.end_date).toISOString()
-            : formattedDate;
-
-         // توليد slug فريد
-         //slug من الاسم عايز يتعدل عشان يبقى فريد
          let slug = formData.name
             .toLowerCase()
             .trim()
@@ -192,7 +179,7 @@ export default function PublishEvent() {
          const uniqueSuffix = Date.now().toString().slice(-5);
          slug = `${slug}-${uniqueSuffix}`;
 
-         if (eventId) {
+         if (serviceId) {
             // Compare formData with originalData and only send changed fields
             const changedFields = {};
             
@@ -234,82 +221,73 @@ export default function PublishEvent() {
             console.log("Changed fields:", changedFields);
 
             const { data, error } = await supabase
-               .from("events")
+               .from("services")
                .update(changedFields)
-               .eq("id", eventId);
+               .eq("id", serviceId);
                
             if (error) {
                console.error(error);
-               toast.error(lang === "ar" ? `حدث خطأ أثناء تحديث الحدث: ${error.message}` : `An error occurred while updating the event: ${error.message}`);
+               toast.error(lang === "ar" ? `حدث خطأ أثناء تحديث الخدمة: ${error.message}` : `An error occurred while updating the service: ${error.message}`);
                return;
             } else {
-               toast.success(lang === "ar" ? `تم تحديث الحدث "${formData.name_ar}" بنجاح!` : `Event "${formData.name}" updated successfully!`);
-               console.log("Updated Event:", data);
-               navigate("/host/events");
+               toast.success(lang === "ar" ? `تم تحديث الخدمة "${formData.name_ar}" بنجاح!` : `Service "${formData.name}" updated successfully!`);
+               console.log("Updated Service:", data);
+               navigate("/user/services");
             }
          } else {
             const { data, error } = await supabase
-               .from("events")
+               .from("services")
                .insert([
                   {
-							host_id: user.id,
-							name: formData.name,
-							name_ar: formData.name_ar,
-							slug,
-							description: formData.description,
-							description_ar: formData.description_ar,
-							category_id: formData.category || null,
-							location: formData.location,
-							date: formattedDate,
-							end_date: formattedEndDate,
-							capacity: Number(formData.capacity) || null,
-							price: Number(formData.price) || 0,
-							status: formData.status,
-							thumbnail: formData.thumbnail?.name || null,
-							images: Array.isArray(formData.images)
-							  ? formData.images.map((img) => img.name)
-							  : null,
+                     client_id: user.id,
+                     name: formData.name,
+                     name_ar: formData.name_ar,
+                     slug,
+                     description: formData.description,
+                     description_ar: formData.description_ar,
+                     category_id: formData.category_id || null,
+                     price: Number(formData.price) || 0,
+                     thumbnail: formData.thumbnail?.name || null,
+                     images: Array.isArray(formData.images)
+                        ? formData.images.map((img) => img.name)
+                        : null,
                   },
                ])
                .select();
 
             if (error) throw error;
 
-            	toast.success(lang === "ar" ? `تم إنشاء الحدث "${formData.name}" بنجاح!` : `Event "${formData.name}" created successfully!`);
+            toast.success(lang === "ar" ? `تم إنشاء الخدمة "${formData.name}" بنجاح!` : `Service "${formData.name}" created successfully!`);
 
-            console.log("Inserted Event:", data);
-            navigate("/host/events");
+            console.log("Inserted Service:", data);
+            navigate("/user/services");
          }
 
          clearFormData();
       } catch (err) {
-         console.error("❌ Insert Error:", err.message);
-         toast.error(
-            lang === "ar"
-               ? `حدث خطأ أثناء إنشاء الحدث: ${err.message}`
-               : `An error occurred while creating the event: ${err.message}`
-         );
+         console.error("Insert Error:", err.message);
+         toast.error(lang === "ar" ? `حدث خطأ أثناء إنشاء الحدث: ${err.message}` : `An error occurred while creating the service: ${err.message}`);
       } finally {
          setLoading(false);
       }
    };
 
-	const handleChangeImages = (files) => {
-      setFormData({ ...formData, images: files });
-   };
+   if (loading && serviceId) {
+      return <Spinner />;
+   }
 
-   // واجهة المستخدم
+   // ✅ واجهة المستخدم
    return (
-      <section className="justify-center items-center bg-background text-content transition-colors duration-500">
-         <div className="w-full bg-muted max-w-5xl mx-auto backdrop-blur-lg border border-content/20 shadow-lg rounded-xl p-4 md:p-8 lg:p-12 transition-all duration-300">
+      <section className="min-h-screen justify-center items-center bg-background text-content transition-colors duration-500">
+         <div className="w-full bg-muted max-w-5xl mx-auto backdrop-blur-lg border border-content/20 shadow-lg rounded-[var(--radius)] p-8 md:p-12 transition-all duration-300">
             <header className="text-center mb-10">
                <h1 className="text-3xl md:text-4xl font-bold text-primary mb-2">
-                  {lang === "ar" ? "نشر حدث" : "Publish Event"}
+                  {lang === "ar" ? "إضافة خدمة" : "Add Service"}
                </h1>
                <p className="text-content/80">
                   {lang === "ar"
-                     ? "أدخل جميع بيانات الحدث أدناه لنشر الحدث"
-                     : "Fill in all event details below to publish your event."}
+                     ? "أدخل جميع بيانات الخدمة أدناه لإضافة الخدمة"
+                     : "Fill in all service details below to add your service."}
                </p>
             </header>
 
@@ -317,15 +295,13 @@ export default function PublishEvent() {
                onSubmit={handleSubmit}
                className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6"
             >
-               {/* English / Arabic Names */}
+               {/* Title */}
                <div>
                   <Label
                      htmlFor="name"
                      className="block text-sm font-semibold mb-2"
                   >
-                     {lang === "ar"
-                        ? "اسم الحدث (إنجليزي)"
-                        : "Event Name (English)"}
+                     {lang === "ar" ? "العنوان (إنجليزي)" : "Title (English)"}
                   </Label>
                   <Input
                      id="name"
@@ -333,8 +309,8 @@ export default function PublishEvent() {
                      onChange={handleChange}
                      placeholder={
                         lang === "ar"
-                           ? "اكتب اسم الحدث بالإنجليزية"
-                           : "Enter event name"
+                           ? "اكتب عنوان الخدمة بالإنجليزية"
+                           : "Enter service title"
                      }
                      className="bg-background shadow-none"
                   />
@@ -345,9 +321,7 @@ export default function PublishEvent() {
                      htmlFor="name_ar"
                      className="block text-sm font-semibold mb-2"
                   >
-                     {lang === "ar"
-                        ? "اسم الحدث (عربي)"
-                        : "Event Name (Arabic)"}
+                     {lang === "ar" ? "العنوان (عربي)" : "Title (Arabic)"}
                   </Label>
                   <Input
                      id="name_ar"
@@ -356,8 +330,8 @@ export default function PublishEvent() {
                      onChange={handleChange}
                      placeholder={
                         lang === "ar"
-                           ? "اكتب اسم الحدث بالعربية"
-                           : "Enter event name in Arabic"
+                           ? "اكتب عنوان الخدمة بالعربية"
+                           : "Enter service title in Arabic, what you are offering ?"
                      }
                      className="bg-background shadow-none"
                   />
@@ -380,8 +354,8 @@ export default function PublishEvent() {
                      rows={3}
                      placeholder={
                         lang === "ar"
-                           ? "اكتب وصف الحدث بالإنجليزية"
-                           : "Describe your event"
+                           ? "اكتب وصف الخدمة بالإنجليزية"
+                           : "Enter service description in English, what you are offering ?"
                      }
                      className="bg-background shadow-none"
                   />
@@ -402,29 +376,8 @@ export default function PublishEvent() {
                      rows={3}
                      placeholder={
                         lang === "ar"
-                           ? "اكتب وصف الحدث بالعربية"
-                           : "Describe your event in Arabic"
-                     }
-                     className="bg-background shadow-none"
-                  />
-               </div>
-
-               {/* Location */}
-               <div>
-                  <Label
-                     htmlFor="location"
-                     className="block text-sm font-semibold mb-2"
-                  >
-                     {lang === "ar" ? "موقع الحدث" : "Event Location"}
-                  </Label>
-                  <Input
-                     id="location"
-                     value={formData.location}
-                     onChange={handleChange}
-                     placeholder={
-                        lang === "ar"
-                           ? "مثال: 'عبر الإنترنت' أو 'القاهرة، مصر'"
-                           : "e.g., 'Online' or 'Cairo, Egypt'"
+                           ? "اكتب وصف الخدمة بالعربية"
+                           : "Enter service description in Arabic"
                      }
                      className="bg-background shadow-none"
                   />
@@ -436,7 +389,7 @@ export default function PublishEvent() {
                      htmlFor="category"
                      className="block text-sm font-semibold mb-2"
                   >
-                     {lang === "ar" ? "فئة الحدث" : "Event Category"}
+                     {lang === "ar" ? "فئة الخدمة" : "Service Category"}
                   </Label>
                   {categoriesLoading ? (
                      <p className="text-sm text-muted-foreground">
@@ -446,10 +399,10 @@ export default function PublishEvent() {
                      </p>
                   ) : (
                      <Select
-                        value={formData.category}
-                        id="category"
+                        value={formData.category_id}
+                        id="category_id"
                         onValueChange={(value) =>
-                           setFormData({ ...formData, category: value })
+                           setFormData({ ...formData, category_id: value })
                         }
                         dir={lang === "ar" ? "rtl" : "ltr"}
                      >
@@ -457,7 +410,7 @@ export default function PublishEvent() {
                            <SelectValue
                               placeholder={
                                  lang === "ar"
-                                    ? "اختر فئة الحدث"
+                                    ? "اختر فئة الخدمة"
                                     : "Select category"
                               }
                            />
@@ -468,74 +421,22 @@ export default function PublishEvent() {
                                  {cat.displayName}
                               </SelectItem>
                            ))}
+                           <SelectItem value="others">
+                              {lang === "ar" ? "غير ذالك" : "Others"}
+                           </SelectItem>
                         </SelectContent>
                      </Select>
                   )}
                </div>
 
-
-
-               {/* Dates */}
-               <div>
-                  <Label
-                     htmlFor="date"
-                     className="block text-sm font-semibold mb-2"
-                  >
-                     {lang === "ar" ? "تاريخ الحدث" : "Event Date"}
-                  </Label>
-                  <Input
-                     id="date"
-                     type="date"
-                     value={formData.date}
-                     onChange={handleChange}
-                     className="bg-background shadow-none"
-                  />
-               </div>
-
-               <div>
-                  <Label
-                     htmlFor="end_date"
-                     className="block text-sm font-semibold mb-2"
-                  >
-                     {lang === "ar" ? "تاريخ الانتهاء" : "End Date"}
-                  </Label>
-                  <Input
-                     id="end_date"
-                     type="date"
-                     value={formData.end_date}
-                     onChange={handleChange}
-                     className="bg-background shadow-none"
-                  />
-               </div>
-
-               {/* Capacity & Price */}
-					<div>
-                  <Label
-                     htmlFor="capacity"
-                     className="block text-sm font-semibold mb-2"
-                  >
-                     {lang === "ar" ? "السعة" : "Capacity"}
-                  </Label>
-                  <Input
-                     id="capacity"
-                     type="number"
-                     value={formData.capacity}
-                     onChange={handleChange}
-                     placeholder={
-                        lang === "ar"
-                           ? "أدخل السعة (مثل 100)"
-                           : "Enter capacity (e.g., 100)"
-                     }
-                     className="bg-background shadow-none"
-                  />
-               </div>
+               {/* Price */}
 
                <div>
                   <Label
                      htmlFor="price"
                      className="block text-sm font-semibold mb-2"
                   >
-                     {lang === "ar" ? "سعر التذكرة" : "Ticket Price"}
+                     {lang === "ar" ? "سعر الخدمة" : "Service Price"}
                   </Label>
                   <Input
                      id="price"
@@ -543,76 +444,67 @@ export default function PublishEvent() {
                      value={formData.price}
                      onChange={handleChange}
                      placeholder={
-                        lang === "ar" ? "مثال: 100 أو 0" : "e.g., 100 or 0"
+                        lang === "ar"
+                           ? 'على سبيل المثال "100" أو "0"'
+                           : "e.g. 100 or 0"
                      }
                      className="bg-background shadow-none"
                   />
                </div>
 
-					{/* Thumbnail */}
-               <div className="md:col-span-2">
+               {/* Thumbnail */}
+               <div>
                   <Label
                      htmlFor="thumbnail"
                      className="block text-sm font-semibold mb-2"
                   >
-                     {lang === "ar" ? "الصورة المصغرة" : "Thumbnail"}
+                     {lang === "ar" ? "صورة الخدمة" : "Service Thumbnail"}
                   </Label>
-						<DragZone
-                     onChange={handleChangeImages}
+                  <DragZone
+                     onChange={handleChangeThumbnail}
                      acceptMultiple={false}
-                     files={eventId ? [formData.thumbnail] : null}
+                     files={serviceId ? [formData.thumbnail] : null}
                   />
                </div>
 
                {/* Images */}
-               <div className="md:col-span-2">
+               <div>
                   <Label
                      htmlFor="images"
                      className="block text-sm font-semibold mb-2"
                   >
-                     {lang === "ar" ? "صور الحدث" : "Event Images"}
+                     {lang === "ar" ? "صور الخدمة" : "Service Images"}
                   </Label>
                   <DragZone
                      onChange={handleChangeImages}
                      acceptMultiple={true}
-                     files={eventId ? formData.images : null}
+                     files={serviceId ? formData.images : null}
+                     maxFiles={5}
                   />
                </div>
 
                {/* Submit */}
                <div className="md:col-span-2 flex justify-end gap-4">
-                  {eventId ? (
-							<Button
-                     type="submit"
-                     disabled={loading}
-                     variant="amber"
-                     size="lg"
-                  >
-                     {loading
-                        ? lang === "ar"
-                           ? "جاري التحديث..."
-                           : "Updating..."
-                        : lang === "ar"
-                        ? "تحديث الحدث"
-                        : "Update Event"}
-                  </Button>
-						) : (
-						<Button
-                     type="submit"
-                     disabled={loading}
-                     variant="amber"
-                     size="lg"
-                  >
-                     {loading
-                        ? lang === "ar"
-                           ? "جاري النشر..."
-                           : "Creating..."
-                        : lang === "ar"
-                        ? "إنشاء الحدث"
-                        : "Create Event"}
-                  </Button>
-					)}
-						<Button
+                  {serviceId ? (
+                     <Button
+                        type="submit"
+                        disabled={loading}
+                        variant="amber"
+                        size="lg"
+                     >
+                        {loading ? "Updating..." : "Update Service"}
+                     </Button>
+                  ) : (
+                     <Button
+                        type="submit"
+                        disabled={loading}
+                        variant="amber"
+                        size="lg"
+                     >
+                        {loading ? "Publishing..." : "Publish Service"}
+                     </Button>
+                  )}
+                  <Button
                      type="button"
                      disabled={loading}
                      variant="outline"

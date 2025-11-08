@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,7 +9,7 @@ import { Star, MapPin, CheckCircle } from "lucide-react";
 const ServiceCard = ({
   id,
   title   = "Service Title",
-  provider = "Unknown Provider",
+  provider_id = "Unknown Provider",
   image = "https://via.placeholder.com/300",
   category = "General",
   location = "Unknown",
@@ -16,11 +18,32 @@ const ServiceCard = ({
   priceRange = "Contact for price",
   verified = false,
 }) => {
+  // Fetch provider data from supabase by provider_id
+
+  const [provider, setProvider] = useState("Unknown Provider");
+
+    const fetchProvider = async () => {
+      if (!provider_id) return;
+      const { data, error } = await supabase
+        .from("users").select("full_name").eq("id", provider_id).single();
+        
+        if (error) {
+          console.error(error);
+          setProvider("Unknown Provider");
+          return;
+        } else {
+          setProvider(data.full_name || "Unknown Provider");
+        }
+    };
+    useEffect(() => {
+      fetchProvider();
+    }, [provider_id]);
+
   return (
     <Card className="group overflow-hidden border-0 shadow-card hover:shadow-hover transition-all duration-300 hover:scale-[1.02]">
       <div className="overflow-hidden aspect-square">
         <img
-          src={image}
+          src={image || "https://placehold.co/400x300"}
           alt={title}
           className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500"
         />

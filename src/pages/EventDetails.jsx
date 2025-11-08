@@ -11,74 +11,86 @@ import EventCountdown from "@/components/events/EventCountdown";
 import { Facebook, Instagram, Twitter } from "lucide-react";
 import { useDirection } from "@/hooks/useDirection";
 import DetailsHero from "@/components/DetailsHero";
-
-const event = {
-   id: 12,
-   img: "https://images.pexels.com/photos/2774556/pexels-photo-2774556.jpeg?_gl=1*17pb17n*_ga*MTYwNjc0OTkyNC4xNzU3Mjc3NDA1*_ga_8JE65Q40S6*czE3NjEwNjI0MjEkbzQkZzEkdDE3NjEwNjI0MjckajU0JGwwJGgw",
-   category: "TECH",
-   title: {
-      ar: "العنوان باللغة العربية",
-      en: "This is english title",
+import { useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import Spinner from "@/components/SpinnerLoader";
+import { supabase } from "@/lib/supabaseClient";
+const details = {
+   start_date: "2025-11-01T18:00:00Z",
+   end_date: "2025-11-03T21:00:00Z",
+   price: 299,
+   address: {
+      ar: "العنوان بالعربي",
+      en: "English Address",
    },
-   details: {
-      start_date: "2025-11-01T18:00:00Z",
-      end_date: "2025-11-03T21:00:00Z",
-      price: 299,
-      address: {
-         ar: "العنوان بالعربي",
-         en: "English Address",
+}
+const highlights = [
+   {
+      title: {
+         ar: "السخي  سيب سيم ث شسيمس يكسحخيمء",
+         en: "sak sls oiefwmnclk fljsd kjiisjfs",
+      },
+      description: {
+         ar: "السخي  سيب سيم ث شسيمس يكسحخيمء ههيةسيخؤو خسيخيوث نبه  بنب",
+         en: "sak sls oiefwmnclk fljsd kjiisjfs dsdi cmems .xw, mxksam ew uuyed",
       },
    },
-   about: {
-      ar: "انضموا إلينا في قمة مبتكري التكنولوجيا، فعالية رائدة تجمع ألمع العقول في مجال التكنولوجيا. استكشفوا أحدث التوجهات، وتواصلوا مع رواد الصناعة، واكتشفوا الابتكارات الرائدة التي تُشكّل المستقبل. تتضمن هذه القمة كلمات رئيسية، وحلقات نقاش، وورش عمل تفاعلية مُصممة لإلهام وتمكين خبراء التكنولوجيا.",
-      en: "Join us for the Tech Innovators Summit, a premier event bringing together the brightest minds in technology. Explore the latest trends, network with industry leaders, and discover groundbreaking innovations shaping the future. This summit features keynote speeches, panel discussions, and interactive workshops designed to inspire and empower tech professionals.",
+   {
+      title: {
+         ar: "السخي  سيب سيم ث شسيمس يكسحخيمء",
+         en: "sak sls oiefwmnclk fljsd kjiisjfs",
+      },
+      description: {
+         ar: "السخي  سيب سيم ث شسيمس يكسحخيمء ههيةسيخؤو خسيخيوث نبه  بنب",
+         en: "sak sls oiefwmnclk fljsd kjiisjfs dsdi cmems .xw, mxksam ew uuyed",
+      },
    },
-   highlights: [
-      {
-         title: {
-            ar: "السخي  سيب سيم ث شسيمس يكسحخيمء",
-            en: "sak sls oiefwmnclk fljsd kjiisjfs",
-         },
-         description: {
-            ar: "السخي  سيب سيم ث شسيمس يكسحخيمء ههيةسيخؤو خسيخيوث نبه  بنب",
-            en: "sak sls oiefwmnclk fljsd kjiisjfs dsdi cmems .xw, mxksam ew uuyed",
-         },
+   {
+      title: {
+         ar: "السخي  سيب سيم ث شسيمس يكسحخيمء",
+         en: "sak sls oiefwmnclk fljsd kjiisjfs",
       },
-      {
-         title: {
-            ar: "السخي  سيب سيم ث شسيمس يكسحخيمء",
-            en: "sak sls oiefwmnclk fljsd kjiisjfs",
-         },
-         description: {
-            ar: "السخي  سيب سيم ث شسيمس يكسحخيمء ههيةسيخؤو خسيخيوث نبه  بنب",
-            en: "sak sls oiefwmnclk fljsd kjiisjfs dsdi cmems .xw, mxksam ew uuyed",
-         },
+      description: {
+         ar: "السخي  سيب سيم ث شسيمس يكسحخيمء ههيةسيخؤو خسيخيوث نبه  بنب",
+         en: "sak sls oiefwmnclk fljsd kjiisjfs dsdi cmems .xw, mxksam ew uuyed",
       },
-      {
-         title: {
-            ar: "السخي  سيب سيم ث شسيمس يكسحخيمء",
-            en: "sak sls oiefwmnclk fljsd kjiisjfs",
-         },
-         description: {
-            ar: "السخي  سيب سيم ث شسيمس يكسحخيمء ههيةسيخؤو خسيخيوث نبه  بنب",
-            en: "sak sls oiefwmnclk fljsd kjiisjfs dsdi cmems .xw, mxksam ew uuyed",
-         },
-      },
-   ],
-   location:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3418.8272013926735!2d30.466650274469004!3d31.031063671155543!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14f66bd729891573%3A0x4f36bd676063305c!2sInternational%20Academy%20of%20Information%20Technology%20and%20Languages!5e0!3m2!1sen!2seg!4v1761057016093!5m2!1sen!2seg",
-};
-
+   },
+]
+const location = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3418.8272013926735!2d30.466650274469004!3d31.031063671155543!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14f66bd729891573%3A0x4f36bd676063305c!2sInternational%20Academy%20of%20Information%20Technology%20and%20Languages!5e0!3m2!1sen!2seg!4v1761057016093!5m2!1sen!2seg"
 const EventDetails = () => {
-   // get lang
    const { lang } = useDirection();
+   const { eventId } = useParams();
+   const [event, setEvent] = useState(null);
+   
+   // const [service, setService] = useState(null);
+   const [loading, setLoading] = useState(true);
+   useEffect(() => {
+      const fetchEvent = async () => {
+         setLoading(true);
+         const { data, error } = await supabase
+            .from("events")
+            .select("*")
+            .eq("id", eventId);
+         if (error) {
+            console.error(error);
+            return;
+         } else {
+            setLoading(false);
+            setEvent(data[0]);
+         }
+      };
+      fetchEvent();
+   }, [eventId]);
+   if (loading) {
+      return <Spinner />;
+   }
    return (
       <main>
          <div className="container">
             {/* hero */}
-            <DetailsHero lang={lang} img={event.img} title={event.title} />
+            <DetailsHero lang={lang} img={event.thumbnail} title={lang === "ar" ? event.name_ar : event.name} />
             {/* details */}
-            <Details lang={lang} details={event.details} />
+            <Details lang={lang} details={details} />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                <div className="md:col-span-2 space-y-10">
                   <section>
@@ -86,10 +98,10 @@ const EventDetails = () => {
                         {lang === "en" ? "About the Event" : "حول الحدث"}
                      </h3>
                      <p className="text-foreground leading-relaxed">
-                        {event.about[lang]}
+                        {lang === "ar" ? event.description_ar : event.description}
                      </p>
                   </section>
-                  <Highlights lang={lang} highlights={event.highlights} />
+                  <Highlights lang={lang} highlights={highlights} />
                   <Location lang={lang} />
                   <WhyAttend lang={lang} />
                   <HostInfo lang={lang} />
@@ -116,7 +128,7 @@ const EventDetails = () => {
                   </section>
                </div>
                <div className="md:col-span-1 space-y-8">
-                  <EventCountdown details={event.details} lang={lang} />
+                  <EventCountdown details={details} lang={lang} />
                   {/* <QuickInfo /> */}
                   <div className="gradient-card rounded-xl p-6 text-center">
                      <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-4">

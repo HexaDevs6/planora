@@ -8,7 +8,7 @@ export const fetchServices = () => async (dispatch) => {
     const { data, error } = await supabase
       .from("services")
       .select("*")
-      .order("created_at", { ascending: true });
+      .order("created_at", { ascending: false });
     if (error) throw error;
 
     dispatch(setServices(data || []));

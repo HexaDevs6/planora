@@ -209,28 +209,28 @@ export default function UserMessages() {
                   alt="Acme Corp"
                 />
                 <div className="flex flex-col gap-1 max-w-md">
-                  <div class="bg-white dark:bg-violet p-3 rounded-lg rounded-bl-sm shadow-subtle">
+                  <div className="bg-white dark:bg-violet p-3 rounded-lg rounded-bl-sm shadow-subtle">
                     <p className="text-sm text-violet dark:text-white">
                       Hey, just following up on the catering options for the
                       "Summer Gala" event. Have you had a chance to review the
                       proposals?
                     </p>
                   </div>
-                  <span class="text-xs text-text-body-light dark:text-text-body-dark self-start">
+                  <span className="text-xs text-text-body-light dark:text-text-body-dark self-start">
                     2:40 PM
                   </span>
                 </div>
               </div>
               <div className="flex gap-3 items-end justify-end mt-5">
                 <div className="flex flex-col gap-1 max-w-md">
-                  <div class="bg-primary text-white p-3 rounded-lg rounded-br-sm shadow-subtle">
+                  <div className="bg-primary text-white p-3 rounded-lg rounded-br-sm shadow-subtle">
                     <p className="text-sm text-white dark:text-violet">
                       Hi Jane! Yes, I've looked them over. 'Gourmet Delights'
                       looks promising. What are your thoughts on their
                       vegetarian menu?
                     </p>
                   </div>
-                  <span class="text-xs text-text-body-light dark:text-text-body-dark self-end">
+                  <span className="text-xs text-text-body-light dark:text-text-body-dark self-end">
                     2:42 PM
                   </span>
                 </div>
@@ -247,13 +247,13 @@ export default function UserMessages() {
                   alt="Acme Corp"
                 />
                 <div className="flex flex-col gap-1 max-w-md">
-                  <div class="bg-white dark:bg-violet p-3 rounded-lg rounded-bl-sm shadow-subtle">
+                  <div className="bg-white dark:bg-violet p-3 rounded-lg rounded-bl-sm shadow-subtle">
                     <p className="text-sm text-violet dark:text-white">
                       Sure, that sounds great! Their options seem varied enough
                       to satisfy all our guests. Let's proceed with them.
                     </p>
                   </div>
-                  <span class="text-xs text-text-body-light dark:text-text-body-dark self-start">
+                  <span className="text-xs text-text-body-light dark:text-text-body-dark self-start">
                     2:45 PM
                   </span>
                 </div>
