@@ -19,6 +19,8 @@ import { useDirection } from "@/hooks/useDirection";
 import DragZone from "@/components/services/DragZone";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { uploadFile, deleteFile } from "@/lib/storage";
+
 
 export default function PublishEvent() {
 	const [searchParams] = useSearchParams();
@@ -159,20 +161,15 @@ export default function PublishEvent() {
       });
    };
 
-   // ✅ إرسال البيانات إلى Supabase
    const handleSubmit = async (e) => {
       e.preventDefault();
-      // const errors = validateEvent(formData);
-      // if (Object.keys(errors).length > 0) {
-      //    // عرض الأخطاء في toast
-      //    Object.values(errors).forEach((msg) => toast.error(msg));
-      //    return;
-      // }
 
       try {
          setLoading(true);
 
-         // تجهيز التواريخ
+         /** -----------------------------
+          * 1. Format and prepare date fields
+          * ----------------------------- */
          const formattedDate = formData.date
             ? new Date(formData.date).toISOString()
             : new Date().toISOString();
@@ -181,121 +178,181 @@ export default function PublishEvent() {
             ? new Date(formData.end_date).toISOString()
             : formattedDate;
 
-         // توليد slug فريد
-         //slug من الاسم عايز يتعدل عشان يبقى فريد
+         /** -----------------------------
+          * 2. Generate unique slug (used for event folder in storage)
+          * ----------------------------- */
          let slug = formData.name
             .toLowerCase()
             .trim()
             .replace(/\s+/g, "-")
             .replace(/[^\w-]/g, "");
-
          const uniqueSuffix = Date.now().toString().slice(-5);
          slug = `${slug}-${uniqueSuffix}`;
 
+         /** -----------------------------
+          * 3. Define folder name for storage
+          * (Use existing slug if editing, otherwise create a new one)
+          * ----------------------------- */
+         const folder = eventId ? formData.slug || slug : slug;
+
+         /** -----------------------------
+          * 4. If editing: check and delete old files if replaced
+          * ----------------------------- */
+         if (eventId && originalData) {
+            // Delete old thumbnail if user selected a new one
+            const thumbnailChanged =
+               formData.thumbnail &&
+               formData.thumbnail instanceof File &&
+               originalData.thumbnail &&
+               formData.thumbnail.name !== originalData.thumbnail;
+
+            if (thumbnailChanged) {
+               await deleteFile("events", originalData.thumbnail);
+            }
+
+            // Delete old gallery if new images are selected
+            const newImages = formData.images.filter((img) => img instanceof File);
+            if (newImages.length > 0 && originalData.images?.length > 0) {
+               const oldPaths = originalData.images.map((img) =>
+                  typeof img === "string" ? img : img.path
+               );
+               await deleteFile("events", oldPaths);
+            }
+         }
+
+         /** -----------------------------
+          * 5. Upload thumbnail if exists
+          * ----------------------------- */
+         let thumbnailPath = formData.thumbnail;
+         if (formData.thumbnail && formData.thumbnail instanceof File) {
+            const thumbFile = formData.thumbnail;
+            const path = `events/${folder}/thumbnail_${Date.now()}_${thumbFile.name}`;
+            await uploadFile("events", path, thumbFile);
+            thumbnailPath = path;
+         }
+
+
+
+         /** -----------------------------
+          * 6. Upload event images if any
+          * ----------------------------- */
+         let imagePaths = [];
+         if (formData.images && formData.images.length > 0) {
+            for (const img of formData.images) {
+               if (img instanceof File) {
+                  // New image to upload
+                  const path = `events/${folder}/gallery/${Date.now()}_${img.name}`;
+                  await uploadFile("events", path, img);
+                  imagePaths.push({ path });
+               } else if (typeof img === "object" && img.path) {
+                  // Existing image (already uploaded before)
+                  imagePaths.push(img);
+               }
+            }
+         }
+
+         /** -----------------------------
+          * 7. Handle Update (if eventId exists)
+          * ----------------------------- */
          if (eventId) {
-            // Compare formData with originalData and only send changed fields
             const changedFields = {};
-            
+
+            // Detect changed text/number fields
             Object.keys(formData).forEach((key) => {
-               // For arrays (images)
-               if (Array.isArray(formData[key]) && Array.isArray(originalData[key])) {
-                  const currentImages = formData[key].map(img => typeof img === 'string' ? img : img.name);
-                  const originalImages = originalData[key];
-                  if (JSON.stringify(currentImages) !== JSON.stringify(originalImages)) {
-                     changedFields.images = currentImages;
-                  }
-               }
-               // For thumbnail (File object or string)
-               else if (key === 'thumbnail') {
-                  const currentThumbnail = typeof formData[key] === 'string' ? formData[key] : formData[key]?.name;
-                  if (currentThumbnail !== originalData[key]) {
-                     changedFields.thumbnail = currentThumbnail;
-                  }
-               }
-               // For price (ensure number comparison)
-               else if (key === 'price') {
-                  if (Number(formData[key]) !== Number(originalData[key])) {
-                     changedFields.price = Number(formData[key]);
-                  }
-               }
-               // For other fields
-               else if (formData[key] !== originalData[key]) {
+               if (key === "images" || key === "thumbnail") return;
+               if (formData[key] !== originalData[key]) {
                   changedFields[key] = formData[key];
                }
             });
 
-            // Only proceed with update if there are changes
-            if (Object.keys(changedFields).length === 0) {
-               toast.info(lang === "ar" ? "لا توجد تغييرات للحفظ" : "No changes to save");
-               setLoading(false);
-               return;
-            }
-
-            console.log("Changed fields:", changedFields);
+            // Always include thumbnail and images
+            changedFields.thumbnail = thumbnailPath;
+            changedFields.images = imagePaths;
 
             const { data, error } = await supabase
                .from("events")
                .update(changedFields)
                .eq("id", eventId);
-               
-            if (error) {
-               console.error(error);
-               toast.error(lang === "ar" ? `حدث خطأ أثناء تحديث الحدث: ${error.message}` : `An error occurred while updating the event: ${error.message}`);
-               return;
-            } else {
-               toast.success(lang === "ar" ? `تم تحديث الحدث "${formData.name_ar}" بنجاح!` : `Event "${formData.name}" updated successfully!`);
-               console.log("Updated Event:", data);
-               navigate("/host/events");
-            }
-         } else {
+
+            if (error) throw error;
+
+            toast.success(
+               lang === "ar"
+                  ? `تم تحديث الحدث "${formData.name_ar}" بنجاح!`
+                  : `Event "${formData.name}" updated successfully!`
+            );
+            navigate("/host/events");
+         }
+
+         /** -----------------------------
+          * 8. Handle Create (new event)
+          * ----------------------------- */
+         else {
             const { data, error } = await supabase
                .from("events")
                .insert([
                   {
-							host_id: user.id,
-							name: formData.name,
-							name_ar: formData.name_ar,
-							slug,
-							description: formData.description,
-							description_ar: formData.description_ar,
-							category_id: formData.category || null,
-							location: formData.location,
-							date: formattedDate,
-							end_date: formattedEndDate,
-							capacity: Number(formData.capacity) || null,
-							price: Number(formData.price) || 0,
-							status: formData.status,
-							thumbnail: formData.thumbnail?.name || null,
-							images: Array.isArray(formData.images)
-							  ? formData.images.map((img) => img.name)
-							  : null,
+                     host_id: user.id,
+                     name: formData.name,
+                     name_ar: formData.name_ar,
+                     slug,
+                     description: formData.description,
+                     description_ar: formData.description_ar,
+                     category_id: formData.category || null,
+                     location: formData.location,
+                     date: formattedDate,
+                     end_date: formattedEndDate,
+                     capacity: Number(formData.capacity) || null,
+                     price: Number(formData.price) || 0,
+                     status: formData.status,
+                     thumbnail: thumbnailPath,
+                     images: imagePaths,
                   },
                ])
                .select();
 
             if (error) throw error;
 
-            	toast.success(lang === "ar" ? `تم إنشاء الحدث "${formData.name}" بنجاح!` : `Event "${formData.name}" created successfully!`);
-
-            console.log("Inserted Event:", data);
+            toast.success(
+               lang === "ar"
+                  ? `تم إنشاء الحدث "${formData.name}" بنجاح!`
+                  : `Event "${formData.name}" created successfully!`
+            );
             navigate("/host/events");
          }
 
+         /** -----------------------------
+          * 9. Clear form after success
+          * ----------------------------- */
          clearFormData();
       } catch (err) {
-         console.error("❌ Insert Error:", err.message);
+         /** -----------------------------
+          * 10. Handle errors
+          * ----------------------------- */
+         console.error("Insert Error:", err.message);
          toast.error(
             lang === "ar"
-               ? `حدث خطأ أثناء إنشاء الحدث: ${err.message}`
-               : `An error occurred while creating the event: ${err.message}`
+               ? `حدث خطأ أثناء حفظ الحدث: ${err.message}`
+               : `Error saving event: ${err.message}`
          );
       } finally {
+         /** -----------------------------
+          * 11. Stop loading spinner
+          * ----------------------------- */
          setLoading(false);
       }
    };
 
+
+
+
 	const handleChangeImages = (files) => {
       setFormData({ ...formData, images: files });
+   };
+
+   //fix add thumbnail to form
+   const handleChangeThumbnail = (file) => {
+      setFormData({ ...formData, thumbnail: file });
    };
 
    // واجهة المستخدم
@@ -558,7 +615,7 @@ export default function PublishEvent() {
                      {lang === "ar" ? "الصورة المصغرة" : "Thumbnail"}
                   </Label>
 						<DragZone
-                     onChange={handleChangeImages}
+                     onChange={handleChangeThumbnail}
                      acceptMultiple={false}
                      files={eventId ? [formData.thumbnail] : null}
                   />

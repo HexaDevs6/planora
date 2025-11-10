@@ -34,6 +34,7 @@ import { fetchEvents } from "@/store/fetchEventsThunk";
 import { supabase } from "@/lib/supabaseClient";
 import loremImg from "@/assets/lorem.jfif";
 import { motion } from "framer-motion";
+import { getPublicUrl } from "@/lib/storage";
 
 export default function Events() {
   7;
@@ -110,11 +111,6 @@ export default function Events() {
 
   // get visible events from redux store
   const viewEvents = filterSearch.slice(0, visibleEvents);
-  // شيل يا مصطفى
-  function getPublicUrl(bucket, path) {
-    const { data } = supabase.storage.from(bucket).getPublicUrl(path);
-    return data?.publicUrl;
-  }
 
   const handleThumbnail = function (el) {
     if (el) {

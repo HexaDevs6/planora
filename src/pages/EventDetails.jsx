@@ -15,6 +15,10 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Spinner from "@/components/SpinnerLoader";
 import { supabase } from "@/lib/supabaseClient";
+import { getPublicUrl } from "@/lib/storage";
+import loremImg from "@/assets/lorem.jfif";
+
+
 const details = {
    start_date: "2025-11-01T18:00:00Z",
    end_date: "2025-11-03T21:00:00Z",
@@ -67,20 +71,46 @@ const EventDetails = () => {
    useEffect(() => {
       const fetchEvent = async () => {
          setLoading(true);
-         const { data, error } = await supabase
-            .from("events")
-            .select("*")
-            .eq("id", eventId);
-         if (error) {
+         try {
+            const { data, error } = await supabase
+               .from("events")
+               .select("*")
+               .eq("id", eventId)
+               .single();
+
+            if (error) throw error;
+            setEvent(data);
+         } catch (error) {
             console.error(error);
-            return;
-         } else {
+         } finally {
             setLoading(false);
-            setEvent(data[0]);
          }
       };
       fetchEvent();
    }, [eventId]);
+
+
+
+ // handle if thumb is local, remote, or from supabase storage
+   const handleThumbnail = (el) => {
+      //if no image
+      if (!el) return loremImg;
+
+      // if its from a remote url 
+      if (typeof el === "string" && el.startsWith("http")) {
+         return el;
+      }
+
+      // if its from supabase storage
+      if (typeof el === "string") {
+         
+         return getPublicUrl("events", el);
+      }
+      
+      // fallback
+      return loremImg;
+   };
+
    if (loading) {
       return <Spinner />;
    }
@@ -88,7 +118,7 @@ const EventDetails = () => {
       <main>
          <div className="container">
             {/* hero */}
-            <DetailsHero lang={lang} img={event.thumbnail} title={lang === "ar" ? event.name_ar : event.name} />
+            <DetailsHero lang={lang} img={handleThumbnail(event?.thumbnail)} title={lang === "ar" ? event.name_ar : event.name} />
             {/* details */}
             <Details lang={lang} details={details} />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

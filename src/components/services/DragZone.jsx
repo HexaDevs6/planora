@@ -14,7 +14,7 @@ const DragZone = ({ onChange, acceptMultiple = false, files = null, maxFiles = 5
    const lang = i18next.language;
 
    const handleDrop = (acceptedFiles) => {
-      console.log(acceptedFiles);
+      console.log(acceptedFiles);   
 
       if (acceptedFiles && acceptedFiles.length > 0) {
          if (acceptMultiple) {
@@ -71,7 +71,7 @@ const DragZone = ({ onChange, acceptMultiple = false, files = null, maxFiles = 5
             onChange?.(updatedFiles);
          } else {
             // Handle single file
-            setFile(acceptedFiles);
+            setFile(acceptedFiles[0]); //(fix: store as File, not array)
             const reader = new FileReader();
             reader.onload = (e) => {
                setFilePreview(e.target?.result);
