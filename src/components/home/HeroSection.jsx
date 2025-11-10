@@ -23,7 +23,7 @@ function HeroSection() {
       <AutoFadeCarousel images={heroImages} />
 
       {/* المحتوى النصي */}
-      <div className=" bottom-3 lg:start-20 lg:bottom-15 absolute z-10 max-w-5xl px-4 text-start flex flex-col gap-1 md:gap-4">
+      <div className="md:start-20 absolute z-10 max-w-5xl px-4 text-start flex flex-col gap-5">
         <img
           className="hidden md:block w-80"
           src="PlanoraYellowTypo.png"
@@ -52,8 +52,8 @@ function HeroSection() {
           }}
         />
 
-        <div className="flex flex-col sm:flex-row justify-start gap-3 sm:gap-4">
-          <Link to={"./host/create-event"}>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <Link to={"./host/create-event"} >
             <Button
               className={`${buttonVariants({
                 variant: "primary",

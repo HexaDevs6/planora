@@ -33,13 +33,13 @@ function NavBar() {
                     {/* Menu icon for mobile */}
                     <button
                         onClick={toggleMenu}
-                        className='md:hidden text-violet dark:text-foreground cursor-pointer rounded-sm transition-all ease-in-out duration-300'
+                        className='md:hidden cursor-pointer rounded-sm p-2 transition-all ease-in-out duration-300'
                     >
-                        {isOpen ? <X size={28} /> : <Menu size={28} />}
+                        {isOpen ? <X size={28} color="#FFA704" /> : <Menu size={28} color="#FFA704" />}
                     </button>
                     <Button
                         variant='glass'
-                        className='flex gap-2 items-center text-violet'
+                        className='hidden md:flex gap-2 items-center text-foreground'
                     >
                         <Search />
                     </Button>
@@ -57,7 +57,7 @@ function NavBar() {
                     </ul>
                     <Link
                         to='/'
-                        className='navbar-logo w-55 bg-[linear-gradient(to_right,rgba(169,158,173,0.4)_0%,rgba(51,12,47,0.4)_100%)] px-9 py-5 supports-[backdrop-filter]:bg-background/25 [clip-path:polygon(0_1%,100%_0,85%_100%,16%_99%)]'
+                        className='navbar-logo w-55 md:bg-[linear-gradient(to_right,rgba(169,158,173,0.4)_0%,rgba(51,12,47,0.4)_100%)] px-3 md:px-8 py-5 md:supports-[backdrop-filter]:bg-background/25 md:[clip-path:polygon(0_1%,100%_0,85%_100%,16%_99%)]'
                     >
                         <img
                             src='/LogoBasic.png'
