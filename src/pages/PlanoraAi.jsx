@@ -9,6 +9,14 @@ import {
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 
+const userData = {
+   name: "Mahmoud",
+   userType: "client",
+   interests: ["Music Concerts", "Tech Conferences"],
+   eventPreferences: "I'm a frontend developer and I love tech events and music concerts",
+   phone: "+20123456789",
+};
+
 export const MissingApiKeyScreen = ({ currentLang }) => {
    return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -97,7 +105,7 @@ const PlanoraAi = () => {
 
       try {
          // Send to Gemini AI with current language
-         const response = await sendMessage(userMessage, messages, currentLang);
+         const response = await sendMessage(userMessage, messages, currentLang, userData);
 
          // Add AI response to chat
          const newAIMessage = {

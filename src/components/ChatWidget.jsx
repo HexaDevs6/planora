@@ -7,6 +7,14 @@ import VoiceChat from "./VoiceChat";
 import { initializeGemini, sendMessage } from "@/services/geminiService";
 import { MissingApiKeyScreen } from "@/pages/PlanoraAi";
 
+const userData = {
+   name: "Mahmoud",
+   userType: "client",
+   interests: ["Music Concerts", "Tech Conferences"],
+   eventPreferences: "I'm a frontend developer and I love tech events and music concerts",
+   phone: "+20123456789",
+};
+
 const ChatWidget = () => {
    const { t, i18n } = useTranslation();
    const currentLang = i18n.language;
@@ -15,7 +23,7 @@ const ChatWidget = () => {
    const [isProcessing, setIsProcessing] = useState(false);
    const [messages, setMessages] = useState([]);
    const [isInitialized, setIsInitialized] = useState(false);
-	
+
    const [apiKeyMissing, setApiKeyMissing] = useState(false);
 
    const handleSendMessage = async (userMessage) => {
@@ -35,7 +43,7 @@ const ChatWidget = () => {
 
       try {
          // Send to Gemini AI with current language
-         const response = await sendMessage(userMessage, messages, currentLang);
+         const response = await sendMessage(userMessage, messages, currentLang, userData);
 
          // Add AI response to chat
          const newAIMessage = {
@@ -84,7 +92,7 @@ const ChatWidget = () => {
       toast.success(t("planoraAi.toast.chatCleared"));
    };
 
-	useEffect(() => {
+   useEffect(() => {
       // Get API key from environment variable (required)
       const envApiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
@@ -124,10 +132,7 @@ const ChatWidget = () => {
          >
             {/* Animated Lucide Star icons */}
             {/* <span className="relative inline-block w-10 h-10"> */}
-               <Sparkles
-                  className="text-violet"
-                  
-               />
+            <Sparkles className="text-violet" />
             {/* </span> */}
          </motion.button>
 
@@ -152,19 +157,21 @@ const ChatWidget = () => {
                         className="hover:bg-violet/20 p-1 rounded-full transition"
                      >
                         <X className="w-4 h-4" />
-                  	</button>
+                     </button>
                   </div>
 
                   <div className="flex-1 overflow-y-auto">
                      <div className="h-full">
-									{apiKeyMissing ? <MissingApiKeyScreen currentLang={currentLang} /> : (
-                        <VoiceChat
-                           onSendMessage={handleSendMessage}
-                           isProcessing={isProcessing}
-                           messages={messages}
-                           onClearChat={handleClearChat}
-                        />
-                     )}
+                        {apiKeyMissing ? (
+                           <MissingApiKeyScreen currentLang={currentLang} />
+                        ) : (
+                           <VoiceChat
+                              onSendMessage={handleSendMessage}
+                              isProcessing={isProcessing}
+                              messages={messages}
+                              onClearChat={handleClearChat}
+                           />
+                        )}
                      </div>
                   </div>
                </motion.div>

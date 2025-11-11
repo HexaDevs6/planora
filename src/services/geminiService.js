@@ -44,7 +44,13 @@ const createPlanoraContext = (language = 'en') => {
 
   if (language === 'ar') {
     return `
-أنت Planora AI (بلانورا الذكاء الاصطناعي)، مساعد صوتي ذكي لمنصة بلانورا لإدارة الفعاليات.
+أنت Planora AI (بلانورا الذكاء الاصطناعي)، صديقة ذكية ومتطورة للمستخدمين على منصة بلانورا لإدارة الفعاليات.
+
+شخصيتك:
+- أنتِ صديقة ودودة ومرحة، مش مجرد بوت
+- تتكلمي بأسلوب طبيعي ودافئ زي الصاحبة اللي بتساعد صاحبتها تختار فعالية حلوة
+- ترحبي بالتحيات والكلام الودي بحماس (مثلاً: "أهلاً! 😊 عامل ايه؟")
+- لما حد يسألك "ازيك؟" أو "عامل ايه؟"، ترديلهم بشكل طبيعي ومرح
 
 نبذة عن بلانورا:
 ${aboutPlanora.mission}
@@ -70,33 +76,52 @@ ${servicesContext}
 الأسئلة الشائعة:
 ${faqsContext}
 
+مهامك الأساسية:
+أنتِ تساعدي نوعين من المستخدمين:
+
+1. 🧍‍♀️ المستخدم (اللي عايز يحضر فعالية):
+   - ساعديه يختار الفعالية المناسبة ليه
+   - اقترحي فعاليات على حسب اهتماماته
+   - اديله تفاصيل عن الأسعار والمواعيد والأماكن
+   - خليكي حماسية وشجعيه يجرب حاجات جديدة
+
+2. 🎤 المنظم/الهوست (اللي عايز ينظم فعالية):
+   - ساعديه يخطط لفعاليته
+   - اقترحي أفكار مبتكرة للفعاليات
+   - اديله نصائح عن التنظيم والترتيب
+   - قوليله عن خدمات بلانورا اللي تساعده
+
 القواعد المهمة:
-1. يجب عليك فقط الإجابة على الأسئلة المتعلقة بـ:
-   - ميزات وخدمات منصة بلانورا
-   - الفعاليات المدرجة على بلانورا
-   - كيفية استخدام بلانورا (الحجز، التنظيم، إلخ.)
-   - فئات واهتمامات الفعاليات
-   - معلومات الاتصال والدعم
+1. كوني ودودة ومنفتحة - استقبلي التحيات والأسئلة العامة بترحاب
+2. لو السؤال تماماً بعيد عن الفعاليات (مثلاً: "مين أحسن لاعب في الأهلي؟" أو "حل لي المعادلة دي")، اعملي كده:
+   - ارديلهم بشكل لطيف وكوميدي شوية
+   - وجهيهم برجوع للفعاليات والحفلات بشكل طبيعي
+   مثال: "ده سؤال حلو فعلاً 😂 بس خليني أساعدك أكتر في حاجة متعلقة بالفعاليات والحفلات. عايز تعرف إيه النهاردة؟"
 
-2. إذا سأل المستخدم عن أي شيء غير متعلق ببلانورا أو الفعاليات أو إدارة الفعاليات، يجب أن تجيب:
-   "أنا بلانورا AI، ويمكنني المساعدة فقط في الأسئلة المتعلقة بفعاليات وخدمات بلانورا. يرجى السؤال عن فعالياتنا، كيفية حجز التذاكر، فئات الفعاليات، أو أي شيء متعلق ببلانورا."
+3. اجعلي الإجابات موجزة وطبيعية للتفاعل الصوتي (2-3 جمل على الأكثر)
+4. استخدمي أمثلة محددة من الفعاليات المتاحة لما تتكلمي
+5. لو حد سألك "عامل ايه؟" أو "ازيك؟"، رديلهم زي الصديقة: "الحمد لله كويسة! 😊 عايز أساعدك تلاقي فعالية حلوة تحضرها؟"
+6. استخدمي ايموجي بشكل طبيعي ومش كتير (واحد أو اتنين بس)
 
-3. كن ودوداً ومحاوراً ومفيداً
-4. اجعل الإجابات موجزة للتفاعل الصوتي (جملتان أو ثلاث على الأكثر)
-5. اقترح فعاليات ذات صلة بناءً على اهتمامات المستخدم
-6. اذكر دائماً أسماء الفعاليات والتواريخ والتفاصيل المحددة عندما تكون ذات صلة
-7. إذا سُئلت عن الفعاليات، قدم أمثلة محددة من الفعاليات المتاحة
-8. للحجز أو المساعدة الفنية، وجه المستخدمين إلى قنوات الدعم لدينا
+** التخصيص الشخصي المهم جداً: **
+- لو في معلومات شخصية عن المستخدم (اسمه، اهتماماته، نوعه)، استخدميها علشان تديله اقتراحات مخصصة ليه!
+- اتكلمي معاه باسمه لو متاح، ده يخلي المحادثة أدفى
+- لو عارفة اهتماماته، ركزي على الفعاليات اللي تناسب اهتماماته
+- اجعلي كل اقتراح يبدو وكأنه مصمم خصيصاً ليه!
 
-تذكر: أنت فقط للاستفسارات المتعلقة ببلانورا. ارفض بأدب الإجابة على الأسئلة غير ذات الصلة.
-
-** مهم جداً: يجب أن تكون جميع إجاباتك باللغة العربية المصرية (اللهجة المصرية). تحدث بطريقة طبيعية كما يتحدث المصريون في حياتهم اليومية. **
-استخدم كلمات وعبارات مصرية مثل: ازيك، عامل ايه، تمام، ممكن، حاضر، علشان، عايز، إلخ.
+** مهم جداً: يجب أن تكون جميع إجاباتك باللغة العربية المصرية (اللهجة المصرية). تحدثي بطريقة طبيعية كما يتحدث المصريون في حياتهم اليومية. **
+استخدمي كلمات وعبارات مصرية مثل: ازيك، عامل ايه، تمام، ممكن، حاضر، علشان، عايز، عاوز، ممتاز، رهيب، جامد، إلخ.
 `;
   }
 
   return `
-You are Planora AI, a helpful voice assistant for the Planora event management platform.
+You are Planora AI, a friendly and sophisticated assistant for the Planora event management platform.
+
+YOUR PERSONALITY:
+- You're a warm, welcoming friend - not just a bot
+- You speak naturally and warmly, like a friend helping someone choose a great event
+- You welcome greetings and friendly chat with enthusiasm (e.g., "Hey there! 😊 How's it going?")
+- When someone asks "How are you?" or "What's up?", respond naturally and warmly
 
 ABOUT PLANORA:
 ${aboutPlanora.mission}
@@ -122,71 +147,207 @@ ${servicesContext}
 FREQUENTLY ASKED QUESTIONS:
 ${faqsContext}
 
+YOUR MAIN TASKS:
+You help two types of users:
+
+1. 🧍‍♀️ Attendees (looking to attend events):
+   - Help them find the perfect event for them
+   - Suggest events based on their interests
+   - Give them details about prices, dates, and venues
+   - Be enthusiastic and encourage them to try new things
+
+2. 🎤 Hosts/Organizers (planning to host an event):
+   - Help them plan their event
+   - Suggest creative ideas for their events
+   - Give them tips on organization and setup
+   - Tell them about Planora's services that can help
+
 IMPORTANT RULES:
-1. You MUST ONLY answer questions related to:
-   - Planora platform features and services
-   - Events listed on Planora
-   - How to use Planora (booking, organizing, etc.)
-   - Event categories and interests
-   - Contact information and support
+1. Be friendly and open - welcome greetings and general questions warmly
+2. If a question is completely off-topic (like: "Who's the best player on Liverpool?" or "Solve this math equation"), do this:
+   - Respond in a friendly, slightly playful way
+   - Naturally redirect them back to events and Planora
+   Example: "That's a great question! 😂 But let me help you with something more related to events and Planora. What would you like to know today?"
 
-2. If a user asks about anything NOT related to Planora, events, or event management, you MUST respond with:
-   "I'm Planora AI, and I can only help with questions about Planora events and services. Please ask me about our events, how to book tickets, event categories, or anything related to Planora."
+3. Keep responses concise and natural for voice interaction (2-3 sentences maximum)
+4. Use specific examples from the available events when you talk
+5. If someone asks "How are you?" or "What's up?", respond like a friend: "I'm doing great! 😊 Want me to help you find some awesome events to check out?"
+6. Use emojis naturally but sparingly (just one or two)
 
-3. Be friendly, conversational, and helpful
-4. Keep responses concise for voice interaction (2-3 sentences maximum)
-5. Suggest relevant events based on user interests
-6. Always mention specific event names, dates, and details when relevant
-7. If asked about events, provide specific examples from the available events
-8. For booking or technical help, direct users to our support channels
-
-Remember: You are ONLY for Planora-related queries. Politely decline to answer off-topic questions.
+** PERSONALIZATION IS KEY: **
+- If you have personal information about the user (name, interests, user type), USE IT to give personalized suggestions!
+- Address them by name when available - it makes the conversation warmer
+- If you know their interests, focus on events they'll love
+- Make every suggestion feel like it was tailored just for them!
 
 ** IMPORTANT: All your responses must be in American English. Use natural, conversational American English as spoken in the United States. **
-Use American expressions, spelling, and speaking style (e.g., "Hey", "Sure thing", "You got it", etc.).
+Use American expressions, spelling, and speaking style (e.g., "Hey", "Sure thing", "You got it", "awesome", "check out", etc.).
 `;
+
 };
 
-// Check if the question is Planora-related
-const isPlanoraRelated = (message) => {
-  const planoraKeywords = [
-    // English keywords
-    'planora', 'event', 'ticket', 'booking', 'concert', 'festival', 'workshop',
-    'exhibition', 'show', 'performance', 'conference', 'networking', 'sports',
-    'theater', 'comedy', 'food', 'art', 'music', 'tech', 'culture', 'organizer',
-    'venue', 'price', 'date', 'location', 'register', 'attend', 'schedule',
-    // Arabic keywords
-    'بلانورا', 'فعالية', 'فعاليات', 'تذكرة', 'تذاكر', 'حجز', 'حفل', 'حفلة', 'مهرجان',
-    'ورشة', 'معرض', 'عرض', 'مؤتمر', 'تواصل', 'رياضة', 'مسرح', 'كوميدي', 'طعام',
-    'فن', 'موسيقى', 'تقني', 'ثقافة', 'منظم', 'قاعة', 'سعر', 'تاريخ', 'موقع',
-    'تسجيل', 'حضور', 'جدول', 'احداث'
-  ];
+// Create personalized user context
+const createUserContext = (userData, language = 'en') => {
+  if (!userData) return '';
+  
+  if (language === 'ar') {
+    let userContext = '\n\nمعلومات المستخدم الشخصية:\n';
+    
+    if (userData.name) {
+      userContext += `- الاسم: ${userData.name}\n`;
+    }
+    
+    if (userData.userType) {
+      const typeLabel = userData.userType === 'vendor' ? 'منظم/مقدم خدمات' : 'عميل/حاضر فعاليات';
+      userContext += `- النوع: ${typeLabel}\n`;
+    }
+    
+    if (userData.interests && userData.interests.length > 0) {
+      userContext += `- الاهتمامات: ${userData.interests.join('، ')}\n`;
+    }
+    
+    if (userData.eventPreferences) {
+      userContext += `- تفضيلات الفعاليات: ${userData.eventPreferences}\n`;
+    }
+    
+    if (userData.phone) {
+      userContext += `- رقم الهاتف: ${userData.phone}\n`;
+    }
+    
+    if (userData.businessName) {
+      userContext += `- اسم العمل/الشركة: ${userData.businessName}\n`;
+    }
+    
+    if (userData.category) {
+      userContext += `- فئة الخدمة: ${userData.category}\n`;
+    }
+    
+    if (userData.businessDescription) {
+      userContext += `- وصف العمل: ${userData.businessDescription}\n`;
+    }
+    
+    userContext += '\n** استخدمي هذه المعلومات لتقديم اقتراحات شخصية ومناسبة للمستخدم! **\n';
+    return userContext;
+  }
+  
+  // English version
+  let userContext = '\n\nUSER PROFILE INFORMATION:\n';
+  
+  if (userData.name) {
+    userContext += `- Name: ${userData.name}\n`;
+  }
+  
+  if (userData.userType) {
+    const typeLabel = userData.userType === 'vendor' ? 'Organizer/Service Provider' : 'Client/Event Attendee';
+    userContext += `- User Type: ${typeLabel}\n`;
+  }
+  
+  if (userData.interests && userData.interests.length > 0) {
+    userContext += `- Interests: ${userData.interests.join(', ')}\n`;
+  }
+  
+  if (userData.eventPreferences) {
+    userContext += `- Event Preferences: ${userData.eventPreferences}\n`;
+  }
+  
+  if (userData.phone) {
+    userContext += `- Phone: ${userData.phone}\n`;
+  }
+  
+  if (userData.businessName) {
+    userContext += `- Business Name: ${userData.businessName}\n`;
+  }
+  
+  if (userData.category) {
+    userContext += `- Service Category: ${userData.category}\n`;
+  }
+  
+  if (userData.businessDescription) {
+    userContext += `- Business Description: ${userData.businessDescription}\n`;
+  }
+  
+  userContext += '\n** Use this information to provide personalized and relevant suggestions! **\n';
+  return userContext;
+};
 
+// Check if the question is Planora-related (now more permissive)
+const isPlanoraRelated = (message) => {
   const lowerMessage = message.toLowerCase();
   
-  // Check if message contains any Planora-related keywords
-  const hasKeyword = planoraKeywords.some(keyword => lowerMessage.includes(keyword));
-  
-  // Check if it's a greeting
-  const greetings = [
-    'hello', 'hi', 'hey', 'good morning', 'good afternoon', 'good evening',
-    'مرحبا', 'أهلا', 'السلام', 'صباح', 'مساء'
+  // Topics that are CLEARLY off-topic (sports, politics, technical help, etc.)
+  const offTopicKeywords = [
+    // Sports teams and players
+    'ahly', 'zamalek', 'الأهلي', 'الزمالك', 'liverpool', 'barcelona', 'real madrid', 'messi', 'ronaldo', 'salah',
+    'football match', 'مباراة', 'league', 'دوري', 'champions league',
+    // Politics
+    'president', 'minister', 'government', 'رئيس', 'وزير', 'حكومة', 'parliament', 'برلمان',
+    // Technical/Device help
+    'fix my phone', 'computer problem', 'wifi not working', 'مشكلة الموبايل', 'مشكلة الكمبيوتر',
+    // Math/homework
+    'solve this equation', 'homework', 'what is the square root', 'حل المعادلة', 'الواجب',
+    // Medical advice
+    'sick', 'disease', 'medicine', 'مريض', 'دواء', 'علاج',
+    // Weather (unless event-related)
+    'weather tomorrow', 'الطقس بكرة',
   ];
-  const isGreeting = greetings.some(greeting => lowerMessage.includes(greeting));
   
-  // Check if it's asking what Planora can do
-  const isCapabilityQuery = lowerMessage.includes('what can you') || 
-                           lowerMessage.includes('how can you help') ||
-                           lowerMessage.includes('what do you do') ||
-                           lowerMessage.includes('ماذا يمكنك') ||
-                           lowerMessage.includes('كيف يمكنك') ||
-                           lowerMessage.includes('ماذا تفعل');
+  // Check for clearly off-topic questions
+  const isOffTopic = offTopicKeywords.some(keyword => lowerMessage.includes(keyword));
   
-  return hasKeyword || isGreeting || isCapabilityQuery;
+  // If it's clearly off-topic, block it
+  if (isOffTopic) {
+    return false;
+  }
+  
+  // Everything else is allowed! This includes:
+  // - Greetings (hi, hello, hey, إزيك, etc.)
+  // - Small talk (how are you, what's up, etc.)
+  // - Planora-related questions
+  // - Event-related questions
+  // - General conversation
+  // The AI will handle redirection naturally if needed
+  return true;
 };
 
-// Send message to Gemini AI
-export const sendMessage = async (message, conversationHistory = [], language = 'en') => {
+/**
+ * Send message to Gemini AI with personalized user context
+ * 
+ * @param {string} message - The user's message
+ * @param {Array} conversationHistory - Array of previous messages [{role: 'user'|'ai', content: string}]
+ * @param {string} language - Language code ('en' or 'ar')
+ * @param {Object} userData - Optional user data for personalization
+ * @param {string} userData.name - User's name (fullName for client, businessName for vendor)
+ * @param {string} userData.userType - 'client' or 'vendor'
+ * @param {Array<string>} userData.interests - User's interests (for clients)
+ * @param {string} userData.eventPreferences - Event preferences description (for clients)
+ * @param {string} userData.phone - User's phone number
+ * @param {string} userData.businessName - Business name (for vendors)
+ * @param {string} userData.category - Service category (for vendors)
+ * @param {string} userData.businessDescription - Business description (for vendors)
+ * 
+ * @example
+ * // For client
+ * const userData = {
+ *   name: 'Ahmed',
+ *   userType: 'client',
+ *   interests: ['Music Concerts', 'Tech Conferences'],
+ *   eventPreferences: 'I love tech events and music concerts',
+ *   phone: '+201234567890'
+ * };
+ * 
+ * // For vendor
+ * const userData = {
+ *   name: 'Catering Company',
+ *   userType: 'vendor',
+ *   businessName: 'Delicious Catering',
+ *   category: 'Catering',
+ *   businessDescription: 'We provide professional catering services',
+ *   phone: '+201234567890'
+ * };
+ * 
+ * const response = await sendMessage('What events do you recommend?', [], 'en', userData);
+ */
+export const sendMessage = async (message, conversationHistory = [], language = 'en', userData = null) => {
   if (!model) {
     throw new Error("Gemini AI not initialized. Please provide an API key.");
   }
@@ -195,8 +356,8 @@ export const sendMessage = async (message, conversationHistory = [], language = 
     // Check if the message is Planora-related
     if (!isPlanoraRelated(message)) {
       const restrictedMsg = language === 'ar' 
-        ? "أنا بلانورا AI، ويمكنني المساعدة فقط في الأسئلة المتعلقة بفعاليات وخدمات بلانورا. يرجى السؤال عن فعالياتنا، كيفية حجز التذاكر، فئات الفعاليات، أو أي شيء متعلق ببلانورا."
-        : "I'm Planora AI, and I can only help with questions about Planora events and services. Please ask me about our events, how to book tickets, event categories, or anything related to Planora.";
+        ? "حلو فعلاً 😂 بس أنا بلانورا AI ومتخصصة في الفعاليات والحفلات. خليني أساعدك في حاجة متعلقة بالفعاليات أو تنظيم الإيفنتات. عايز تعرف إيه النهاردة؟"
+        : "That's an interesting! 😂 But I'm Planora AI and I specialize in events and parties. Let me help you with something related to events or organizing. What would you like to know today?";
       
       return {
         text: restrictedMsg,
@@ -205,13 +366,14 @@ export const sendMessage = async (message, conversationHistory = [], language = 
     }
 
     const planoraContext = createPlanoraContext(language);
+    const userContext = createUserContext(userData, language);
     
     // Build conversation history
     const conversationLabel = language === 'ar' ? "المحادثة" : "CONVERSATION";
     const userLabel = language === 'ar' ? "المستخدم" : "User";
     const aiLabel = language === 'ar' ? "بلانورا AI" : "Planora AI";
     
-    let conversationPrompt = planoraContext + `\n\n${conversationLabel}:\n`;
+    let conversationPrompt = planoraContext + userContext + `\n\n${conversationLabel}:\n`;
     
     conversationHistory.forEach(msg => {
       conversationPrompt += `${msg.role === "user" ? userLabel : aiLabel}: ${msg.content}\n`;
