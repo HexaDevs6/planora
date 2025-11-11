@@ -60,6 +60,7 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   --animate-shine: shine var(--duration) infinite linear;
+  --color-swith : var(--swith);
 }
 
 @keyframes shine {
@@ -132,6 +133,8 @@
   --sidebar-accent-foreground: #1F071C;
   --sidebar-border: #E5DED9;
   --sidebar-ring: #FFA704;
+
+  --swith: #FFA704;
 }
 
 /* ---------------- DARK MODE ---------------- */
@@ -177,6 +180,8 @@
   --sidebar-accent-foreground: #FBF7F4;
   --sidebar-border: #4A2A43;
   --sidebar-ring: #FFA704;
+
+  --swith: #5C3D59;
 }
 
 @layer base {

@@ -6,12 +6,14 @@ import { useTranslation } from "react-i18next";
 import VoiceChat from "./VoiceChat";
 import { initializeGemini, sendMessage } from "@/services/geminiService";
 import { MissingApiKeyScreen } from "@/pages/PlanoraAi";
+import AiPlanoraWidget from "./AiPlanoraWidget";
 
 const userData = {
    name: "Mahmoud",
    userType: "client",
    interests: ["Music Concerts", "Tech Conferences"],
-   eventPreferences: "I'm a frontend developer and I love tech events and music concerts",
+   eventPreferences:
+      "I'm a frontend developer and I love tech events and music concerts",
    phone: "+20123456789",
 };
 
@@ -43,7 +45,12 @@ const ChatWidget = () => {
 
       try {
          // Send to Gemini AI with current language
-         const response = await sendMessage(userMessage, messages, currentLang, userData);
+         const response = await sendMessage(
+            userMessage,
+            messages,
+            currentLang,
+            userData
+         );
 
          // Add AI response to chat
          const newAIMessage = {
@@ -123,18 +130,18 @@ const ChatWidget = () => {
 
    return (
       <>
-         <motion.button
+         {/* <motion.button
             onClick={() => setOpen(!open)}
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: "spring", stiffness: 200 }}
             className="fixed bottom-6 bg-gradient-amber right-6 z-50 size-14  text-white rounded-full p-4 shadow-xl flex items-center justify-center"
          >
-            {/* Animated Lucide Star icons */}
-            {/* <span className="relative inline-block w-10 h-10"> */}
             <Sparkles className="text-violet" />
-            {/* </span> */}
-         </motion.button>
+         </motion.button> */}
+
+            <AiPlanoraWidget open={open} setOpen={setOpen} />
+
 
          <AnimatePresence>
             {open && (
@@ -145,10 +152,10 @@ const ChatWidget = () => {
                   transition={{ type: "spring", stiffness: 250, damping: 20 }}
                   className="fixed bottom-16 right-4 sm:bottom-20 sm:right-6 z-50 
   w-[90%] max-w-[380px] h-[70vh] sm:h-[520px] 
-  bg-white dark:bg-background border border-border shadow-2xl 
+  bg-background/50 backdrop-blur-md border border-border shadow-2xl 
   rounded-2xl overflow-hidden flex flex-col"
                >
-                  <div className="flex items-center py-2 justify-between px-4 bg-amber text-white">
+                  <div className="flex items-center py-2 justify-between px-4 bg-amber/50 text-white">
                      <h3 className="text-sm font-semibold">
                         Planora AI Assistant
                      </h3>

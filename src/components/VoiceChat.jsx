@@ -289,7 +289,7 @@ const VoiceChat = ({ onSendMessage, isProcessing, messages, onClearChat }) => {
   return (
     <div className="flex flex-col h-full">
       {/* Messages Area */}
-      <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-6 space-y-4">
+      <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4">
         <AnimatePresence mode="popLayout">
           {messages.length === 0 ? (
             <motion.div
@@ -312,10 +312,10 @@ const VoiceChat = ({ onSendMessage, isProcessing, messages, onClearChat }) => {
                 className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-[80%] rounded-2xl px-5 py-3 ${
+                  className={`max-w-[80%] rounded-2xl px-5 py-3 border shadow-lg ${
                     message.role === 'user'
-                      ? 'bg-gradient-amber text-violet-dark'
-                      : 'bg-card border border-border text-foreground'
+                      ? 'bg-gradient-amber border-amber-dark text-violet-dark'
+                      : 'bg-gradient-violet border-violet-dark text-white'
                   }`}
                 >
                   <p className="text-sm leading-relaxed">{message.content}</p>
