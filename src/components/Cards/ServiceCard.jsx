@@ -11,7 +11,7 @@ import loremService  from '@/assets/loremService.jfif';
 const ServiceCard = ({
   id,
   title = "Service Title",
-  image = "https://via.placeholder.com/300",
+  image,
   category = "General",
   rating = 0,
   reviews = 0,

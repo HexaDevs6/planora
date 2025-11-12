@@ -5,6 +5,8 @@ import { useDirection } from "@/hooks/useDirection";
 import { supabase } from "@/lib/supabaseClient";
 import { useState, useEffect } from "react";
 import Spinner from "@/components/SpinnerLoader";
+import avatarPlaceholderImg from "@/assets/user_placeholder3.png";
+
 
 const ProviderCard = ({ provider_id }) => {
   const [provider, setProvider] = useState(null);
@@ -36,7 +38,7 @@ const ProviderCard = ({ provider_id }) => {
     <Link to={`/user/${provider_id}`}>
       <div className="group gradient-card rounded-xl p-4 flex  md:flex-col gap-4 items-center text-center">
         <img
-          src={provider.image || "https://placehold.co/200"}
+          src={provider.image || avatarPlaceholderImg}
           alt={provider.full_name}
           className="md:w-24 h-full md:h-auto aspect-square object-cover rounded-full"
         />

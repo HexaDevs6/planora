@@ -20,6 +20,8 @@ import { useSearchParams } from "react-router-dom";
 import Spinner from "@/components/SpinnerLoader";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { uploadFile, deleteFile } from "@/lib/storage";
+
 
 export default function AddService() {
    const [searchParams] = useSearchParams();
@@ -158,18 +160,12 @@ export default function AddService() {
 
    const handleSubmit = async (e) => {
       e.preventDefault();
-      console.log(formData);
-
-      // const errors = validateEvent(formData);
-      // if (Object.keys(errors).length > 0) {
-      //    // عرض الأخطاء في toast
-      //    Object.values(errors).forEach((msg) => toast.error(msg));
-      //    return;
-      // }
+      setLoading(true);
 
       try {
-         setLoading(true);
-
+         /** -----------------------------
+          * 1. Generate unique slug
+          * ----------------------------- */
          let slug = formData.name
             .toLowerCase()
             .trim()
@@ -179,61 +175,92 @@ export default function AddService() {
          const uniqueSuffix = Date.now().toString().slice(-5);
          slug = `${slug}-${uniqueSuffix}`;
 
+         /** -----------------------------
+          * 2. Define storage folder name
+          * ----------------------------- */
+         const folder = serviceId ? formData.slug || slug : slug;
+
+         /** -----------------------------
+          * 3. If editing: delete old files if replaced
+          * ----------------------------- */
+         if (serviceId && originalData) {
+            // If new thumbnail chosen → delete old one
+            const thumbnailChanged =
+               formData.thumbnail &&
+               formData.thumbnail instanceof File &&
+               originalData.thumbnail &&
+               formData.thumbnail.name !== originalData.thumbnail;
+
+            if (thumbnailChanged) {
+               await deleteFile("services", originalData.thumbnail);
+            }
+
+            // If new gallery chosen → delete old gallery
+            const newImages = formData.images.filter((img) => img instanceof File);
+            if (newImages.length > 0 && originalData.images?.length > 0) {
+               const oldPaths = originalData.images.map((img) =>
+                  typeof img === "string" ? img : img.path
+               );
+               await deleteFile("services", oldPaths);
+            }
+         }
+
+         /** -----------------------------
+          * 4. Upload thumbnail if exists
+          * ----------------------------- */
+         let thumbnailPath = formData.thumbnail;
+         if (formData.thumbnail && formData.thumbnail instanceof File) {
+            const thumbFile = formData.thumbnail;
+            const path = `services/${user.id}/${folder}/thumbnail_${Date.now()}_${thumbFile.name}`;
+            await uploadFile("services", path, thumbFile);
+            thumbnailPath = path;
+         }
+
+         /** -----------------------------
+          * 5. Upload gallery images if exists
+          * ----------------------------- */
+         let imagePaths = [];
+         if (formData.images && formData.images.length > 0) {
+            for (const img of formData.images) {
+               if (img instanceof File) {
+                  const path = `services/${user.id}/${folder}/gallery/${Date.now()}_${img.name}`;
+                  await uploadFile("services", path, img);
+                  imagePaths.push({ path });
+               } else if (typeof img === "object" && img.path) {
+                  imagePaths.push(img);
+               }
+            }
+         }
+
+         /** -----------------------------
+          * 6. Update or create
+          * ----------------------------- */
          if (serviceId) {
-            // Compare formData with originalData and only send changed fields
             const changedFields = {};
-            
+
             Object.keys(formData).forEach((key) => {
-               // For arrays (images)
-               if (Array.isArray(formData[key]) && Array.isArray(originalData[key])) {
-                  const currentImages = formData[key].map(img => typeof img === 'string' ? img : img.name);
-                  const originalImages = originalData[key];
-                  if (JSON.stringify(currentImages) !== JSON.stringify(originalImages)) {
-                     changedFields.images = currentImages;
-                  }
-               }
-               // For thumbnail (File object or string)
-               else if (key === 'thumbnail') {
-                  const currentThumbnail = typeof formData[key] === 'string' ? formData[key] : formData[key]?.name;
-                  if (currentThumbnail !== originalData[key]) {
-                     changedFields.thumbnail = currentThumbnail;
-                  }
-               }
-               // For price (ensure number comparison)
-               else if (key === 'price') {
-                  if (Number(formData[key]) !== Number(originalData[key])) {
-                     changedFields.price = Number(formData[key]);
-                  }
-               }
-               // For other fields
-               else if (formData[key] !== originalData[key]) {
+               if (["images", "thumbnail"].includes(key)) return;
+               if (formData[key] !== originalData[key]) {
                   changedFields[key] = formData[key];
                }
             });
 
-            // Only proceed with update if there are changes
-            if (Object.keys(changedFields).length === 0) {
-               toast.info(lang === "ar" ? "لا توجد تغييرات للحفظ" : "No changes to save");
-               setLoading(false);
-               return;
-            }
-
-            console.log("Changed fields:", changedFields);
+            changedFields.thumbnail = thumbnailPath;
+            changedFields.images = imagePaths;
 
             const { data, error } = await supabase
                .from("services")
                .update(changedFields)
                .eq("id", serviceId);
-               
-            if (error) {
-               console.error(error);
-               toast.error(lang === "ar" ? `حدث خطأ أثناء تحديث الخدمة: ${error.message}` : `An error occurred while updating the service: ${error.message}`);
-               return;
-            } else {
-               toast.success(lang === "ar" ? `تم تحديث الخدمة "${formData.name_ar}" بنجاح!` : `Service "${formData.name}" updated successfully!`);
-               console.log("Updated Service:", data);
-               navigate("/user/services");
-            }
+
+            if (error) throw error;
+
+            toast.success(
+               lang === "ar"
+                  ? `تم تحديث الخدمة "${formData.name_ar}" بنجاح!`
+                  : `Service "${formData.name}" updated successfully!`
+            );
+            navigate("/user/services");
          } else {
             const { data, error } = await supabase
                .from("services")
@@ -247,30 +274,39 @@ export default function AddService() {
                      description_ar: formData.description_ar,
                      category_id: formData.category_id || null,
                      price: Number(formData.price) || 0,
-                     thumbnail: formData.thumbnail?.name || null,
-                     images: Array.isArray(formData.images)
-                        ? formData.images.map((img) => img.name)
-                        : null,
+                     thumbnail: thumbnailPath,
+                     images: imagePaths,
                   },
                ])
                .select();
 
             if (error) throw error;
 
-            toast.success(lang === "ar" ? `تم إنشاء الخدمة "${formData.name}" بنجاح!` : `Service "${formData.name}" created successfully!`);
+            toast.success(
+               lang === "ar"
+                  ? `تم إنشاء الخدمة "${formData.name}" بنجاح!`
+                  : `Service "${formData.name}" created successfully!`
+            );
 
-            console.log("Inserted Service:", data);
             navigate("/user/services");
          }
 
+         /** -----------------------------
+          * 7. Clear form after success
+          * ----------------------------- */
          clearFormData();
       } catch (err) {
          console.error("Insert Error:", err.message);
-         toast.error(lang === "ar" ? `حدث خطأ أثناء إنشاء الحدث: ${err.message}` : `An error occurred while creating the service: ${err.message}`);
+         toast.error(
+            lang === "ar"
+               ? `حدث خطأ أثناء حفظ الخدمة: ${err.message}`
+               : `Error saving service: ${err.message}`
+         );
       } finally {
          setLoading(false);
       }
    };
+
 
    if (loading && serviceId) {
       return <Spinner />;

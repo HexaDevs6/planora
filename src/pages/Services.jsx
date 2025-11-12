@@ -27,6 +27,7 @@ import { fetchServices } from "@/store/fetchServicesThunk";
 import loremService from "@/assets/loremService.jfif";
 import { motion } from "framer-motion";
 import { supabase } from "@/lib/supabaseClient";
+import { getPublicUrl } from "@/lib/storage";
 
 export default function Services() {
   const query = useSelector((state) =>
@@ -97,21 +98,16 @@ export default function Services() {
   // get visible services from redux store
   const viewService = filterSearch.slice(0, visibleServices);
 
-  // شيل يا مصطفى
-  function getPublicUrl(bucket, path) {
-    const { data } = supabase.storage.from(bucket).getPublicUrl(path);
-    return data?.publicUrl;
-  }
 
   const handleThumbnail = function (el) {
     if (el) {
       if (el.startsWith("http")) {
         return el;
       } else {
-        return getPublicUrl("events", el);
+        return getPublicUrl("services", el);
       }
     }
-  };
+  };  
 
   return (
     <div className="min-h-screen flex flex-col bg-background">

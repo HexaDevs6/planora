@@ -8,6 +8,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Spinner from "@/components/SpinnerLoader";
+import { getPublicUrl } from "@/lib/storage";
 
 const ServiceDetails = () => {
   const { lang } = useDirection();
@@ -34,20 +35,59 @@ const ServiceDetails = () => {
     };
     fetchService();
   }, [serviceId]);
+
+  // handle if thumb is local, remote, or from supabase storage
+  const handleThumbnail = (el) => {
+    //if no image
+    if (!el) return loremImg;
+
+    // if its from a remote url 
+    if (typeof el === "string" && el.startsWith("http")) {
+      return el;
+    }
+
+    // if its from supabase storage
+    if (typeof el === "string") {
+
+      return getPublicUrl("services", el);
+    }
+
+    // fallback
+    return loremImg;
+  };
+
+
+
+  const getImages = (images) => {
+    if (!images) return [];
+
+    // in case images received as json string (rarley)
+    if (typeof images === "string") {
+      try {
+        const parsed = JSON.parse(images);
+        return parsed.map((img) => getPublicUrl("services", img.path));
+      } catch {
+        return [];
+      }
+    }
+
+    // normal case as array of objects
+    if (Array.isArray(images)) {
+      return images.map((img) => getPublicUrl("services", img.path));
+    }
+
+    return [];
+  };
+
   if (loading) {
     return <Spinner />;
   }
-  const getImages = (images) => {
-    if (images.type === "string") {
-      return JSON.parse(images);
-    }
-    return images;
-  };
+
   return (
     <main className="container">
       <DetailsHero
         lang={lang}
-        img={service.thumbnail}
+        img={handleThumbnail(service?.thumbnail)}
         title={lang === "ar" ? service.name_ar : service.name}
       />
       <div className="grid grid-cols-1 md:grid-cols-6 gap-4 md:gap-8">
@@ -63,7 +103,7 @@ const ServiceDetails = () => {
               {lang === "ar" ? service.description_ar : service.description}
             </p>
           </section>
-          {service.images && (
+          {service?.images?.length > 0 && (
             <ServiceGallery images={getImages(service.images)} />
           )}
           {/* <ServiceReviews reviews={service.reviews_list} /> */}

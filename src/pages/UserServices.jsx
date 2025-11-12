@@ -17,6 +17,8 @@ import { supabase } from "@/lib/supabaseClient";
 import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
 import { toast } from "sonner";
+import { deleteFile } from "@/lib/storage"; 
+
 
 const UserServices = () => {
    const navigate = useNavigate();
@@ -42,33 +44,81 @@ const UserServices = () => {
       navigate(`/user/create-service?serviceId=${serviceId}`);
    };
 
+// delete storage and database record
    const handleDelete = async (serviceId) => {
       Swal.fire({
          title: lang === "ar" ? "هل أنت متأكد؟" : "Are you sure?",
-         text: lang === "ar" ? "لن تتمكن من التراجع عن هذا!" : "You won't be able to revert this!",
+         text:
+            lang === "ar"
+               ? "سيتم حذف الخدمة وجميع الصور المرتبطة بها!"
+               : "This service and all its images will be deleted!",
          icon: "warning",
          showCancelButton: true,
          confirmButtonText: lang === "ar" ? "نعم" : "Yes",
          cancelButtonText: lang === "ar" ? "لا" : "No",
       }).then(async (result) => {
+         if (!result.isConfirmed) return;
+
          setLoadingDelete(true);
-         if (result.isConfirmed) {
-            const { data, error } = await supabase
+
+         try {
+            // 1️⃣ Fetch service info (thumbnail + images)
+            const { data: serviceData, error: fetchError } = await supabase
+               .from("services")
+               .select("thumbnail, images")
+               .eq("id", serviceId)
+               .single();
+
+            if (fetchError) throw fetchError;
+
+            // 2️⃣ Collect all image paths
+            const allPaths = [];
+
+            if (serviceData?.thumbnail) {
+               allPaths.push(serviceData.thumbnail);
+            }
+
+            if (Array.isArray(serviceData?.images)) {
+               serviceData.images.forEach((img) => {
+                  if (img.path) allPaths.push(img.path);
+               });
+            }
+
+            // 3️⃣ Delete from Supabase Storage
+            if (allPaths.length > 0) {
+               await deleteFile("services", allPaths);
+            }
+
+            // 4️⃣ Delete service record from database
+            const { error: deleteError } = await supabase
                .from("services")
                .delete()
                .eq("id", serviceId);
-            if (error) {
-               console.error(error);
-               toast.error(lang === "ar" ? "حدث خطأ أثناء حذف الخدمة!" : "Error deleting service!");
-               return;
-            } else {
-               console.log("Deleted service:", data);
-               toast.success(lang === "ar" ? "تم حذف الخدمة بنجاح!" : "Service deleted successfully!");
-            }
+
+            if (deleteError) throw deleteError;
+
+            // 5️⃣ Show success toast
+            toast.success(
+               lang === "ar"
+                  ? "تم حذف الخدمة وجميع الصور الخاصة بها بنجاح!"
+                  : "Service and its images deleted successfully!"
+            );
+
+            // 6️⃣ Refresh list
+            setServices((prev) => prev.filter((s) => s.id !== serviceId));
+         } catch (error) {
+            console.error("Delete Service Error:", error.message);
+            toast.error(
+               lang === "ar"
+                  ? `حدث خطأ أثناء حذف الخدمة: ${error.message}`
+                  : `Error deleting service: ${error.message}`
+            );
+         } finally {
+            setLoadingDelete(false);
          }
-         setLoadingDelete(false);
       });
    };
+
 
    const handleView = (serviceId) => {
       console.log("View service:", serviceId);
@@ -178,9 +228,9 @@ const UserServices = () => {
                                     <th className="text-start py-3 px-4 font-semibold text-sm">
                                        {lang === "ar" ? "الفئة" : "Category"}
                                     </th>
-                                    <th className="text-start py-3 px-4 font-semibold text-sm">
+                                    {/* <th className="text-start py-3 px-4 font-semibold text-sm">
                                        {lang === "ar" ? "التاريخ" : "Date"}
-                                    </th>
+                                    </th> */}
                                     <th className="text-start py-3 px-4 font-semibold text-sm">
                                        {lang === "ar" ? "السعر" : "Price"}
                                     </th>
@@ -209,12 +259,12 @@ const UserServices = () => {
                                              {getCategoryName(service.category_id)}
                                           </span>
                                        </td>
-                                       <td className="py-4 px-4">
+                                       {/* <td className="py-4 px-4">
                                           <div className="flex items-center gap-1 text-sm">
                                              <Calendar className="h-3 w-3 text-muted-foreground" />
                                              {formatDate(service.date)}
                                           </div>
-                                       </td>
+                                       </td> */}
                                        <td className="py-4 px-4">
                                           <span className="font-semibold text-sm">
                                              {service.price === 0
@@ -223,7 +273,7 @@ const UserServices = () => {
                                           </span>
                                        </td>
                                        <td className="py-4 px-4">
-                                          <div className="flex items-center justify-end gap-2">
+                                          <div className="flex items-center justify-start gap-2">
                                              <Link
                                                 to={`/services/${service.id}`}
                                              >

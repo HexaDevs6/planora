@@ -193,7 +193,8 @@ export default function PublishEvent() {
           * 3. Define folder name for storage
           * (Use existing slug if editing, otherwise create a new one)
           * ----------------------------- */
-         const folder = eventId ? formData.slug || slug : slug;
+         const folder = eventId ? originalData.slug : slug;
+
 
          /** -----------------------------
           * 4. If editing: check and delete old files if replaced
@@ -226,7 +227,7 @@ export default function PublishEvent() {
          let thumbnailPath = formData.thumbnail;
          if (formData.thumbnail && formData.thumbnail instanceof File) {
             const thumbFile = formData.thumbnail;
-            const path = `events/${folder}/thumbnail_${Date.now()}_${thumbFile.name}`;
+            const path = `events/${user.id}/${folder}/thumbnail_${Date.now()}_${thumbFile.name}`;
             await uploadFile("events", path, thumbFile);
             thumbnailPath = path;
          }
@@ -241,7 +242,7 @@ export default function PublishEvent() {
             for (const img of formData.images) {
                if (img instanceof File) {
                   // New image to upload
-                  const path = `events/${folder}/gallery/${Date.now()}_${img.name}`;
+                  const path = `events/${user.id}/${folder}/gallery/${Date.now()}_${img.name}`;
                   await uploadFile("events", path, img);
                   imagePaths.push({ path });
                } else if (typeof img === "object" && img.path) {

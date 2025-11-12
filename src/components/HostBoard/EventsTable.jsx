@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchCategories } from "@/store/fetchCategoriesThunk";
+import { deleteFile } from "@/lib/storage"; 
 
 const EventsTable = () => {
    const { data: categories } = useSelector((state) => state.categories);
@@ -27,42 +28,77 @@ const EventsTable = () => {
       });
    };
 
+
    const handleDelete = async (eventId) => {
       Swal.fire({
          title: lang === "ar" ? "هل أنت متأكد؟" : "Are you sure?",
          text:
             lang === "ar"
-               ? "لن تتمكن من التراجع عن هذا!"
-               : "You won't be able to revert this!",
+               ? "سيتم حذف الحدث وجميع الصور المرتبطة به!"
+               : "This event and all its images will be deleted!",
          icon: "warning",
          showCancelButton: true,
          confirmButtonText: lang === "ar" ? "نعم" : "Yes",
          cancelButtonText: lang === "ar" ? "لا" : "No",
       }).then(async (result) => {
-			setLoadingDelete(true);
-         if (result.isConfirmed) {
-            const { data, error } = await supabase
+         if (!result.isConfirmed) return;
+         setLoadingDelete(true);
+
+         try {
+            // 1️⃣ Fetch event data (thumbnail + images)
+            const { data: eventData, error: fetchError } = await supabase
+               .from("events")
+               .select("thumbnail, images")
+               .eq("id", eventId)
+               .single();
+
+            if (fetchError) throw fetchError;
+
+            // 2️⃣ Collect all image paths
+            const allPaths = [];
+
+            if (eventData?.thumbnail) {
+               allPaths.push(eventData.thumbnail);
+            }
+
+            if (Array.isArray(eventData?.images)) {
+               eventData.images.forEach((img) => {
+                  if (img.path) allPaths.push(img.path);
+               });
+            }
+
+            // 3️⃣ Delete from Supabase Storage
+            if (allPaths.length > 0) {
+               await deleteFile("events", allPaths);
+            }
+
+            // 4️⃣ Delete event record from database
+            const { error: deleteError } = await supabase
                .from("events")
                .delete()
                .eq("id", eventId);
-            if (error) {
-               console.error(error);
-               toast.error(
-                  lang === "ar"
-                     ? "حدث خطأ أثناء حذف الحدث!"
-                     : "Error deleting event!"
-               );
-               return;
-            } else {
-               console.log("Deleted event:", data);
-               toast.success(
-                  lang === "ar"
-                     ? "تم حذف الحدث بنجاح!"
-                     : "Event deleted successfully!"
-               );
-            }
+
+            if (deleteError) throw deleteError;
+
+            // 5️⃣ Show success message
+            toast.success(
+               lang === "ar"
+                  ? "تم حذف الحدث وجميع الصور الخاصة به بنجاح!"
+                  : "Event and its images deleted successfully!"
+            );
+
+            // 6️⃣ Refresh UI
+            setEvents((prev) => prev.filter((e) => e.id !== eventId));
+         } catch (error) {
+            console.error("Delete Event Error:", error.message);
+            toast.error(
+               lang === "ar"
+                  ? `حدث خطأ أثناء حذف الحدث: ${error.message}`
+                  : `Error deleting event: ${error.message}`
+            );
+         } finally {
+            setLoadingDelete(false);
          }
-         setLoadingDelete(false);
       });
    };
 
