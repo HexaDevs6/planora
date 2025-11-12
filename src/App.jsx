@@ -27,6 +27,8 @@ import HostSettings from "./components/HostBoard/HostSettings";
 import ServiceDetails from "./pages/ServiceDetails";
 import AddService from "./pages/AddService";
 import UserServices from "./pages/UserServices";
+import PlanoraAi from "./pages/PlanoraAi";
+import ChatWidget from "./components/ChatWidget";
 
 function App() {
     useDirection();
@@ -35,6 +37,7 @@ function App() {
         <main>
             <BrowserRouter>
                 <Toaster richColors position='bottom-right' />
+                <ChatWidget />
 
                 <Routes>
                     <Route element={<MainLayout />}>
@@ -51,6 +54,7 @@ function App() {
                             path='/services/:serviceId'
                             element={<ServiceDetails />}
                         />
+                        <Route path='/planora-ai' element={<PlanoraAi />} />
                     </Route>
                     <Route
                         element={
