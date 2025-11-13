@@ -152,8 +152,17 @@ export const saveUserInfo =
 
 // ✅ Sign out
 export const signOut = () => async (dispatch) => {
-    await supabase.auth.signOut();
-    dispatch(clearUser());
+    dispatch(setLoading(true));
+    try {
+        await supabase.auth.signOut();
+        dispatch(clearUser());
+        console.log("Sign out successful");
+        
+    } catch (error) {
+        console.error("Sign out error:", error.message);
+    } finally {
+        dispatch(setLoading(false));
+    }
 };
 
 // ✅ Fetch current user session

@@ -62,7 +62,12 @@ function NavBar() {
                         <img
                             src='/LogoBasic.png'
                             alt='Planora'
-                            className='w-full h-full object-cover'
+                            className='w-full h-full object-cover dark:hidden'
+                        />
+                        <img
+                            src='/LogoBasicLight.png'
+                            alt='Planora'
+                            className='w-full h-full object-cover hidden dark:block'
                         />
                     </Link>
                     <ul className='navbar-links__right  text-violet dark:text-foreground justify-center lg:gap-8 text-md lg:text-lg font-medium hidden md:flex  '>
@@ -124,7 +129,7 @@ function NavBar() {
                       <Link to="/user/settings">Settings</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                      onClick={() => handleSignOut(dispatch, navigate, t)}
+                      onSelect={() => handleSignOut(dispatch, navigate, t)}
                       className="text-amper focus:text-amper/80 hover:bg-red-600/10"
                     >
                       Logout

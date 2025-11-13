@@ -3,9 +3,9 @@ import yourTicket from "../../assets/your-Ticket.jpeg";
 
 export default function UserTickets() {
   return (
-    <section className="bg-background flex flex-col gap-12 transition-all duration-300 ease-in-out text-foreground">
+    <>
       {/* Main Content */}
-      <main className="flex-1 p-8 lg:p-16">
+      <main className="container">
         {/* Header */}
         <header className="mb-16 flex justify-between items-center">
           <div>
@@ -243,6 +243,6 @@ export default function UserTickets() {
           </div>
         </section>
       </main>
-    </section>
+    </>
   );
 }

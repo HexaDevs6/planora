@@ -172,7 +172,7 @@ const UserServices = () => {
          }
       };
       fetchUserServices();
-   }, [user.id, loadingDelete]);
+   }, [loadingDelete]);
 
    useEffect(() => {
       if (!categories || categories.length === 0) {
@@ -181,7 +181,6 @@ const UserServices = () => {
    }, [dispatch, categories]);
 
    return (
-      <section className="min-h-screen bg-background p-4 md:p-8">
          <div className="container">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
@@ -205,7 +204,7 @@ const UserServices = () => {
 
             {/* Services Table or Empty State */}
             {services.length === 0 && !loading && !loadingDelete ? (
-               <Card>
+               <Card className="rounded-xl bg-background">
                   <CardContent>
                      <EmptyState />
                   </CardContent>
@@ -332,7 +331,6 @@ const UserServices = () => {
                </Card>
             )}
          </div>
-      </section>
    );
 };
 

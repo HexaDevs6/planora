@@ -158,7 +158,7 @@ const EventsTable = () => {
    );
 
    return (
-      <div className="space-y-5">
+      <div className="space-y-5 container">
          {/* Header */}
          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
             <div>

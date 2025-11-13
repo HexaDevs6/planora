@@ -3,8 +3,7 @@ import SecondHeaderImg from "../assets/HeaderImg.jpg";
 import { Search } from "lucide-react";
 import { t } from "i18next";
 import { Input } from "./ui/input";
-import { Select, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
-import { SelectContent } from "@radix-ui/react-select";
+import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from "./ui/select";
 import { useDispatch, useSelector } from "react-redux";
 import { setSearchQuery } from "@/store/searchAndFilterEventsSlice";
 import { setServiceSearchQuery } from "@/store/searchAndFilterServiceSlice";
@@ -52,10 +51,10 @@ export default function PagesHeader({ img, title, subtitle, search, type }) {
             </div>
             <div className="relative">
               <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="sm:w-[100px]">
+                <SelectTrigger className="sm:w-[100px] py-6">
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
-                <SelectContent className="top-0 left-0 w-50 absolute">
+                <SelectContent className="">
                   <SelectItem
                     className="text-white hover:bg-white hover:text-black"
                     value="latest"

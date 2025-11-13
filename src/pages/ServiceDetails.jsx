@@ -30,7 +30,6 @@ const ServiceDetails = () => {
       } else {
         setLoading(false);
         setService(data[0]);
-        console.log(data[0]);
       }
     };
     fetchService();
@@ -38,6 +37,8 @@ const ServiceDetails = () => {
 
   // handle if thumb is local, remote, or from supabase storage
   const handleThumbnail = (el) => {
+    console.log(el);
+    
     //if no image
     if (!el) return loremImg;
 
@@ -87,6 +88,7 @@ const ServiceDetails = () => {
     <main className="container">
       <DetailsHero
         lang={lang}
+        // img={service?.thumbnail}
         img={handleThumbnail(service?.thumbnail)}
         title={lang === "ar" ? service.name_ar : service.name}
       />

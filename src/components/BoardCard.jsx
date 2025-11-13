@@ -6,17 +6,17 @@ import { MapPin } from "lucide-react";
 export default function BoardCard() {
     return (
         <>
-            <div className='bg-card rounded-sm soft-shadow overflow-hidden group transform transition-all duration-300 hover:-translate-y-1 shadow-md'>
+            <div className='bg-background rounded-xl border overflow-hidden group'>
                 <img
                     alt='Music Festival'
                     className='w-full h-48 object-cover'
                     src='https://lh3.googleusercontent.com/aida-public/AB6AXuCuE9FToirIJIBcBmt0df13dxjxDKS8Gip8ffnvOMVuH8KqWvTRWL5JeEpIgCEVrcZAoeFu-cLPcIRK3k6SYo9cKR4lhlmSe2EXcWUMKzyhVz3Qq40JBn-vkv8zQ03xm3N0RSoRSI0bKsfk74cLiWhYHyT8W6CQDEBN1oAYfc6D2nUCdlw7bXKHehGPRYNybkIHWrH2m5JV1fBaofmsYqqqah2NcrSGcITc8tKzNEPEKBPlKxL8syZ1UZ2RwHxJ3rfFwk3SY7AH1dWy'
                 />
                 <div className='p-6'>
-                    <p className='text-sm font-semibold text-amber'>
+                    <p className='text-sm font-semibold text-amber-dark'>
                         SAT, DEC 12, 2024
                     </p>
-                    <h3 className='text-xl font-bold text-primary mt-2'>
+                    <h3 className='text-xl font-bold text-foreground mt-2'>
                         Vibrations Music Festival
                     </h3>
                     <p className='text-gray-500 mt-1 flex items-center gap-2'>

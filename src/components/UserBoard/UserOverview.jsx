@@ -28,7 +28,7 @@ export default function UserOverview() {
   };
 
   return (
-    <div className="overview flex flex-col gap-12 transition-all duration-300 ease-in-out">
+    <div className="overview flex flex-col gap-12 container">
       {/* Upcoming Events */}
       <div className="upcoming-events">
         <div className="upcoming-events__header flex flex-col items-start md:flex-row md:items-center gap-2 justify-between">
@@ -57,7 +57,7 @@ export default function UserOverview() {
           {/* Past Events */}
           <div className="past-events space-y-2">
             <h3 className="text-2xl font-bold text-primary">Past Events</h3>
-            <div className="bg-card rounded-md p-4 soft-shadow space-y-4">
+            <div className="bg-background rounded-xl p-4 soft-shadow space-y-4 border">
               {userEventsData.past.map((event, idx) => (
                 <div
                   key={idx}
@@ -85,7 +85,7 @@ export default function UserOverview() {
           {/* Saved Events */}
           <div className="saved-events space-y-2">
             <h3 className="text-2xl font-bold text-primary">Saved Events</h3>
-            <div className="bg-card rounded-md p-4 soft-shadow space-y-4">
+            <div className="bg-background rounded-xl p-4 soft-shadow space-y-4 border">
               {userEventsData.saved.map((event, idx) => (
                 <div
                   key={idx}
@@ -114,7 +114,7 @@ export default function UserOverview() {
         {/* Next Ticket */}
         <div className="user__next-ticket space-y-2">
           <h3 className="text-2xl font-bold text-primary">Next Ticket</h3>
-          <div className="bg-card rounded-md p-6 shadow-sm text-center border border-border">
+          <div className="bg-background rounded-xl p-6 shadow-sm text-center border">
             <h3 className="text-lg font-bold text-primary">
               Vibrations Music Festival
             </h3>
