@@ -314,7 +314,7 @@ export default function AddService() {
 
    // ✅ واجهة المستخدم
    return (
-      <section className="min-h-screen justify-center items-center text-content transition-colors duration-500">
+      <section className="container text-content transition-colors duration-500">
          <div className="w-full max-w-5xl mx-auto">
             <header className="text-center mb-10">
                <h1 className="text-3xl md:text-4xl font-bold text-primary mb-2">

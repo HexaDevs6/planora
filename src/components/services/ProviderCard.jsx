@@ -40,7 +40,7 @@ const ProviderCard = ({ provider_id }) => {
         <img
           src={provider.image || avatarPlaceholderImg}
           alt={provider.full_name}
-          className="md:w-24 h-full md:h-auto aspect-square object-cover rounded-full"
+          className="w-18 md:w-24 h-full md:h-auto aspect-square object-cover rounded-full"
         />
         <div className="text-start md:text-center flex flex-col gap-2 items-start md:items-center w-full">
           <h3 className="text-lg font-bold group-hover:underline">
