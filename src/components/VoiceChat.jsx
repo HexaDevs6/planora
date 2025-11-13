@@ -496,7 +496,7 @@ const VoiceChat = ({ onSendMessage, isProcessing, messages, onClearChat }) => {
                 whileTap={{ scale: 0.95 }}
                 onClick={isListening ? stopListening : startListening}
                 disabled={isProcessing || !isSpeechSupported}
-                className={`relative p-8 rounded-full transition-all duration-300 ${
+                className={`relative p-5 rounded-full transition-all duration-300 ${
                   isListening
                     ? 'bg-destructive text-white shadow-lg shadow-destructive/50'
                     : 'bg-gradient-amber text-violet-dark shadow-lg shadow-amber/50'
@@ -506,7 +506,7 @@ const VoiceChat = ({ onSendMessage, isProcessing, messages, onClearChat }) => {
               >
                 {isListening ? (
                   <>
-                    <MicOff className="w-8 h-8" />
+                    <MicOff />
                     <motion.div
                       className="absolute inset-0 rounded-full border-4 border-white"
                       animate={{ scale: [1, 1.2, 1] }}
@@ -514,7 +514,7 @@ const VoiceChat = ({ onSendMessage, isProcessing, messages, onClearChat }) => {
                     />
                   </>
                 ) : (
-                  <Mic className="w-8 h-8" />
+                  <Mic />
                 )}
                 
                 {/* Pulsing ring when speaking */}

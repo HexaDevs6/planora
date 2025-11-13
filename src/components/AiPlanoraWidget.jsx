@@ -1,7 +1,9 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { useDirection } from "@/hooks/useDirection";
 
 const AiPlanoraWidget = ({ open, setOpen }) => {
+   const { lang } = useDirection();
    return (
       // <motion.button
       //    type="button"
@@ -189,7 +191,7 @@ const AiPlanoraWidget = ({ open, setOpen }) => {
       <motion.button
          type="button"
          aria-label="AI Agent"
-         className="fixed bottom-6 right-6 z-50 rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:outline-offset-0 dark:focus-visible:outline-primary-dark"
+         className={`fixed bottom-6 ${lang === "ar" ? "left-6" : "right-6"} z-50 rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:outline-offset-0 dark:focus-visible:outline-primary-dark`}
          onClick={() => setOpen(!open)}
          whileHover={{ scale: 1.1 }}
          whileTap={{ scale: 0.95 }}

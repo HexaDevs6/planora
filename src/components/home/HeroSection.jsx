@@ -7,8 +7,10 @@ import CircularText from "../ui/shadcn-io/circular-text/index";
 import { t } from "i18next";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useDirection } from "@/hooks/useDirection";
 
 function HeroSection() {
+  const { lang } = useDirection();
   const heroImages = [
     "/images/homeHero/hero1.webp",
     "/images/homeHero/hero2.webp",
@@ -19,11 +21,12 @@ function HeroSection() {
 
   return (
     <section className="relative w-full h-screen flex items-center justify-center overflow-hidden">
+      <div className={`overlay w-full h-full absolute z-10 ${lang === "ar" ? "bg-gradient-to-r" : "bg-gradient-to-l"} from-transparent to-background`}></div>
       {/* الخلفية المتغيرة */}
       <AutoFadeCarousel images={heroImages} />
 
       {/* المحتوى النصي */}
-      <div className="md:start-20 absolute z-10 max-w-5xl px-4 text-start flex flex-col gap-5">
+      <div className="container md:start-20 absolute z-10 px-4 text-start flex flex-col gap-5">
         <img
           className="hidden md:block w-80"
           src="PlanoraYellowTypo.png"
@@ -31,17 +34,17 @@ function HeroSection() {
         />
 
         <div className="lg:text-5xl flex flex-col items-start text-3xl font-bold mb-4 leading-tight drop-shadow-[0px_4px_4px_rgba(0,0,0,0.25)] text-violet">
-          {t("hero.slogan")}{" "}
+          <span className="text-foreground">{t("hero.slogan")}</span>{" "}
           <FlipWords
             words={t("hero.flipWords").split(" ")}
             duration={1500}
             dir="ltr"
-            className="text-amber font-semibold drop-shadow-2xl lg:text-6xl py-2"
+            className="dark:text-amber text-amber-dark font-semibold drop-shadow-2xl lg:text-6xl py-2"
           />
         </div>
 
         <SplittingText
-          className="lg:text-2xl text-lg mb-4 font-semibold drop-shadow-6xl text-secondary dark:text-foreground leading-relaxed md:w-[75%]"
+          className="lg:text-2xl text-lg mb-4 font-semibold drop-shadow-6xl text-foreground leading-relaxed md:w-[75%]"
           text={[t("hero.description")]}
           type="lines"
           inView

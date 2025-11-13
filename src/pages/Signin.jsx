@@ -130,9 +130,9 @@ function Signin() {
     }, []);
 
     return (
-        <div className='flex flex-col md:flex-row min-h-screen bg-background pt-16'>
+        <div className='flex items-center flex-col md:flex-row min-h-screen bg-background '>
             {/* Left column - form */}
-            <div className='w-full md:w-1/2 flex items-start justify-center px-8  py-12'>
+            <div className='w-full md:w-1/2 flex items-start justify-center px-8 py-8'>
                 <div className='w-full max-w-lg'>
                     <header className='mb-10'>
                         <Link to='/' className='flex items-center mb-6'>

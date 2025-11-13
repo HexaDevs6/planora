@@ -7,6 +7,7 @@ import VoiceChat from "./VoiceChat";
 import { initializeGemini, sendMessage } from "@/services/geminiService";
 import { MissingApiKeyScreen } from "@/pages/PlanoraAi";
 import AiPlanoraWidget from "./AiPlanoraWidget";
+import { useDirection } from "@/hooks/useDirection";
 
 const userData = {
    name: "Mahmoud",
@@ -20,7 +21,7 @@ const userData = {
 const ChatWidget = () => {
    const { t, i18n } = useTranslation();
    const currentLang = i18n.language;
-
+   const { lang } = useDirection();
    const [open, setOpen] = useState(false);
    const [isProcessing, setIsProcessing] = useState(false);
    const [messages, setMessages] = useState([]);
@@ -150,14 +151,14 @@ const ChatWidget = () => {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 30, scale: 0.9 }}
                   transition={{ type: "spring", stiffness: 250, damping: 20 }}
-                  className="fixed bottom-16 right-4 sm:bottom-20 sm:right-6 z-50 
-  w-[90%] max-w-[480px] h-[70vh] sm:h-[520px] 
+                  className={`fixed bottom-20 ${lang === "ar" ? "left-4" : "right-4"} sm:bottom-20 sm:${lang === "ar" ? "left-6" : "right-6"} z-50 
+  w-[90%] max-w-[480px] h-[80vh] sm:h-[520px] 
   bg-background/50 backdrop-blur-md border border-border shadow-2xl 
-  rounded-2xl overflow-hidden flex flex-col"
+  rounded-2xl overflow-hidden flex flex-col`}
                >
                   <div className="flex items-center py-2 justify-between px-4 bg-amber/50 text-white">
-                     <h3 className="text-sm font-semibold">
-                        Planora AI Assistant
+                     <h3 className="text-sm font-semibold text-foreground">
+                        {t("planoraAi.title")}
                      </h3>
                      <button
                         onClick={() => setOpen(false)}
