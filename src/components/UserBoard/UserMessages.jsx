@@ -1,8 +1,7 @@
-// /src/pages/UserMessages.jsx
+// /src/components/UserBoard/UserMessages.jsx
 import React, { useEffect, useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-import i18n from "@/i18n";
 import {
   createOrGetConversation,
   getInbox,
@@ -15,7 +14,8 @@ import { Search, CirclePlus, Smile } from "lucide-react";
 
 export default function UserMessagesPage() {
   const user = useSelector((state) => state.auth.user);
-  const userId = user?.id || user?.user_id || user?.uid; // fallback fields
+  const userId = user?.id;
+
   const [inbox, setInbox] = useState([]);
   const [activeConvId, setActiveConvId] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -23,29 +23,43 @@ export default function UserMessagesPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [loadingInbox, setLoadingInbox] = useState(true);
   const [loadingMessages, setLoadingMessages] = useState(false);
+
   const subRef = useRef(null);
   const inboxSubRef = useRef(null);
   const messagesEndRef = useRef(null);
 
+  // ⭐ READ CID FROM URL
+  const location = useLocation();
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const cid = params.get("cid");
+
+    if (cid) {
+      console.log("Opening conversation from URL:", cid);
+      setActiveConvId(cid);
+    }
+  }, [location]);
+
+  // ⭐ Load inbox
   useEffect(() => {
     if (!userId) return;
+
     let mounted = true;
 
     (async () => {
       setLoadingInbox(true);
+
       const data = await getInbox(userId);
       if (!mounted) return;
       setInbox(Array.isArray(data) ? data : []);
+
       setLoadingInbox(false);
     })();
 
-    // subscribe inbox updates (optional, will deliver new message events globally)
-    inboxSubRef.current = subscribeToInbox(userId, (payload) => {
-      // payload contains new message; best practice: refresh inbox RPC once
-      (async () => {
-        const updated = await getInbox(userId);
-        setInbox(Array.isArray(updated) ? updated : []);
-      })();
+    // Real-time inbox update
+    inboxSubRef.current = subscribeToInbox(userId, async () => {
+      const updated = await getInbox(userId);
+      setInbox(Array.isArray(updated) ? updated : []);
     });
 
     return () => {
@@ -54,7 +68,7 @@ export default function UserMessagesPage() {
     };
   }, [userId]);
 
-  // when activeConvId changes, fetch messages and subscribe to real-time for this conv
+  // ⭐ Load messages when conversation changes
   useEffect(() => {
     if (!activeConvId) {
       setMessages([]);
@@ -62,6 +76,7 @@ export default function UserMessagesPage() {
     }
 
     let mounted = true;
+
     setLoadingMessages(true);
 
     (async () => {
@@ -69,26 +84,22 @@ export default function UserMessagesPage() {
       if (!mounted) return;
       setMessages(msgs || []);
       setLoadingMessages(false);
-      // scroll
-      setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
+
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
     })();
 
-    // subscribe
+    // Realtime messages
     const sub = subscribeToNewMessages(activeConvId, (newMsg) => {
-      // push new message if not duplicate
       setMessages((prev) => {
         if (prev.some((m) => m.id === newMsg.id)) return prev;
         return [...prev, newMsg];
       });
 
-      // also refresh inbox quick (optional)
-      (async () => {
-        const updated = await getInbox(userId);
-        setInbox(Array.isArray(updated) ? updated : []);
-      })();
-
-      // scroll
-      setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), 80);
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
     });
 
     subRef.current = sub;
@@ -97,23 +108,22 @@ export default function UserMessagesPage() {
       mounted = false;
       subRef.current?.remove?.();
     };
-  }, [activeConvId, userId]);
+  }, [activeConvId]);
 
-  const openConversationWith = async (otherUserId) => {
-    if (!userId) return;
-    const convId = await createOrGetConversation(userId, otherUserId);
-    setActiveConvId(convId);
-  };
-
+  // ⭐ Send message
   const handleSend = async () => {
     if (!text.trim() || !userId || !activeConvId) return;
+
     try {
-      await sendMessage({ conversation_id: activeConvId, sender_id: userId, content: text.trim() });
+      await sendMessage({
+        conversation_id: activeConvId,
+        sender_id: userId,
+        content: text.trim(),
+      });
+
       setText("");
-      // messages will arrive via realtime subscription; optional: optimistic update
     } catch (err) {
-      console.error("send error:", err);
-      // optionally show toast
+      console.error("Send error:", err);
     }
   };
 
@@ -125,32 +135,33 @@ export default function UserMessagesPage() {
 
   return (
     <div>
-      <header className="flex items-center justify-between whitespace-nowrap border-b border-gray-200 dark:border-white px-6 py-5 bg-content-light dark:bg-content-dark shadow-subtle">
-        <div className="flex items-center gap-2 text-sm text-primary ">
+      <header className="flex items-center justify-between whitespace-nowrap border-b px-6 py-5">
+        <div className="flex items-center gap-2 text-sm text-primary">
           <Link className="text-semibold" to={"/user/overview"}>
             Dashboard
           </Link>
-          <span className="text-primary">/</span>
-          <Link to={"/user/messages"} className="font-semibold text-primary ">
+          <span>/</span>
+          <Link to={"/user/messages"} className="font-semibold text-primary">
             Messages
           </Link>
         </div>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        <div className={`lg:col-span-1`}>
-          <div className={`p-5 flex items-center gap-3 border-b border-gray-200 dark:border-white`}>
+        {/* LEFT SIDE → Inbox */}
+        <div className="lg:col-span-1 border-r">
+          <div className="p-5 flex items-center gap-3 border-b">
             <Search size={18} />
             <input
               type="search"
               placeholder="Search conversations"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="py-2 px-3 w-full placeholder:text-text placeholder:text-[12px] border rounded-sm focus:outline-amber-300"
+              className="py-2 px-3 w-full border rounded-sm"
             />
           </div>
 
-          <div className={`border-gray-200 dark:border-white flex flex-row md:flex-col overflow-y-auto max-h-[70vh]`}>
+          <div className="overflow-y-auto max-h-[70vh]">
             {loadingInbox ? (
               <div className="p-4 text-center">Loading...</div>
             ) : inbox.length === 0 ? (
@@ -159,31 +170,36 @@ export default function UserMessagesPage() {
               </div>
             ) : (
               (filtered.length > 0 ? filtered : inbox).map((conv) => {
-                // structure depends on your RPC; adapt field names
-                const otherName = conv.other_user_name || conv.name || conv.display_name || "Conversation";
-                const otherId = conv.other_user_id || conv.other_id || conv.participant_id;
-                const lastMessage = conv.last_message_text || conv.last_message || conv.last_message_content;
-                const unread = conv.unread_count || conv.unread || 0;
-                const isActive = activeConvId === conv.conversation_id || activeConvId === conv.id;
+                const otherName =
+                  conv.other_user_name || conv.name || "Conversation";
+
+                const isActive =
+                  activeConvId === conv.conversation_id ||
+                  activeConvId === conv.id;
 
                 return (
                   <div
-                    onClick={() => {
-                      setActiveConvId(conv.conversation_id || conv.id);
-                    }}
                     key={conv.conversation_id || conv.id}
-                    className={`flex items-center cursor-pointer gap-3 p-3 border-b hover:bg-amber-light ${isActive ? "bg-amber-100" : ""}`}
+                    onClick={() =>
+                      setActiveConvId(conv.conversation_id || conv.id)
+                    }
+                    className={`flex items-center gap-3 p-3 cursor-pointer border-b hover:bg-amber-light ${
+                      isActive ? "bg-amber-100" : ""
+                    }`}
                   >
-                    <div className="w-12 h-12 rounded-full bg-gray-200 flex-shrink-0 overflow-hidden">
-                      <img src={conv.other_user_avatar || conv.avatar} alt={otherName} className="w-full h-full object-cover" />
+                    <div className="w-12 h-12 rounded-full bg-gray-200">
+                      <img
+                        src={conv.other_user_avatar || ""}
+                        alt={otherName}
+                        className="w-full h-full object-cover rounded-full"
+                      />
                     </div>
+
                     <div className="flex-1 min-w-0">
-                      <p className="font-bold text-primary truncate">{otherName}</p>
-                      <p className="text-xs text-text truncate">{lastMessage}</p>
-                    </div>
-                    <div className="text-sm text-text">
-                      {conv.last_message_at && <div className="text-[12px] hidden md:block">{new Date(conv.last_message_at).toLocaleString()}</div>}
-                      {unread > 0 && <div className="w-5 h-5 flex items-center justify-center rounded-full bg-amber text-white text-xs">{unread}</div>}
+                      <p className="font-bold truncate">{otherName}</p>
+                      <p className="text-xs text-gray-500 truncate">
+                        {conv.last_message}
+                      </p>
                     </div>
                   </div>
                 );
@@ -192,80 +208,75 @@ export default function UserMessagesPage() {
           </div>
         </div>
 
-        {/* messages area */}
+        {/* RIGHT SIDE → Messages */}
         <div className="lg:col-span-2 flex flex-col min-h-[60vh]">
-          <header className="flex justify-between items-center p-5 md:border-b border-1 border-gray-200 dark:border-white">
+          <header className="p-5 border-b">
             {activeConvId ? (
-              <div className="flex gap-3 items-center">
-                <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden">
-                  {/* try to show other party avatar from selected inbox item */}
-                  <img
-                    src={(inbox.find((c) => (c.conversation_id || c.id) === activeConvId)?.other_user_avatar) || ""}
-                    alt="other"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <h1 className="font-bold text-primary">
-                    {inbox.find((c) => (c.conversation_id || c.id) === activeConvId)?.other_user_name || "Conversation"}
-                  </h1>
-                </div>
-              </div>
+              <h1 className="font-bold text-primary">
+                {
+                  inbox.find(
+                    (c) =>
+                      (c.conversation_id || c.id) === activeConvId
+                  )?.other_user_name
+                }
+              </h1>
             ) : (
-              <p className="text-text">Select a conversation...</p>
+              <p className="text-gray-500">Select a conversation...</p>
             )}
           </header>
 
-          <div className="flex-1 p-6 overflow-y-auto space-y-3 bg-chat-bg-light dark:bg-chat-bg-dark">
-            {loadingMessages ? (
-              <div>Loading messages...</div>
-            ) : messages.length === 0 ? (
-              <div className="text-center text-text">No messages yet</div>
+          <div className="flex-1 p-6 overflow-y-auto space-y-3">
+            {messages.length === 0 ? (
+              <div className="text-center text-gray-500">
+                No messages yet
+              </div>
             ) : (
               messages.map((m) => {
                 const mine = m.sender_id === userId;
                 return (
-                  <div key={m.id} className={`flex gap-3 ${mine ? "justify-end" : "justify-start"}`}>
-                    {!mine && (
-                      <div className="w-10 h-10 rounded-full overflow-hidden">
-                        <img src={inbox.find((c) => (c.conversation_id || c.id) === activeConvId)?.other_user_avatar || ""} alt="avatar" className="w-full h-full object-cover" />
-                      </div>
-                    )}
-                    <div className={`${mine ? "bg-primary text-white" : "bg-white dark:bg-violet text-violet"} p-3 rounded-lg max-w-[70%]`}>
-                      <div className="text-sm">{m.content || m.message || m.text}</div>
-                      <div className="text-[10px] text-muted-foreground mt-1 text-right">{new Date(m.created_at || m.createdAt).toLocaleTimeString()}</div>
+                  <div
+                    key={m.id}
+                    className={`flex gap-3 ${
+                      mine ? "justify-end" : "justify-start"
+                    }`}
+                  >
+                    <div
+                      className={`p-3 rounded-lg max-w-[70%] ${
+                        mine
+                          ? "bg-primary text-white"
+                          : "bg-gray-200 text-gray-800"
+                      }`}
+                    >
+                      {m.content}
                     </div>
-                    {mine && (
-                      <div className="w-10 h-10 rounded-full overflow-hidden">
-                        <img src={user.avatar || user.photoURL || ""} alt="me" className="w-full h-full object-cover" />
-                      </div>
-                    )}
                   </div>
                 );
               })
             )}
+
             <div ref={messagesEndRef} />
           </div>
 
-          {/* footer send */}
-          <footer className="flex items-center gap-3 p-5 border-t bg-content-light dark:bg-content-dark">
-            <div className="flex items-center gap-3 w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-sm">
-              <CirclePlus size={20} />
-              <input
-                type="text"
-                placeholder="Type a message..."
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                className="flex-1 px-4 py-2 border rounded-sm focus:outline-amber-300"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") handleSend();
-                }}
-              />
-              <Smile size={20} />
-              <button className="bg-amber text-white px-4 py-2 rounded-sm" onClick={handleSend}>
-                Send
-              </button>
-            </div>
+          {/* SEND MESSAGE */}
+          <footer className="p-5 border-t flex gap-3 items-center">
+            <input
+              type="text"
+              placeholder="Type a message..."
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSend()}
+              disabled={!activeConvId}
+              className="flex-1 px-4 py-2 border rounded"
+            />
+            <button
+              className={`px-4 py-2 rounded text-white ${
+                activeConvId ? "bg-amber" : "bg-gray-400 cursor-not-allowed"
+              }`}
+              onClick={handleSend}
+              disabled={!activeConvId}
+            >
+              Send
+            </button>
           </footer>
         </div>
       </div>

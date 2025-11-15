@@ -62,6 +62,7 @@ const ServiceDetails = () => {
 
     try {
       const convoId = await createOrGetConversation(user.id, service.client_id);
+      //use search params to pass conversation id???
       navigate(`/user/messages?cid=${convoId}`);
     } catch (err) {
       console.error("Failed to start conversation:", err.message);
