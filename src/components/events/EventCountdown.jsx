@@ -1,8 +1,55 @@
 import { Ticket } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { Button } from "../ui/button";
+import { useDispatch } from "react-redux";
+import { createTicket } from "@/store/tickets/clientTicketsSlice";
+import { toast } from "sonner";
+import { supabase } from "@/lib/supabaseClient";
+import QRCode from "react-qr-code";
 
-const EventCountdown = ({ details, lang = "en" }) => {
+const EventCountdown = ({ details, eventId,user, lang = "en" }) => {
+
+   const dispatch =useDispatch();
    // Function to calculate time left and event status
+
+const [isTicketBooked, setIsTicketBooked] = useState(false);
+const [ticket, setTicket] = useState(null);
+
+
+useEffect(() => {
+  const checkExistingTicket = async () => {
+    const client = await user;
+
+    const { data: existingTicket } = await supabase
+      .from("tickets")
+      .select("*")
+      .eq("event_id", eventId)
+      .eq("client_id", client.id)
+      .single();
+
+    if (existingTicket) {
+      setIsTicketBooked(true);
+      setTicket(existingTicket);
+    }
+  };
+
+  checkExistingTicket();
+}, [eventId, user]);
+
+const handleCreateTicket = async () => {
+   try {
+      const client = await user;
+      const tic =await dispatch(createTicket({ eventId, clientId: client.id})).unwrap();
+      if (tic) {
+         toast.success("Ticket booked successfully");
+         setIsTicketBooked(true);
+         setTicket(tic);
+         console.log(tic);
+      }
+   } catch (error) {
+      console.error(error);
+   }
+}
    const calculateTimeLeft = () => {
       const now = new Date().getTime();
       const start = new Date(details.start_date).getTime();
@@ -127,24 +174,23 @@ const EventCountdown = ({ details, lang = "en" }) => {
             </div>
          )}
 
-         <button
+         
+         { isTicketBooked && ticket ?(  <div className="flex justify-center mt-4">
+      <QRCode value={ticket.qr_code} size={180} />
+   </div>) :(
+            <Button
+            className="mt-6 w-full"
+            variant="default"
+            size="CTA"
+            onClick={handleCreateTicket}
             disabled={countdown.status === "ended"}
-            className={`mt-6 w-full px-6 py-3 rounded-lg font-bold shadow-lg flex items-center justify-center gap-2 transition-all transform
-        ${
-           countdown.status === "ended"
-              ? "bg-gray-400 cursor-not-allowed text-white"
-              : "bg-violet text-white hover:bg-violet/80"
-        }`}
          >
-            <Ticket />
-            {countdown.status === "ended"
-               ? lang === "ar"
-                  ? "انتهى الحدث"
-                  : "Event Ended"
-               : lang === "ar"
+            <Ticket className="size-4" />
+            {
+               lang === "ar"
                ? "احجز تذكرتك الآن"
                : "Get Tickets Now"}
-         </button>
+         </Button>)}
       </div>
    );
 };

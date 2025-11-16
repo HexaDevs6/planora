@@ -17,16 +17,18 @@ import Spinner from "@/components/SpinnerLoader";
 import { supabase } from "@/lib/supabaseClient";
 import { getPublicUrl } from "@/lib/storage";
 import loremImg from "@/assets/lorem.jfif";
+import { useSelector } from "react-redux";
 
 
 const details = {
    start_date: "2025-11-01T18:00:00Z",
-   end_date: "2025-11-03T21:00:00Z",
+   end_date: "2026-11-03T21:00:00Z",
    price: 299,
    address: {
       ar: "العنوان بالعربي",
       en: "English Address",
    },
+
 }
 const highlights = [
    {
@@ -65,9 +67,14 @@ const EventDetails = () => {
    const { lang } = useDirection();
    const { eventId } = useParams();
    const [event, setEvent] = useState(null);
+
+   const { user } = useSelector((state) => state.auth);
+   console.log(user);
    
    // const [service, setService] = useState(null);
    const [loading, setLoading] = useState(true);
+
+
    useEffect(() => {
       const fetchEvent = async () => {
          setLoading(true);
@@ -87,9 +94,8 @@ const EventDetails = () => {
          }
       };
       fetchEvent();
+   
    }, [eventId]);
-
-
 
  // handle if thumb is local, remote, or from supabase storage
    const handleThumbnail = (el) => {
@@ -158,7 +164,7 @@ const EventDetails = () => {
                   </section>
                </div>
                <div className="md:col-span-1 space-y-8">
-                  <EventCountdown details={details} lang={lang} />
+                  <EventCountdown details={details} eventId={event?.id} user={user} lang={lang} />
                   {/* <QuickInfo /> */}
                   <div className="gradient-card rounded-xl p-6 text-center">
                      <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
