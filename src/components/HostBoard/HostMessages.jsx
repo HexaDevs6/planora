@@ -91,7 +91,7 @@ export default function HostMessagesPage() {
       mounted = false;
       subRef.current?.remove?.();
     };
-  }, [activeConvId, hostId]);
+  }, [activeConvId, hostId , messages]);
 
   // ⭐ SEND MESSAGE
   const handleSend = async () => {
