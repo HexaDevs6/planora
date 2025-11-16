@@ -11,6 +11,7 @@ import {
   subscribeToInbox,
 } from "@/lib/chatService";
 import { Search, CirclePlus, Smile } from "lucide-react";
+import avatarPlaceholderImg from "@/assets/user_placeholder2.png";
 
 export default function UserMessagesPage() {
   const user = useSelector((state) => state.auth.user);
@@ -189,7 +190,7 @@ export default function UserMessagesPage() {
                   >
                     <div className="w-12 h-12 rounded-full bg-gray-200">
                       <img
-                        src={conv.other_user_avatar || ""}
+                        src={conv.other_user_avatar || avatarPlaceholderImg }
                         alt={otherName}
                         className="w-full h-full object-cover rounded-full"
                       />
