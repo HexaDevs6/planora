@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/lib/supabaseClient";
 import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const translations = {
     en: {
@@ -49,7 +50,7 @@ export function PasswordChangeModal({ lang = "en", user }) {
     const navigate = useNavigate();
 
     const PASSWORD_REGEX =
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -91,30 +92,41 @@ export function PasswordChangeModal({ lang = "en", user }) {
             }
 
             if (newPassword === oldPassword) {
-            toast.error( 
-                lang === "ar" ? "لا يمكن أن تكون كلمة المرور الجديدة هي نفس كلمة المرور الحالية" : "New password cannot be the same as the current password");
-            return;
-        }
-
-            
+                toast.error(
+                    lang === "ar"
+                        ? "لا يمكن أن تكون كلمة المرور الجديدة هي نفس كلمة المرور الحالية"
+                        : "New password cannot be the same as the current password"
+                );
+                return;
+            }
 
             // 4) update password
-            const { error } = await supabase.auth.updateUser({
-                password: newPassword,
+            Promise.resolve().then(async () => {
+                const { error } = await supabase.auth.updateUser({
+                    password: newPassword,
+                });
+
+                if (error) {
+                    toast.error(t.error);
+                    return;
+                }
             });
 
-            if (error) throw error;
-
-            toast.success(
-                lang === "ar"
-                ? "تم تحديث كلمة المرور بنجاح"
-                : "Password updated successfully"
-            );
-            setOldPassword("");
-            setNewPassword("");
-            setConfirmPassword("");
             setIsOpen(false);
-            navigate(0);
+
+            Swal.fire({
+                icon: "success",
+                title:
+                    lang === "ar" ? "تم تحديث كلمة المرور" : "Password updated",
+                text:
+                    lang === "ar"
+                        ? "سيتم تحديث الجلسة الآن"
+                        : "Your session will be refreshed now",
+                confirmButtonText: lang === "ar" ? "حسناً" : "OK",
+            }).then(() => {
+                // safest way
+                navigate(0);
+            });
         } catch (err) {
             console.error(err);
             toast.error(t.error);
@@ -123,14 +135,6 @@ export function PasswordChangeModal({ lang = "en", user }) {
         }
     };
 
-    console.log('oldpass', oldPassword );
-    console.log('newpass', newPassword );
-    console.log('confirmpass', confirmPassword );
-    console.log('isopen', isOpen );
-    console.log('isloading', isLoading );
-    console.log('user', user );
-    
-    
     return (
         <>
             <Button variant='outline' size='lg' onClick={() => setIsOpen(true)}>

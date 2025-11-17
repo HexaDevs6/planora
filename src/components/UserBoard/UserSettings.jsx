@@ -10,12 +10,15 @@ import avatarPlaceholderImg from "@/assets/user_placeholder3.png";
 import { getPublicUrl } from "@/lib/storage";
 import Spinner from "../SpinnerLoader";
 import { toast } from "sonner";
+import { PasswordChangeModal } from "../PasswordChangeModal";
 
 export default function ProfileSettings() {
     const { lang } = useDirection();
     const dispatch = useDispatch();
     const { user } = useSelector((state) => state.auth);
-    const { data: categories, loading } = useSelector((state) => state.categories);
+    const { data: categories, loading } = useSelector(
+        (state) => state.categories
+    );
     const [saving, setSaving] = useState(false);
     const originalRef = useRef(null); // Store original data
     const [formData, setFormData] = useState({
@@ -111,7 +114,11 @@ export default function ProfileSettings() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!user?.id) {
-            toast.error(lang === "ar" ? "يجب تسجيل الدخول أولاً" : "You must be logged in");
+            toast.error(
+                lang === "ar"
+                    ? "يجب تسجيل الدخول أولاً"
+                    : "You must be logged in"
+            );
             return;
         }
 
@@ -127,7 +134,9 @@ export default function ProfileSettings() {
             if (formData.avatarFile) {
                 const file = formData.avatarFile;
                 const ext = file.name.split(".").pop();
-                const path = `avatars/${user.full_name}/${user.id}-${Date.now()}.${ext}`;
+                const path = `avatars/${user.full_name}/${
+                    user.id
+                }-${Date.now()}.${ext}`;
 
                 const { error: uploadErr } = await supabase.storage
                     .from("avatars")
@@ -190,7 +199,8 @@ export default function ProfileSettings() {
                 originalCat.some((c) => !newCat.includes(c));
 
             if (categoriesChanged) {
-                await supabase.from("user_categories")
+                await supabase
+                    .from("user_categories")
                     .delete()
                     .eq("user_id", user.id);
 
@@ -212,7 +222,9 @@ export default function ProfileSettings() {
             // 5) Save success
             // -------------------------
             toast.success(
-                lang === "ar" ? "تم حفظ التعديلات بنجاح" : "Changes saved successfully"
+                lang === "ar"
+                    ? "تم حفظ التعديلات بنجاح"
+                    : "Changes saved successfully"
             );
 
             // -------------------------
@@ -232,7 +244,9 @@ export default function ProfileSettings() {
         } catch (err) {
             console.error(err);
             toast.error(
-                lang === "ar" ? "حدث خطأ أثناء حفظ البيانات" : "Failed to save profile"
+                lang === "ar"
+                    ? "حدث خطأ أثناء حفظ البيانات"
+                    : "Failed to save profile"
             );
         } finally {
             setSaving(false);
@@ -253,7 +267,7 @@ export default function ProfileSettings() {
                     </h1>
                 </header>
 
-                <form onSubmit={handleSubmit} className='space-y-12'>
+                <form onSubmit={handleSubmit}>
                     <section>
                         {/* Personal Details */}
                         <h2 className='text-xl font-semibold text-primary border-b border-border pb-4 mb-6'>
@@ -269,8 +283,8 @@ export default function ProfileSettings() {
                                     src={
                                         formData.avatarFile
                                             ? URL.createObjectURL(
-                                                formData.avatarFile
-                                            )
+                                                  formData.avatarFile
+                                              )
                                             : handleAvatar(formData.avatarUrl)
                                     }
                                     alt='User Avatar'
@@ -302,6 +316,11 @@ export default function ProfileSettings() {
                                             }
                                         />
                                     </label>
+                                    <div className='text-sm text-muted-foreground pt-4'>
+                                        {lang === "ar"
+                                            ? "يمكنك تحميل صورة بحجم اقل من 2 ميغابايت (jpg, jpeg, png)"
+                                            : "You can upload an image with a maximum size of 2MB (jpg, jpeg, png)"}
+                                    </div>
 
                                     {/* {formData.avatarUrl &&
                                         !formData.avatarFile && (
@@ -330,9 +349,7 @@ export default function ProfileSettings() {
                                     htmlFor='full_name'
                                     className='mb-2 block font-medium text-sm'
                                 >
-                                    {lang === "ar"
-                                        ? "الاسم "
-                                        : "Name"}
+                                    {lang === "ar" ? "الاسم " : "Name"}
                                 </Label>
                                 <Input
                                     id='full_name'
@@ -472,7 +489,7 @@ export default function ProfileSettings() {
                             </div>
                         </div>
                         {/* categories / interests */}
-                        <div className='grid grid-cols-2 md:grid-cols-3 gap-3 mt-7 border-t pt-7'>
+                        <div className='grid grid-cols-2 md:grid-cols-3 gap-3 mt-7 border-y py-7'>
                             <Label className='text-md font-semibold '>
                                 {lang === "ar"
                                     ? " التصنيفات / الاهتمامات"
@@ -486,12 +503,13 @@ export default function ProfileSettings() {
                                         e.preventDefault();
                                         toggleInterest(interest.id); // store id instead of name
                                     }}
-                                    className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${formData.categories.includes(
-                                        interest.id
-                                    )
+                                    className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
+                                        formData.categories.includes(
+                                            interest.id
+                                        )
                                             ? "border-primary bg-primary/10"
                                             : "border-border hover:border-primary/50"
-                                        }`}
+                                    }`}
                                 >
                                     <div className='flex items-center gap-2'>
                                         <span className='text-sm font-medium'>
@@ -577,28 +595,31 @@ export default function ProfileSettings() {
                             </button>
                         </div>
                     </section> */}
-
-                    {/* Security */}
-                    <section>
-                        <h2 className='text-xl font-semibold text-primary border-b border-border pb-4 '>
-                            {lang === "en" ? "Security" : "الأمان"}
-                        </h2>
-                        <div className='bg-surface p-6 rounded-sm'>
-                            <Button variant='outline' size='lg'>
-                                {lang === "en"
-                                    ? "Change Password"
-                                    : "تغيير كلمة المرور"}
-                            </Button>
-                        </div>
-                    </section>
-
                     {/* Save Button */}
-                    <div className=' pt-6 border-t border-border'>
-                        <Button variant='default' size='lg' type='submit' disabled={saving}>
-                            {saving ? <div className="w-5 h-5 border-4 border-background border-t-transparent rounded-full animate-spin"></div> : lang === "en" ? "Save Changes" : "حفظ التغييرات"}
+                    <div className=' pt-6'>
+                        <Button
+                            variant='default'
+                            size='lg'
+                            type='submit'
+                            disabled={saving}
+                        >
+                            {saving ? (
+                                <div className='w-5 h-5 border-4 border-background border-t-transparent rounded-full animate-spin'></div>
+                            ) : lang === "en" ? (
+                                "Save Changes"
+                            ) : (
+                                "حفظ التغييرات"
+                            )}
                         </Button>
                     </div>
                 </form>
+                {/* Security */}
+                <section className='space-y-4 pt-8'>
+                    <h2 className='text-xl font-semibold text-primary border-b border-border pb-4 '>
+                        {lang === "en" ? "Security" : "الأمان"}
+                    </h2>
+                    <PasswordChangeModal lang={lang} user={user} />
+                </section>
             </div>
         </main>
     );
