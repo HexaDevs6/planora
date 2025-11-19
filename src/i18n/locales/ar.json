@@ -25,7 +25,8 @@
       "continue": "متابعة",
       "creating": "جاري إنشاء الحساب...",
       "signingIn": "جاري تسجيل الدخول...",
-      "letsGetStarted": "ابدأ رحلتك الآن"
+      "letsGetStarted": "ابدأ رحلتك الآن",
+      "send": "إرسال"
     },
     "form": {
       "email": "البريد الإلكتروني",
@@ -65,7 +66,15 @@
       "error": "خطأ!",
       "warning": "تحذير!",
       "info": "معلومات!"
-    }
+    },
+    "messages": {
+      "noMessages": "لا يوجد رسائل بعد",
+      "noConversations": "لا يوجد محادثات بعد",
+      "selectConversation": "اختر محادثة...",
+      "typeMessage": "اكتب رسالة...",
+      "searchConversation": "ابحث عن محادثة..."
+    },
+    "loading": "جاري التحميل..."
   },
   "nav": {
     "home": "الرئيسية",

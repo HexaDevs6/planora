@@ -1,10 +1,7 @@
 "use client";
 import {
-	CreditCard,
 	DotSquare,
 	LogOut,
-	Bell,
-	UserCircle,
  } from "lucide-react"
 
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -17,10 +14,7 @@ import {
 import {
 	DropdownMenu,
 	DropdownMenuContent,
-	DropdownMenuGroup,
 	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
 	DropdownMenuTrigger,
  } from "@/components/ui/dropdown-menu"
  import { useDispatch } from "react-redux";
@@ -46,9 +40,9 @@ export default function NavUser({ user }) {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar className="h-8 w-8 rounded-lg grayscale">
+              <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarFallback className="rounded-lg">{user.name.split(" ").map((n) => n[0]).join("")}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
@@ -95,9 +89,9 @@ export default function NavUser({ user }) {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator /> */}
-            <DropdownMenuItem onClick={handleLogout}>
+            <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
               <LogOut />
-              Log out
+              {t("common.buttons.logout")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

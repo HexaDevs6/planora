@@ -25,7 +25,8 @@
       "continue": "Continue",
       "creating": "Creating Account...",
       "signingIn": "Signing in...",
-      "letsGetStarted": "Let's Get Started"
+      "letsGetStarted": "Let's Get Started",
+      "send": "Send"
     },
     "form": {
       "email": "Email",
@@ -65,7 +66,15 @@
       "error": "Error!",
       "warning": "Warning!",
       "info": "Info!"
-    }
+    },
+    "messages": {
+      "noMessages": "No messages yet",
+      "noConversations": "No conversations yet",
+      "selectConversation": "Select a conversation...",
+      "typeMessage": "Type a message...",
+      "searchConversation": "Search conversations..."
+    },
+    "loading": "Loading..."
   },
   "nav": {
     "home": "Home",
