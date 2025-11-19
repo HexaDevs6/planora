@@ -1,6 +1,709 @@
 {
-   "hero": {
-      "title": "Planora",
-      "subtitle": "Where grate events begin"
-   }
+  "common": {
+    "buttons": {
+      "login": "Login",
+      "register": "Register",
+      "logout": "Logout",
+      "submit": "Submit",
+      "cancel": "Cancel",
+      "more": "More",
+      "close": "Close",
+      "search": "Search",
+      "edit": "Edit",
+      "delete": "Delete",
+      "create": "Create",
+      "update": "Update",
+      "save": "Save",
+      "apply": "Apply",
+      "getStarted": "Get Started",
+      "contactUs": "Contact Us",
+      "join": "Join",
+      "follow": "Follow",
+      "explore": "Explore More",
+      "bookNow": "Book Now",
+      "back": "Back",
+      "continue": "Continue",
+      "creating": "Creating Account...",
+      "signingIn": "Signing in...",
+      "letsGetStarted": "Let's Get Started"
+    },
+    "form": {
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "fullName": "Full Name",
+      "phone": "Phone Number",
+      "name": "Name",
+      "address": "Address",
+      "city": "City",
+      "country": "Country",
+      "state": "State",
+      "zip": "Zip",
+      "description": "Description",
+      "title": "Title",
+      "subtitle": "Subtitle",
+      "date": "Date",
+      "time": "Time",
+      "duration": "Duration",
+      "price": "Price",
+      "capacity": "Capacity",
+      "category": "Category",
+      "location": "Location",
+      "image": "Image"
+    },
+    "validation": {
+      "required": "This field is required",
+      "emailInvalid": "Please enter a valid email address",
+      "passwordLength": "Password must be at least 8 characters",
+      "passwordsNoMatch": "Passwords do not match",
+      "fillAllFields": "Please fill in all required fields",
+      "agreeToTerms": "You must agree to the terms and conditions",
+      "emailExists": "Email already exists"
+    },
+    "toast": {
+      "success": "Success!",
+      "error": "Error!",
+      "warning": "Warning!",
+      "info": "Info!"
+    }
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "contact": "Contact",
+    "events": "Events",
+    "services": "Services"
+  },
+  "hero": {
+    "slogan": "WHERE ALL GREAT EVENTS BEGIN",
+    "description": "Organize, Discover, and Manage your awesome events effortlessly - one smart platform that connects ideas, people, and events.",
+    "flipWords": "Events Meetups Conference Workshops Festivals Exhibitions Weddings",
+    "rotating": "WELCOME • TO • PLANORA • PLATFORM • "
+  },
+  "cta": {
+    "title": "Ready to Transform Your Events?",
+    "add": "Add Events Details",
+    "share": "Share Your QR",
+    "enjoy": "Enjoy & Give Feedback"
+  },
+  "upcoming": {
+    "title": "Biggest Upcoming event Starts In",
+    "days": "Days",
+    "hours": "Hours",
+    "minutes": "Minutes",
+    "seconds": "Seconds"
+  },
+  "plan": {
+    "title": "Why Should You Plan With Planora?",
+    "subtitle": "Connecting People with smart and joy",
+    "services": "Our Services"
+  },
+  "categories": {
+    "title": "Events Categories",
+    "concerts": {
+      "title": "Concerts",
+      "subtitle": "Get ready for electrifying nights filled with rhythm, passion, and crowd vibes that move your soul."
+    },
+    "wedding": {
+      "title": "Wedding",
+      "subtitle": "From charming halls to luxury setups — we make every wedding a dream come true with seamless planning and perfect details."
+    },
+    "theaters": {
+      "title": "Theaters",
+      "subtitle": "Immerse yourself in the magic of live performances, captivating stories, and unforgettable moments in our theater."
+    },
+    "festivals": {
+      "title": "Festivals",
+      "subtitle": "Experience the vibrant energy of festivals, where music, art, and culture come together to create unforgettable moments."
+    },
+    "exhibitions": {
+      "title": "Exhibitions",
+      "subtitle": "Discover captivating exhibitions, captivating stories, and unforgettable moments in our theater."
+    },
+    "workshops": {
+      "title": "Workshops",
+      "subtitle": "Immerse yourself in the magic of live performances, captivating stories, and unforgettable moments in our theater."
+    },
+    "conferences": {
+      "title": "Conferences",
+      "subtitle": "Immerse yourself in the magic of live performances, captivating stories, and unforgettable moments in our theater."
+    }
+  },
+  "services": {
+    "photographers": {
+      "title": "Photographers",
+      "subtitle": "Capture moments that tell a story",
+      "desc": "Capture moments that tell a story"
+    },
+    "planners": {
+      "title": "Planners",
+      "subtitle": "Plan the perfect events"
+    },
+    "decorators": {
+      "title": "Decorators",
+      "subtitle": "Decorate the perfect events"
+    },
+    "designers": {
+      "title": "Designers",
+      "subtitle": "Design the perfect events"
+    },
+    "halls": {
+      "title": "Events Halls",
+      "subtitle": "Where Grandeur Meets Perfection",
+      "desc": "Experience the pinnacle of luxury and elegance in our Royal Halls — grand venues designed to host your most prestigious events with unmatched style, ambiance, and service."
+    },
+    "catering": {
+      "title": "Catering",
+      "subtitle": "Where Every Bite Tells a Story",
+      "desc": "Delight your guests with world-class catering, exquisite flavors, elegant presentation, and flawless service for every occasion."
+    },
+    "sound": {
+      "title": "Sound System",
+      "subtitle": "Feel the Beat",
+      "desc": "Turn up the energy with our professional DJs — bringing the perfect beats to make every moment unforgettable."
+    },
+    "venues": {
+      "title": "Venues",
+      "subtitle": "Plan the perfect events"
+    },
+    "video": {
+      "title": "Video Production",
+      "subtitle": "Plan the perfect events"
+    }
+  },
+  "feats": {
+    "1": {
+      "title": "Easy Booking",
+      "subtitle": "Fast & secure ticketing"
+    },
+    "2": {
+      "title": "Smart Search",
+      "subtitle": "Find events instantly"
+    },
+    "3": {
+      "title": "Services Marketplace",
+      "subtitle": "Hire photographers, planners, decorators & more"
+    },
+    "4": {
+      "title": "Notifications",
+      "subtitle": "Stay updated & never miss out"
+    },
+    "5": {
+      "title": "AI Powered",
+      "subtitle": "Ai Suggestions and Helper"
+    },
+    "6": {
+      "title": "Rating & Blog",
+      "subtitle": "feedback for events & service providers"
+    }
+  },
+  "footer": {
+    "newstitle": "Ready to Transform Your Events?",
+    "newssubtitle": "Join event hosts and attendees who trust Planora",
+    "platform": "Platform",
+    "features": "Features",
+    "events": "Events",
+    "signup": "Sign Up",
+    "about": "About",
+    "blog": "Blog",
+    "qa": "Q&A",
+    "contact": "Contact",
+    "privacy": "Privacy Policy",
+    "terms": "Terms & Conditions",
+    "support": "Support",
+    "resources": "Resources",
+    "copyright": "© 2025 Planora. All rights reserved | HexaDevs Team."
+  },
+  "auth": {
+    "signout": {
+      "alert": {
+        "title": "Log out of Planora?",
+        "text": "You can always sign in again later.",
+        "confirmButton": "Yes, log me out",
+        "cancelButton": "Cancel"
+      },
+      "toast": {
+        "success": {
+          "title": "Signed out successfully!",
+          "description": "You've been logged out of your account."
+        },
+        "error": {
+          "title": "Sign-out failed",
+          "description": "Please try again later."
+        }
+      }
+    },
+    "signin": {
+      "title": "Where great events begin.",
+      "googleSignIn": "Sign in with Google ",
+      "orUseEmail": "Or use Email",
+      "notMember": "Not a member yet?",
+      "registerNow": "REGISTER NOW",
+      "toast": {
+        "success": {
+          "title": "Login Successful!",
+          "description": "Welcome back to Planora!"
+        },
+        "error": {
+          "title": "Login failed!",
+          "description": "Please check your email and password."
+        },
+        "googleSuccess": {
+          "title": "Signed in with Google!",
+          "description": "Welcome to Planora!"
+        },
+        "googleError": {
+          "title": "Sign-In failed with Google!",
+          "description": "Please try again."
+        }
+      }
+    },
+    "register": {
+      "title": "Create Account",
+      "step1": {
+        "subtitle": "Choose your account type",
+        "client": {
+          "title": "I'm a Client",
+          "description": "Browse events, book tickets, and hire service providers for your events",
+          "features": [
+            "Discover amazing events",
+            "Book event services",
+            "Manage your bookings",
+            "Get personalized recommendations"
+          ]
+        },
+        "host": {
+          "title": "I'm a Host",
+          "description": "Offer your services, manage bookings, and grow your event business",
+          "features": [
+            "List your services",
+            "Receive booking requests",
+            "Manage your bookings",
+            "Get personalized recommendations"
+          ]
+        },
+        "provider": {
+          "title": "I'm a Provider",
+          "description": "Offer your services, manage bookings, and grow your event business",
+          "features": [
+            "List your services",
+            "Receive booking requests",
+            "Manage your bookings",
+            "Get personalized recommendations"
+          ]
+        },
+        "alreadyHaveAccount": "Already have an account?"
+      },
+      "step2": {
+        "client": {
+          "subtitle": "Tell us about your interests",
+          "interestsLabel": "Your Interests * (Select at least one)",
+          "eventPreferencesLabel": "About You (Optional)",
+          "eventPreferencesPlaceholder": "Tell us about the types of events you typically attend..."
+        },
+        "host": {
+          "subtitle": "Complete your business profile"
+        },
+        "provider": {
+          "subtitle": "Complete your provider profile"
+        }
+      },
+      "step3": {
+        "subtitle": "Enter your basic information"
+      },
+      "toast": {
+        "validation": {
+          "selectUserType": "Please select whether you're a client or host",
+          "selectInterestsAndFullName": "Please select at least one interest and fill in your full name",
+          "fillBusinessInfo": "Please fill in all required business information",
+          "fillRequiredInfo": "Please fill in all required information"
+        },
+        "success": {
+          "title": "Registration Successful!",
+          "description": "Welcome to Planora as a"
+        },
+        "error": {
+          "title": "Registration failed",
+          "description": "An error occurred during registration"
+        }
+      }
+    },
+    "form": {
+      "googleSignUp": "Continue with Google",
+      "or": "or",
+      "fullName": {
+        "label": "Full Name *",
+        "placeholder": "John Doe"
+      },
+      "email": {
+        "label": "Email Address *",
+        "placeholder": "your@email.com"
+      },
+      "phone": {
+        "label": "Phone Number",
+        "placeholder": "+1 (555) 000-0000"
+      },
+      "password": {
+        "label": "Password *",
+        "placeholder": "Min. 8 characters"
+      },
+      "confirmPassword": {
+        "label": "Confirm Password *",
+        "placeholder": "Repeat password"
+      },
+      "terms": {
+        "text": "I agree to the",
+        "termsLink": "Terms of Service",
+        "and": "and",
+        "privacyLink": "Privacy Policy"
+      },
+      "toast": {
+        "googleSuccess": {
+          "title": "Signed in with Google!",
+          "description": "Welcome to Planora as a"
+        },
+        "googleError": {
+          "title": "Google Sign-In failed",
+          "description": "An error occurred during Google sign-in"
+        }
+      }
+    },
+    "providerInfo": {
+      "service": {
+        "label": "Service You Offer *",
+        "placeholder": "Select a service",
+        "options": {
+          "photography": "Photography",
+          "catering": "Catering",
+          "dj": "DJ / Music",
+          "planning": "Event Planning",
+          "design": "Decoration & Design",
+          "security": "Security",
+          "transport": "Transportation",
+          "venue": "Venue Management",
+          "av": "Audio/Visual Equipment",
+          "other": "Other"
+        }
+      },
+      "bio": {
+        "label": "Bio *",
+        "placeholder": "Tell us about yourself, your background, experience, and what you're passionate about..."
+      }
+    },
+    "hostInfo": {
+      "businessName": {
+        "label": "Business/Company Name *",
+        "placeholder": "Your Business Name"
+      },
+      "category": {
+        "label": "Category *",
+        "placeholder": "Select a category"
+      },
+      "businessDescription": {
+        "label": "Business Description *",
+        "placeholder": "Describe your services, expertise, and what makes your business unique..."
+      },
+      "socialMedia": {
+        "facebook": {
+          "label": "Facebook URL",
+          "placeholder": "https://facebook.com/yourpage"
+        },
+        "instagram": {
+          "label": "Instagram URL",
+          "placeholder": "https://instagram.com/yourprofile"
+        }
+      }
+    }
+  },
+  "aboutUs": {
+    "head": {
+      "title": "Connecting People Through Events",
+      "subTitle": "About Planora",
+      "desc": "Planora is a platform that connects people with events seamless, helping millions create lasting memories every day."
+    },
+
+    "statsSection": {
+      "activeEvents": "Active Events",
+      "happyClients": "Happy Clients",
+      "organizers": "Organizers",
+      "cities": "Cities"
+    },
+
+    "ourStory": {
+      "title": "Our Story",
+      "subTitle": "From a simple idea to a powerful platform",
+      "desc": "Planora was founded at the Information Technology Institute (ITI) - Damanhour branch, where a group of passionate learners from the Front-End and Cross-Platform Development track came together with one goal - to turn knowledge into real impact. What started as a graduation project became a symbol of teamwork, creativity, and gratitude toward our mentors and colleagues. Planora reflects our hope for a lasting collaboration that continues beyond the classroom and grows into something meaningful "
+    },
+
+    "values": {
+      "title": "Our Values",
+      "subTitle": "The principles that guide everything we do",
+      "mission": {
+        "title": "Mission",
+        "desc": "To connect people with unforgettable experiences and make event discovery effortless for everyone."
+      },
+      "community": {
+        "title": "Community First",
+        "desc": "Building a vibrant community of event organizers, attendees, and service providers worldwide."
+      },
+      "innovation": {
+        "title": "Innovation",
+        "desc": "Constantly evolving our platform with cutting-edge technology to serve you better."
+      },
+      "trust": {
+        "title": "Trust & Safety",
+        "desc": "Your security and privacy are our top priorities. We ensure safe, reliable transactions."
+      }
+    },
+
+    "team": {
+      "title": "Meet The HexaDevs Team",
+      "subTitle": "The brains behind Planora",
+      "mahmoud": "Mahmoud Abu-Attiya",
+      "mohamed": "Mohamed El-Kafrawy",
+      "mariam": "Mariam Hamido",
+      "islam": "Islam Adel",
+      "mustafa": "Moustafa Hawash",
+      "nadeen": "Nadeen Ahmed"
+    },
+
+    "ctaSec": {
+      "title": "Join Our Growing Community",
+      "desc": "Whether you're an organizer, attendee, or service provider, there's a place for you on Planora."
+    }
+  },
+  "eventsPage": {
+    "header": {
+      "title": "Discover Events",
+      "subTitle": "Browse and filter through thousands of amazing events happening near you",
+      "search": "Search events..."
+    },
+    "category": {
+      "title": "Browse by Category",
+      "subTitle": "Explore events across different categories and find what interests you most",
+      "cateCards": {
+        "title0": "All",
+        "title1": "Concerts",
+        "title2": "Conferences",
+        "title3": "Sports",
+        "title4": "Exhibitions",
+        "title5": "Workshops",
+        "title6": "Networking",
+        "subTitle": "events"
+      },
+      "cards": {
+        "1": {
+          "title": "Tech Innovation Summit 2025",
+          "data": "March 15, 2025",
+          "location": "San Francisco, CA",
+          "category": "Conferences"
+        },
+        "2": {
+          "title": "Summer Music Festival",
+          "data": "June 20-22, 2025",
+          "location": "Austin, TX",
+          "category": "Concerts"
+        },
+        "3": {
+          "title": "Digital Marketing Masterclass",
+          "data": "April 8, 2025",
+          "location": "Online Event",
+          "category": "Workshops"
+        },
+        "4": {
+          "title": "NBA Finals Watch Party",
+          "data": "June 5, 2025",
+          "location": "Los Angeles, CA",
+          "category": "Sports"
+        },
+        "5": {
+          "title": "Modern Art Showcase",
+          "data": "May 10-30, 2025",
+          "location": "New York, NY",
+          "category": "Exhibitions"
+        },
+        "6": {
+          "title": "Startup Founders Meetup",
+          "data": "March 28, 2025",
+          "location": "Seattle, WA",
+          "category": "Networking"
+        },
+        "7": {
+          "title": "Web Development Bootcamp",
+          "data": "April 15-17, 2025",
+          "location": "Boston, MA",
+          "category": "Workshops"
+        },
+        "8": {
+          "title": "Jazz Night Live",
+          "data": "May 5, 2025  ",
+          "location": "Chicago, IL",
+          "category": "Concerts"
+        },
+        "9": {
+          "title": "Business Leadership Summit",
+          "data": "July 12, 2025",
+          "location": "Miami, FL",
+          "category": "Conferences"
+        },
+        "10": {
+          "title": "Tech Innovation Summit 2025",
+          "data": "March 15, 2025",
+          "location": "San Francisco, CA",
+          "category": "Conferences"
+        },
+        "11": {
+          "title": "Summer Music Festival",
+          "data": "June 20-22, 2025",
+          "location": "Austin, TX",
+          "category": "Concerts"
+        },
+        "12": {
+          "title": "Digital Marketing Masterclass",
+          "data": "April 8, 2025",
+          "location": "Online Event",
+          "category": "Workshops"
+        },
+        "attendees": "attendees",
+        "viewDetails": "view Details"
+      },
+      "viewMore": "Load More"
+    },
+    "free": "Free",
+    "loading": {
+      "category": "Loading Category...",
+      "cards": "Loading Events..."
+    }
+  },
+  "servicesPage": {
+    "header": {
+      "title": "Find Perfect Service Providers",
+      "subTitle": "Connect with verified professionals for photography, planning, catering, and more",
+      "search": "Search services or providers..."
+    },
+    "category": {
+      "title": "Browse by Category",
+      "subTitle": "Connect with verified professionals for photography, planning, catering, and more",
+      "cateCards": {
+        "title0": "All",
+        "title1": "Photography",
+        "title2": "Event Planning",
+        "title3": "DJ Services",
+        "title4": "Catering",
+        "title5": "Decoration",
+        "title6": "Venue"
+      }
+    },
+    "cards": {
+      "1": {
+        "title": "Professional Event Photography",
+        "location": "San Francisco, CA",
+        "category": "Photography"
+      },
+      "2": {
+        "title": "Summer Music Festival",
+        "location": "Austin, TX",
+        "category": "Event Planning"
+      },
+      "3": {
+        "title": "Digital Marketing Masterclass",
+        "location": "Online Event",
+        "category": "Austin, TX"
+      },
+      "4": {
+        "title": "NBA Finals Watch Party",
+        "location": "Los Angeles, CA",
+        "category": "New York, NY"
+      },
+      "5": {
+        "title": "Modern Art Showcase",
+        "location": "New York, NY",
+        "category": "Photography"
+      },
+      "6": {
+        "title": "Startup Founders Meetup",
+        "location": "Seattle, WA",
+        "category": "Event Planning"
+      },
+      "7": {
+        "title": "Web Development Bootcamp",
+        "location": "Boston, MA",
+        "category": "DJ Services"
+      },
+      "8": {
+        "title": "Jazz Night Live",
+        "location": "Chicago, IL",
+        "category": "Catering"
+      },
+      "viewMore": "Load More"
+    },
+    "free": "Free",
+    "join": {
+      "title": "Are You a Service Provider?",
+      "description": "Join our marketplace and connect with thousands of event organizers looking for professional services.",
+      "button": "Become a Provider"
+    },
+    "loading": {
+      "category": "Loading Category...",
+      "cards": "Loading Services..."
+    }
+  },
+  "auth.signin.googleNote": "Google login creates a Client account by default.",
+  "auth.signin.wantHost": "Want to publish events?",
+  "auth.signin.createHost": "Create a Host account",
+  "planoraAi": {
+    "title": "Planora AI",
+    "subtitle": "Your Event Assistant",
+    "initScreen": {
+      "title": "Planora AI",
+      "subtitle": "AI-Powered Voice Assistant for Events",
+      "apiKeyLabel": "Gemini API Key",
+      "apiKeyPlaceholder": "Enter your Gemini API key",
+      "initButton": "Initialize Planora AI",
+      "howToGet": "How to get your API key:",
+      "step1": "Visit Google AI Studio",
+      "step2": "Sign in with your Google account",
+      "step3": "Click \"Create API Key\"",
+      "step4": "Copy and paste it above",
+      "envNote": "Or set VITE_GEMINI_API_KEY in your .env.local file"
+    },
+    "info": {
+      "whatICanHelp": "What I Can Help With:",
+      "help1": "Discover upcoming events",
+      "help2": "Find events by category",
+      "help3": "Get event details & pricing",
+      "help4": "Learn about Planora features",
+      "help5": "Booking & ticketing help",
+      "howToUse": "How to Use:",
+      "usage1": "Tap the microphone to speak",
+      "usage2": "Ask about events or services",
+      "usage3": "I only answer Planora queries",
+      "usage4": "Toggle sound for voice responses"
+    },
+    "footer": {
+      "scopeNote": "Planora AI only answers questions about Planora events and services"
+    },
+    "voiceChat": {
+      "startConversation": "Start a conversation",
+      "tapMic": "Click the microphone button to ask about Planora events",
+      "listening": "Listening... Speak now",
+      "processing": "Processing your request...",
+      "tapToStart": "Tap the microphone to start speaking",
+      "thinking": "Thinking...",
+      "clearChat": "Clear chat",
+      "disableVoice": "Disable voice responses",
+      "enableVoice": "Enable voice responses",
+      "speechNotSupported": "Speech recognition not supported in this browser"
+    },
+    "toast": {
+      "ready": "Planora AI is ready to help!",
+      "initError": "Failed to initialize AI. Please check your API key.",
+      "requireApiKey": "Please enter a valid API key",
+      "requireInit": "Please initialize Planora AI first",
+      "outsideScope": "This question is outside Planora's scope",
+      "errorResponse": "Failed to get response. Please try again.",
+      "chatCleared": "Chat cleared"
+    },
+    "welcomeMessage": "Hello! I'm Planora AI. I can help you discover amazing events, book tickets, and answer questions about our platform. What would you like to know?"
+  }
 }

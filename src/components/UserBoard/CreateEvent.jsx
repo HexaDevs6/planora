@@ -1,0 +1,688 @@
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { supabase } from "@/lib/supabaseClient";
+import { toast } from "sonner";
+import { fetchCategories } from "@/store/fetchCategoriesThunk";
+import { validateEvent } from "@/utils/validation/eventValidation";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+   Select,
+   SelectContent,
+   SelectItem,
+   SelectTrigger,
+   SelectValue,
+} from "@/components/ui/select";
+import { useDirection } from "@/hooks/useDirection";
+import DragZone from "@/components/services/DragZone";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+import { uploadFile, deleteFile } from "@/lib/storage";
+
+
+export default function PublishEvent() {
+	const [searchParams] = useSearchParams();
+   const eventId = searchParams.get("eventId");
+   const dispatch = useDispatch();
+   const { lang } = useDirection();
+	const navigate = useNavigate();
+   const user = useSelector((state) => state.auth.user);
+   const { data: categories, loading: categoriesLoading } = useSelector(
+      (state) => state.categories
+   );
+
+   const [loading, setLoading] = useState(false);
+   const [formData, setFormData] = useState({
+      name: "",
+      name_ar: "",
+      slug: "",
+      description: "",
+      description_ar: "",
+      location: "",
+      date: "",
+      end_date: "",
+      category: "",
+      capacity: "",
+      price: "",
+      status: "upcoming",
+      thumbnail: null,
+      images: [],
+   });
+
+	const [originalData, setOriginalData] = useState(null);
+
+	useEffect(() => {
+      if (eventId) {
+         setLoading(true);
+         const fetchService = async () => {
+            const { data, error } = await supabase
+               .from("events")
+               .select("*")
+               .eq("id", eventId);
+            if (error) {
+               console.error(error);
+               return;
+            } else {
+               console.log(data);
+               const event = data[0];
+               const eventData = {
+                  name: event.name,
+                  name_ar: event.name_ar,
+                  slug: event.slug,
+                  description: event.description,
+                  description_ar: event.description_ar,
+                  category: event.category_id,
+                  price: event.price,
+                  thumbnail: event.thumbnail,
+                  images: event.images,
+                  location: event.location,
+                  date: event.date,
+                  end_date: event.end_date,
+                  capacity: event.capacity,
+                  status: event.status,
+               };
+               setFormData(eventData);
+               setOriginalData(eventData);
+               setLoading(false);
+            }
+         };
+         fetchService();
+      }
+   }, [eventId]);
+
+	const handleCancel = () => {
+      Swal.fire({
+         title: lang === "ar" ? "هل أنت متأكد؟" : "Are you sure?",
+         text:
+            lang === "ar"
+               ? "لن تتمكن من التراجع عن هذا!"
+               : "You won't be able to revert this!",
+         icon: "warning",
+         showCancelButton: true,
+         confirmButtonText: lang === "ar" ? "نعم" : "Yes",
+         cancelButtonText: lang === "ar" ? "لا" : "No",
+      }).then((result) => {
+         if (result.isConfirmed) {
+            clearFormData();
+            navigate("/host/events");
+         }
+      });
+   };
+
+   // ✅ جلب التصنيفات من Supabase مرة واحدة
+   useEffect(() => {
+      if (!categories || categories.length === 0) {
+         dispatch(fetchCategories());
+      }
+   }, [dispatch, categories]);
+
+   // ✅ تجهيز التصنيفات للعرض
+   const CategoryOptions =
+      categories
+         ?.filter((category) => category.type === "event")
+         ?.map((category) => ({
+            ...category,
+            displayName: lang === "ar" ? category.name_ar : category.name,
+         })) || [];
+
+   // ✅ التعامل مع إدخال المستخدم
+   const handleChange = (e) => {
+      const { id, value, type, files, checked } = e.target;
+      setFormData({
+         ...formData,
+         [id]:
+            type === "file"
+               ? e.target.multiple
+                  ? Array.from(files)
+                  : files[0]
+               : type === "checkbox"
+               ? checked
+               : value,
+      });
+   };
+
+	const clearFormData = () => {
+      setFormData({
+         name: "",
+         name_ar: "",
+         slug: "",
+         description: "",
+         description_ar: "",
+         category: "",
+         price: "",
+         capacity: "",
+         location: "",
+         date: "",
+         end_date: "",
+         thumbnail: null,
+         images: [],
+      });
+   };
+
+   const handleSubmit = async (e) => {
+      e.preventDefault();
+
+      try {
+         setLoading(true);
+
+         /** -----------------------------
+          * 1. Format and prepare date fields
+          * ----------------------------- */
+         const formattedDate = formData.date
+            ? new Date(formData.date).toISOString()
+            : new Date().toISOString();
+
+         const formattedEndDate = formData.end_date
+            ? new Date(formData.end_date).toISOString()
+            : formattedDate;
+
+         /** -----------------------------
+          * 2. Generate unique slug (used for event folder in storage)
+          * ----------------------------- */
+         let slug = formData.name
+            .toLowerCase()
+            .trim()
+            .replace(/\s+/g, "-")
+            .replace(/[^\w-]/g, "");
+         const uniqueSuffix = Date.now().toString().slice(-5);
+         slug = `${slug}-${uniqueSuffix}`;
+
+         /** -----------------------------
+          * 3. Define folder name for storage
+          * (Use existing slug if editing, otherwise create a new one)
+          * ----------------------------- */
+         const folder = eventId ? originalData.slug : slug;
+
+
+         /** -----------------------------
+          * 4. If editing: check and delete old files if replaced
+          * ----------------------------- */
+         if (eventId && originalData) {
+            // Delete old thumbnail if user selected a new one
+            const thumbnailChanged =
+               formData.thumbnail &&
+               formData.thumbnail instanceof File &&
+               originalData.thumbnail &&
+               formData.thumbnail.name !== originalData.thumbnail;
+
+            if (thumbnailChanged) {
+               await deleteFile("events", originalData.thumbnail);
+            }
+
+            // Delete old gallery if new images are selected
+            const newImages = formData.images.filter((img) => img instanceof File);
+            if (newImages.length > 0 && originalData.images?.length > 0) {
+               const oldPaths = originalData.images.map((img) =>
+                  typeof img === "string" ? img : img.path
+               );
+               await deleteFile("events", oldPaths);
+            }
+         }
+
+         /** -----------------------------
+          * 5. Upload thumbnail if exists
+          * ----------------------------- */
+         let thumbnailPath = formData.thumbnail;
+         if (formData.thumbnail && formData.thumbnail instanceof File) {
+            const thumbFile = formData.thumbnail;
+            const path = `events/${user.id}/${folder}/thumbnail_${Date.now()}_${thumbFile.name}`;
+            await uploadFile("events", path, thumbFile);
+            thumbnailPath = path;
+         }
+
+
+
+         /** -----------------------------
+          * 6. Upload event images if any
+          * ----------------------------- */
+         let imagePaths = [];
+         if (formData.images && formData.images.length > 0) {
+            for (const img of formData.images) {
+               if (img instanceof File) {
+                  // New image to upload
+                  const path = `events/${user.id}/${folder}/gallery/${Date.now()}_${img.name}`;
+                  await uploadFile("events", path, img);
+                  imagePaths.push({ path });
+               } else if (typeof img === "object" && img.path) {
+                  // Existing image (already uploaded before)
+                  imagePaths.push(img);
+               }
+            }
+         }
+
+         /** -----------------------------
+          * 7. Handle Update (if eventId exists)
+          * ----------------------------- */
+         if (eventId) {
+            const changedFields = {};
+
+            // Detect changed text/number fields
+            Object.keys(formData).forEach((key) => {
+               if (key === "images" || key === "thumbnail") return;
+               if (formData[key] !== originalData[key]) {
+                  changedFields[key] = formData[key];
+               }
+            });
+
+            // Always include thumbnail and images
+            changedFields.thumbnail = thumbnailPath;
+            changedFields.images = imagePaths;
+
+            const { data, error } = await supabase
+               .from("events")
+               .update(changedFields)
+               .eq("id", eventId);
+
+            if (error) throw error;
+
+            toast.success(
+               lang === "ar"
+                  ? `تم تحديث الحدث "${formData.name_ar}" بنجاح!`
+                  : `Event "${formData.name}" updated successfully!`
+            );
+            navigate("/host/events");
+         }
+
+         /** -----------------------------
+          * 8. Handle Create (new event)
+          * ----------------------------- */
+         else {
+            const { data, error } = await supabase
+               .from("events")
+               .insert([
+                  {
+                     host_id: user.id,
+                     name: formData.name,
+                     name_ar: formData.name_ar,
+                     slug,
+                     description: formData.description,
+                     description_ar: formData.description_ar,
+                     category_id: formData.category || null,
+                     location: formData.location,
+                     date: formattedDate,
+                     end_date: formattedEndDate,
+                     capacity: Number(formData.capacity) || null,
+                     price: Number(formData.price) || 0,
+                     status: formData.status,
+                     thumbnail: thumbnailPath,
+                     images: imagePaths,
+                  },
+               ])
+               .select();
+
+            if (error) throw error;
+
+            toast.success(
+               lang === "ar"
+                  ? `تم إنشاء الحدث "${formData.name}" بنجاح!`
+                  : `Event "${formData.name}" created successfully!`
+            );
+            navigate("/host/events");
+         }
+
+         /** -----------------------------
+          * 9. Clear form after success
+          * ----------------------------- */
+         clearFormData();
+      } catch (err) {
+         /** -----------------------------
+          * 10. Handle errors
+          * ----------------------------- */
+         console.error("Insert Error:", err.message);
+         toast.error(
+            lang === "ar"
+               ? `حدث خطأ أثناء حفظ الحدث: ${err.message}`
+               : `Error saving event: ${err.message}`
+         );
+      } finally {
+         /** -----------------------------
+          * 11. Stop loading spinner
+          * ----------------------------- */
+         setLoading(false);
+      }
+   };
+
+
+
+
+	const handleChangeImages = (files) => {
+      setFormData({ ...formData, images: files });
+   };
+
+   //fix add thumbnail to form
+   const handleChangeThumbnail = (file) => {
+      setFormData({ ...formData, thumbnail: file });
+   };
+
+   // واجهة المستخدم
+   return (
+      <section className="justify-center items-center text-content transition-colors duration-500">
+         <div className="w-full max-w-4xl mx-auto">
+            <header className="text-center mb-10">
+               <h1 className="text-3xl md:text-4xl font-bold text-primary mb-2">
+                  {lang === "ar" ? "نشر حدث" : "Publish Event"}
+               </h1>
+               <p className="text-content/80">
+                  {lang === "ar"
+                     ? "أدخل جميع بيانات الحدث أدناه لنشر الحدث"
+                     : "Fill in all event details below to publish your event."}
+               </p>
+            </header>
+
+            <form
+               onSubmit={handleSubmit}
+               className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6"
+            >
+               {/* English / Arabic Names */}
+               <div>
+                  <Label
+                     htmlFor="name"
+                     className="block text-sm font-semibold mb-2"
+                  >
+                     {lang === "ar"
+                        ? "اسم الحدث (إنجليزي)"
+                        : "Event Name (English)"}
+                  </Label>
+                  <Input
+                     id="name"
+                     value={formData.name}
+                     onChange={handleChange}
+                     placeholder={
+                        lang === "ar"
+                           ? "اكتب اسم الحدث بالإنجليزية"
+                           : "Enter event name"
+                     }
+                     className="bg-background shadow-none"
+                  />
+               </div>
+
+               <div>
+                  <Label
+                     htmlFor="name_ar"
+                     className="block text-sm font-semibold mb-2"
+                  >
+                     {lang === "ar"
+                        ? "اسم الحدث (عربي)"
+                        : "Event Name (Arabic)"}
+                  </Label>
+                  <Input
+                     id="name_ar"
+                     dir="rtl"
+                     value={formData.name_ar}
+                     onChange={handleChange}
+                     placeholder={
+                        lang === "ar"
+                           ? "اكتب اسم الحدث بالعربية"
+                           : "Enter event name in Arabic"
+                     }
+                     className="bg-background shadow-none"
+                  />
+               </div>
+
+               {/* Descriptions */}
+               <div className="md:col-span-2">
+                  <Label
+                     htmlFor="description"
+                     className="block text-sm font-semibold mb-2"
+                  >
+                     {lang === "ar"
+                        ? "الوصف (إنجليزي)"
+                        : "Description (English)"}
+                  </Label>
+                  <Textarea
+                     id="description"
+                     value={formData.description}
+                     onChange={handleChange}
+                     rows={3}
+                     placeholder={
+                        lang === "ar"
+                           ? "اكتب وصف الحدث بالإنجليزية"
+                           : "Describe your event"
+                     }
+                     className="bg-background shadow-none"
+                  />
+               </div>
+
+               <div className="md:col-span-2">
+                  <Label
+                     htmlFor="description_ar"
+                     className="block text-sm font-semibold mb-2"
+                  >
+                     {lang === "ar" ? "الوصف (عربي)" : "Description (Arabic)"}
+                  </Label>
+                  <Textarea
+                     id="description_ar"
+                     dir="rtl"
+                     value={formData.description_ar}
+                     onChange={handleChange}
+                     rows={3}
+                     placeholder={
+                        lang === "ar"
+                           ? "اكتب وصف الحدث بالعربية"
+                           : "Describe your event in Arabic"
+                     }
+                     className="bg-background shadow-none"
+                  />
+               </div>
+
+               {/* Location */}
+               <div>
+                  <Label
+                     htmlFor="location"
+                     className="block text-sm font-semibold mb-2"
+                  >
+                     {lang === "ar" ? "موقع الحدث" : "Event Location"}
+                  </Label>
+                  <Input
+                     id="location"
+                     value={formData.location}
+                     onChange={handleChange}
+                     placeholder={
+                        lang === "ar"
+                           ? "مثال: 'عبر الإنترنت' أو 'القاهرة، مصر'"
+                           : "e.g., 'Online' or 'Cairo, Egypt'"
+                     }
+                     className="bg-background shadow-none"
+                  />
+               </div>
+
+               {/* Category */}
+               <div>
+                  <Label
+                     htmlFor="category"
+                     className="block text-sm font-semibold mb-2"
+                  >
+                     {lang === "ar" ? "فئة الحدث" : "Event Category"}
+                  </Label>
+                  {categoriesLoading ? (
+                     <p className="text-sm text-muted-foreground">
+                        {lang === "ar"
+                           ? "جاري تحميل الفئات..."
+                           : "Loading categories..."}
+                     </p>
+                  ) : (
+                     <Select
+                        value={formData.category}
+                        id="category"
+                        onValueChange={(value) =>
+                           setFormData({ ...formData, category: value })
+                        }
+                        dir={lang === "ar" ? "rtl" : "ltr"}
+                     >
+                        <SelectTrigger className="w-full">
+                           <SelectValue
+                              placeholder={
+                                 lang === "ar"
+                                    ? "اختر فئة الحدث"
+                                    : "Select category"
+                              }
+                           />
+                        </SelectTrigger>
+                        <SelectContent>
+                           {CategoryOptions.map((cat) => (
+                              <SelectItem key={cat.id} value={cat.id}>
+                                 {cat.displayName}
+                              </SelectItem>
+                           ))}
+                        </SelectContent>
+                     </Select>
+                  )}
+               </div>
+
+
+
+               {/* Dates */}
+               <div>
+                  <Label
+                     htmlFor="date"
+                     className="block text-sm font-semibold mb-2"
+                  >
+                     {lang === "ar" ? "تاريخ الحدث" : "Event Date"}
+                  </Label>
+                  <Input
+                     id="date"
+                     type="date"
+                     value={formData.date}
+                     onChange={handleChange}
+                     className="bg-background shadow-none"
+                  />
+               </div>
+
+               <div>
+                  <Label
+                     htmlFor="end_date"
+                     className="block text-sm font-semibold mb-2"
+                  >
+                     {lang === "ar" ? "تاريخ الانتهاء" : "End Date"}
+                  </Label>
+                  <Input
+                     id="end_date"
+                     type="date"
+                     value={formData.end_date}
+                     onChange={handleChange}
+                     className="bg-background shadow-none"
+                  />
+               </div>
+
+               {/* Capacity & Price */}
+					<div>
+                  <Label
+                     htmlFor="capacity"
+                     className="block text-sm font-semibold mb-2"
+                  >
+                     {lang === "ar" ? "السعة" : "Capacity"}
+                  </Label>
+                  <Input
+                     id="capacity"
+                     type="number"
+                     value={formData.capacity}
+                     onChange={handleChange}
+                     placeholder={
+                        lang === "ar"
+                           ? "أدخل السعة (مثل 100)"
+                           : "Enter capacity (e.g., 100)"
+                     }
+                     className="bg-background shadow-none"
+                  />
+               </div>
+
+               <div>
+                  <Label
+                     htmlFor="price"
+                     className="block text-sm font-semibold mb-2"
+                  >
+                     {lang === "ar" ? "سعر التذكرة" : "Ticket Price"}
+                  </Label>
+                  <Input
+                     id="price"
+                     type="number"
+                     value={formData.price}
+                     onChange={handleChange}
+                     placeholder={
+                        lang === "ar" ? "مثال: 100 أو 0" : "e.g., 100 or 0"
+                     }
+                     className="bg-background shadow-none"
+                  />
+               </div>
+
+					{/* Thumbnail */}
+               <div className="md:col-span-2">
+                  <Label
+                     htmlFor="thumbnail"
+                     className="block text-sm font-semibold mb-2"
+                  >
+                     {lang === "ar" ? "الصورة المصغرة" : "Thumbnail"}
+                  </Label>
+						<DragZone
+                     onChange={handleChangeThumbnail}
+                     acceptMultiple={false}
+                     files={eventId ? [formData.thumbnail] : null}
+                  />
+               </div>
+
+               {/* Images */}
+               <div className="md:col-span-2">
+                  <Label
+                     htmlFor="images"
+                     className="block text-sm font-semibold mb-2"
+                  >
+                     {lang === "ar" ? "صور الحدث" : "Event Images"}
+                  </Label>
+                  <DragZone
+                     onChange={handleChangeImages}
+                     acceptMultiple={true}
+                     files={eventId ? formData.images : null}
+                  />
+               </div>
+
+               {/* Submit */}
+               <div className="md:col-span-2 flex justify-end gap-4">
+                  {eventId ? (
+							<Button
+                     type="submit"
+                     disabled={loading}
+                     variant="amber"
+                     size="lg"
+                  >
+                     {loading
+                        ? lang === "ar"
+                           ? "جاري التحديث..."
+                           : "Updating..."
+                        : lang === "ar"
+                        ? "تحديث الحدث"
+                        : "Update Event"}
+                  </Button>
+						) : (
+						<Button
+                     type="submit"
+                     disabled={loading}
+                     variant="amber"
+                     size="lg"
+                  >
+                     {loading
+                        ? lang === "ar"
+                           ? "جاري النشر..."
+                           : "Creating..."
+                        : lang === "ar"
+                        ? "إنشاء الحدث"
+                        : "Create Event"}
+                  </Button>
+					)}
+						<Button
+                     type="button"
+                     disabled={loading}
+                     variant="outline"
+                     size="lg"
+                     onClick={handleCancel}
+                     className="bg-red-600/20 border-red-600/50 text-red-600/80 hover:bg-red-600/50 hover:text-red-600/90"
+                  >
+                     {lang === "ar" ? "إلغاء" : "Cancel"}
+                  </Button>
+               </div>
+            </form>
+         </div>
+      </section>
+   );
+}
