@@ -16,15 +16,25 @@ export default function ProtectedRoute({ children }) {
     return <Navigate to="/register" replace />;
   }
 
-  // Host trying to access user routes
-  if (user.role === "host" && location.pathname.startsWith("/user")) {
-    return <Navigate to="/host/overview" replace />;
-  }
+  // // Host trying to access user routes
+  // if (user.role === "host" && location.pathname.startsWith("/user")) {
+  //   return <Navigate to="/host/overview" replace />;
+  // }
 
-  // Client trying to access host routes
-  if (user.role === "client" && location.pathname.startsWith("/host")) {
-    return <Navigate to="/user/overview" replace />;
-  }
+  // // Client trying to access host routes
+  // if (user.role === "client" && location.pathname.startsWith("/host")) {
+  //   return <Navigate to="/user/overview" replace />;
+  // }
+
+  // Host trying to access user routes
+if (user.role === "host" && location.pathname.startsWith("/user")) {
+  return <Navigate to="/host/overview" replace />;
+}
+
+// Client trying to access host routes
+if (user.role === "client" && location.pathname.startsWith("/host")) {
+  return <Navigate to="/user/overview" replace />;
+}
 
   // Otherwise, allow access
   return children;

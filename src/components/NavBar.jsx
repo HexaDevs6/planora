@@ -102,10 +102,11 @@ function NavBar() {
                                                     avatarPlaceholderImg
                                                 }
                                                 alt={user.full_name || ""}
+                                                className='object-cover'
                                             />
                                             <AvatarFallback>
                                                 {user.avatar
-                                                    ? user.full_name[0].toUpperCase()
+                                                    ? user.full_name.toUpperCase()
                                                     : user.email
                                                     ? user.email[0].toUpperCase()
                                                     : "U"}
@@ -122,11 +123,15 @@ function NavBar() {
                             : `/user/overview`
                         }
                       >
-                        {user?.full_name}'s Dashboard
+                        {user?.full_name.split(" ")[0]}'s Dashboard
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to="/user/settings">Settings</Link>
+                      <Link to={
+                          user.role === "host"
+                            ? `/host/settings`
+                            : `/user/settings`
+                        }>Settings</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onSelect={() => handleSignOut(dispatch, navigate, t)}
