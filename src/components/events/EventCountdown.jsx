@@ -199,7 +199,7 @@ const handleCreateTicket = async () => {
            disabled={countdown.status === "ended"}
          >
            <Ticket className="size-4" />
-           {lang === "ar" ? "احجز تذكرتك الآن" : "Get Tickets Now"}
+           {lang === "ar" ? "أحجز الان" : "Book Now"}
          </Button>
        )}
      </div>

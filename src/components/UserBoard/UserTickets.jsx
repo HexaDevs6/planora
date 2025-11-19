@@ -1,7 +1,78 @@
-import React from "react";
-import yourTicket from "../../assets/your-Ticket.jpeg";
+import React, {useEffect, useState } from "react";
+import { useDirection } from "@/hooks/useDirection";
+import { useDispatch, useSelector } from "react-redux";
+import { supabase } from "@/lib/supabaseClient";
+import { fetchEvents } from "@/store/fetchEventsThunk";
+import { motion } from "framer-motion";
+import { t } from "i18next";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import TicketFrame from './../TicketFrame';
+import StyledQR from "../qrcode";
+import { Calendar, MapPin, StopCircle, Users } from "lucide-react";
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
+import {Dialog,DialogContent,DialogHeader,DialogTitle,} from "@/components/ui/dialog"
+
+
+
 
 export default function UserTickets() {
+  const {user} = useSelector((state) => state.auth);
+  const [userTickets, setUserTickets] =useState([]);
+  const [openTicket, setOpenTicket] = useState(null); 
+  const [filteredEvents, setFilteredEvents] = useState([]);
+  const {lang} = useDirection();
+  const dispatch = useDispatch();
+
+
+
+  // get events from supabase
+    const {
+      items: eventsData,
+      loading: eventsLoading,
+      error,
+    } = useSelector((state) => state.events);
+  
+    useEffect(() => {
+      // Fetch only if data not loaded before
+      if (!eventsData.length) dispatch(fetchEvents());
+    
+    }, [dispatch, eventsData.length]);
+
+  useEffect(() => {
+
+    async function fetchTickets() {
+      const {data, error} = await supabase
+        .from("tickets")
+        .select("*")
+        .eq("client_id", user.id);
+      if (error) {
+        console.error("Error fetching tickets:", error);
+      } else {
+        setUserTickets(data);
+       
+      }
+    }
+    fetchTickets();
+    console.log("Fetched tickets:", userTickets);
+  }, [user]);
+
+
+  useEffect(() => {
+    const mergedData = userTickets.map((ticket) => {
+      const eventDetails = eventsData.find((event) => event.id === ticket.event_id);
+      return {
+        ...ticket,
+        eventDetails,
+      };
+    });
+    setFilteredEvents(mergedData);
+    console.log("Merged ticket and event data:", filteredEvents);
+    
+
+  }, [userTickets, eventsData]);
+
+
   return (
     <>
       {/* Main Content */}
@@ -9,8 +80,8 @@ export default function UserTickets() {
         {/* Header */}
         <header className="mb-16 flex justify-between items-center">
           <div>
-            <h1 className="text-5xl font-extrabold text-primary drop-shadow-[0_4px_6px_rgba(0,0,0,0.25)]">
-              Up Coming Events & Tickets
+            <h1 className="text-3xl font-extrabold text-primary drop-shadow-[0_4px_6px_rgba(0,0,0,0.25)]">
+              {lang === "ar" ? "تذاكري" : "My Tickets"}
             </h1>
             <p className="text-lg text-content mt-3">
               Your personalized chronological feed of events.
@@ -197,50 +268,96 @@ export default function UserTickets() {
         </section>
 
         {/* Featured Event */}
-        <section>
+        <section className="mb-20">
           <h2 className="text-3xl font-bold text-primary border-b border-border pb-4 mb-8">
-            Featured Event
+            {lang === "ar" ? " التذاكر القادمة" : "upcoming tickets"}
           </h2>
-          <div className="relative bg-card backdrop-blur-md rounded-2xl shadow-lg flex flex-col md:flex-row items-stretch overflow-hidden border border-border hover:scale-[1.02] transition-transform duration-300">
-            <div
-              className="md:w-1/3 bg-cover bg-center min-h-[200px]"
-              style={{ backgroundImage: `url(${yourTicket})` }}
-            ></div>
-            <div className="flex-1 p-6 flex flex-col justify-between">
-              <div>
-                <p className="text-sm font-medium text-accent mb-1">
-                  Upcoming
-                </p>
-                <h3 className="text-2xl font-bold text-primary">
-                  Tech Summit 2024
-                </h3>
-                <p className="text-content mt-1 text-sm sm:text-base">
-                  October 26, 2024 · 9:00 AM - 5:00 PM
-                </p>
-              </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+  {filteredEvents.map((el, i) => (
+    <motion.div
+      key={el.id}
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: i * 0.1 }}
+    >
+      <Card className="overflow-hidden rounded-xl shadow-sm hover:shadow-md p-0 hover:scale-[1.02] duration-300 transition-all">
+        <div className="p-4 border-b">
+          <div 
+  className="cursor-pointer"
+  onClick={() => setOpenTicket(el.id)}
+>
+  <TicketFrame>
+    <h3 className="text-center text-lg font-semibold mb-4 text-amber">
+      {lang === "ar" ? "لا تشارك هذه التذكرة مع احد" : "Don't share this ticket with anyone!"}
+    </h3>
 
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-6 gap-4 sm:gap-0">
-                <div className="flex items-center gap-2 text-content">
-                  <span className="material-symbols-outlined text-lg">
-                    location_on
-                  </span>
-                  <span className="text-sm">Virtual Event</span>
-                </div>
+    <div className="flex justify-center mb-4">
+      <StyledQR value={el?.qr_code} size={200} />
+    </div>
+  </TicketFrame>
+</div>
 
-                <button className="bg-primary text-primary-foreground font-semibold py-2 px-6 rounded-lg hover:bg-accent transition-all flex items-center justify-center gap-2 w-full sm:w-auto shadow-md">
-                  <span>View Ticket</span>
-                  <span className="material-symbols-outlined">arrow_forward</span>
-                </button>
-              </div>
-            </div>
-            <div className="bg-card p-6 flex items-center justify-center border-t md:border-t-0 md:border-l border-border">
-              <img
-                alt="QR Code"
-                className="w-28 h-28 sm:w-32 sm:h-32 rounded-lg"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYSJJv8JyC7HXyTDZBtLL1WV47w40A2L9ls2NP2-gXsflxyeIbEiRmHlDqanKmUuD6USJCrsW8eJ-CiShgEtziIbmLhgybPvoLZNfag9F76j7LE0jZVD5qGjr0Oy0N30lQnpQ1ge5XG-VCCDrlWrKrvuwZih7DiLvx9-YIIifZGLWjLgAwiECT8Bb1rDwIY1ExO85gLjKtGcXJt2UPcXF4Q8kaxYRnUw8NMhOkl1vL4e2iqIIlxDXJOtAf8rF5UYd4k_6vkqEGVDWz"
-              />
-            </div>
+        </div>
+
+       
+        <CardHeader>
+          <div className="flex justify-between items-start">
+            <CardTitle className="text-lg font-semibold">
+              {lang === "ar" ? el.eventDetails?.name_ar : el.eventDetails?.name}
+            </CardTitle>
+
+            <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
+              {el.eventDetails.is_free ? t("eventsPage.free") : `$${el.eventDetails.price}`}
+            </span>
           </div>
+        </CardHeader>
+
+        <CardContent className="space-y-2 text-sm pb-4">
+          <p className="text-muted-foreground flex gap-2">
+            <Calendar size={16} /> {el.eventDetails.date
+              ? new Date(el.eventDetails.date).toLocaleDateString(lang)
+              : "N/A"}
+          </p>
+
+          <p className="text-muted-foreground flex gap-2">
+            <MapPin size={16} /> {el.eventDetails.location || "Unspecified"}
+          </p>
+
+          <p className="text-muted-foreground flex gap-2">
+            <Users size={16} /> {el.eventDetails.capacity} attendees
+          </p>
+          <div className={`flex items-center pt-2 w-full`}>
+          <Link className="w-full" to={`/events/${el.eventDetails.id}`}>
+            <Button className="w-full" variant="amber" size="lg">
+              {t('eventsPage.category.cards.viewDetails')}
+            </Button>
+          </Link>
+        </div>
+        </CardContent>
+
+      </Card>
+      <Dialog open={openTicket === el.id} onOpenChange={() => setOpenTicket(null)}>
+  <DialogContent className="max-w-md">
+    <DialogHeader>
+      <DialogTitle>
+        {lang === "ar" ? "تفاصيل التذكرة" : "Ticket Details"}
+      </DialogTitle>
+    </DialogHeader>
+
+    <div className="flex flex-col items-center py-4">
+      <StyledQR value={el?.qr_code} size={260} />
+      <p className="mt-4 text-sm text-muted-foreground">
+        {lang === "ar" ? el.eventDetails?.name_ar : el.eventDetails?.name}
+      </p>
+    </div>
+  </DialogContent>
+</Dialog>
+    </motion.div>
+  ))}
+</div>
+
+
+
         </section>
       </main>
     </>
