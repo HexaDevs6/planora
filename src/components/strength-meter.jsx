@@ -3,53 +3,30 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 import { Eye, EyeOff, Check, X, RefreshCw } from "lucide-react"
 import { Input } from "@/components/ui/input"
+import { useDirection } from "@/hooks/useDirection"
 
-const defaultRequirements = {
-  en: [
+const defaultRequirements = [
     {
-      label: "At least 8 characters",
+      label: {en: "At least 8 characters", ar: "أقل من 8 أحرف"},
       validator: (password) => password.length >= 8,
     },
     {
-      label: "At least one lowercase letter",
+      label: {en: "At least one lowercase letter", ar: "حرف صغير واحد على الأقل"},
       validator: (password) => /[a-z]/.test(password),
     },
     {
-      label: "At least one uppercase letter",
+      label: {en: "At least one uppercase letter", ar: "حرف كبير واحد على الأقل"},
       validator: (password) => /[A-Z]/.test(password),
     },
     {
-      label: "At least one number",
+      label: {en: "At least one number", ar: "رقم واحد على الأقل"},
       validator: (password) => /\d/.test(password),
     },
     {
-      label: "At least one special character",
-      validator: (password) => /[!@#$%^&*(),.?":{}|<>]/.test(password),
-    },
-  ],
-  ar: [
-    {
-      label: "8 أحرف على الأقل",
-      validator: (password) => password.length >= 8,
-    },
-    {
-      label: "حرف صغير واحد على الأقل",
-      validator: (password) => /[a-z]/.test(password),
-    },
-    {
-      label: "حرف كبير واحد على الأقل",
-      validator: (password) => /[A-Z]/.test(password),
-    },
-    {
-      label: "رقم واحد على الأقل",
-      validator: (password) => /\d/.test(password),
-    },
-    {
-      label: "رمز خاص واحد على الأقل",
+      label: {en: "At least one special character", ar: "رمز خاص واحد على الأقل"},
       validator: (password) => /[!@#$%^&*(),.?":{}|<>]/.test(password),
     },
   ]
-}
 
 const defaultStrengthLabels = {
   en: {
@@ -103,23 +80,22 @@ export function PasswordStrengthMeter({
   showRequirements = true,
   segments = 4,
   strengthThresholds = defaultStrengthThresholds,
-  requirements = defaultRequirements.en,
+  requirements = defaultRequirements,
   customCalculateStrength,
   showPasswordToggle = true,
-  strengthLabels = defaultStrengthLabels.en,
+  strengthLabels = defaultStrengthLabels,
   className,
   meterClassName,
   inputClassName,
   placeholder = "Enter password",
   enableAutoGenerate = false,
   autoGenerateLength = 10,
-  lang = "en",
   theme,
   ...props
 }) {
   const [password, setPassword] = React.useState(value)
   const [showPassword, setShowPassword] = React.useState(false)
-
+  const { lang } = useDirection()
   const appliedTheme = { ...defaultTheme, ...theme }
 
   React.useEffect(() => {
@@ -331,7 +307,7 @@ export function PasswordStrengthMeter({
                       appliedTheme.requirementText,
                       passed ? "text-foreground" : "text-muted-foreground"
                     )}>
-                    {requirement.label}
+                    {requirement.label[lang]}
                   </span>
                 </li>
               );
