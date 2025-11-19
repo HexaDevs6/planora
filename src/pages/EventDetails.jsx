@@ -16,6 +16,7 @@ import Spinner from "@/components/SpinnerLoader";
 import { supabase } from "@/lib/supabaseClient";
 import { getPublicUrl } from "@/lib/storage";
 import loremImg from "@/assets/lorem.jfif";
+import { useSelector } from "react-redux";
 
 // ⭐ الإضافات المطلوبة فقط
 import { useSelector } from "react-redux";
@@ -25,12 +26,13 @@ import { createOrGetConversation } from "@/lib/chatService";
 
 const details = {
    start_date: "2025-11-01T18:00:00Z",
-   end_date: "2025-11-03T21:00:00Z",
+   end_date: "2026-11-03T21:00:00Z",
    price: 299,
    address: {
       ar: "العنوان بالعربي",
       en: "English Address",
    },
+
 }
 
 const highlights = [
@@ -82,10 +84,10 @@ const EventDetails = () => {
          }
       };
       fetchEvent();
+   
    }, [eventId]);
 
-
-
+ // handle if thumb is local, remote, or from supabase storage
    const handleThumbnail = (el) => {
       if (!el) return loremImg;
       if (typeof el === "string" && el.startsWith("http")) return el;
@@ -177,7 +179,7 @@ const EventDetails = () => {
                <div className="md:col-span-1 space-y-8">
 
                   {/* Countdown */}
-                  <EventCountdown details={details} lang={lang} />
+                  <EventCountdown details={details} eventId={event?.id} user={user} lang={lang} />
 
                   {/* ⭐ زر مراسلة منظم الحدث */}
                   <button
