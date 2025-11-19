@@ -17,9 +17,6 @@ import { supabase } from "@/lib/supabaseClient";
 import { getPublicUrl } from "@/lib/storage";
 import loremImg from "@/assets/lorem.jfif";
 import { useSelector } from "react-redux";
-
-// ⭐ الإضافات المطلوبة فقط
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { createOrGetConversation } from "@/lib/chatService";
 
