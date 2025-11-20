@@ -626,21 +626,6 @@ export default function PublishEvent() {
                   />
                </div>
 
-               {/* Images */}
-               <div className="md:col-span-2">
-                  <Label
-                     htmlFor="images"
-                     className="block text-sm font-semibold mb-2"
-                  >
-                     {lang === "ar" ? "صور الحدث" : "Event Images"}
-                  </Label>
-                  <DragZone
-                     onChange={handleChangeImages}
-                     acceptMultiple={true}
-                     files={eventId ? formData.images : null}
-                  />
-               </div>
-
                {/* Submit */}
                <div className="md:col-span-2 flex justify-end gap-4">
                   {eventId ? (

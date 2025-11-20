@@ -1,9 +1,7 @@
-import EventHero from "@/components/DetailsHero";
 import Details from "@/components/events/Details";
 
 import React, { useEffect, useState } from "react";
 import WhyAttend from "@/components/events/WhyAttend";
-import Highlights from "@/components/events/Highlights";
 import HostInfo from "@/components/events/HostInfo";
 import Location from "@/components/events/Location";
 import EventCountdown from "@/components/events/EventCountdown";
@@ -16,7 +14,6 @@ import Spinner from "@/components/SpinnerLoader";
 import { supabase } from "@/lib/supabaseClient";
 import { getPublicUrl } from "@/lib/storage";
 import loremImg from "@/assets/lorem.jfif";
-import ServiceGallery from "@/components/services/ServiceGallery";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { createOrGetConversation } from "@/lib/chatService";
@@ -29,25 +26,6 @@ const details = {
       ar: "العنوان بالعربي",
       en: "English Address",
    },
-};
-
-const getImages = (images) => {
-   if (!images) return [];
-
-   if (typeof images === "string") {
-      try {
-         const parsed = JSON.parse(images);
-         return parsed.map((img) => getPublicUrl("events", img.path));
-      } catch {
-         return [];
-      }
-   }
-
-   if (Array.isArray(images)) {
-      return images.map((img) => getPublicUrl("events", img.path));
-   }
-
-   return [];
 };
 
 const highlights = [
@@ -159,13 +137,8 @@ const EventDetails = () => {
                            : event.description}
                      </p>
                   </section>
-
-                  {/* <Highlights lang={lang} highlights={highlights} /> */}
-                  {event?.images?.length > 0 && (
-                     <ServiceGallery images={getImages(event.images)} />
-                  )}
                   <Location lang={lang} />
-                  <WhyAttend lang={lang} />
+                  <WhyAttend lang={lang} eventCategoryId={event.category_id} />
                   <HostInfo lang={lang} />
 
                   <section className="gradient-card rounded-xl p-8 flex flex-col md:flex-row items-center justify-between gap-6">
@@ -197,9 +170,9 @@ const EventDetails = () => {
                {/* RIGHT SECTION */}
                <div className="md:col-span-1 space-y-8">
                   {/* Countdown */}
-                  <EventCountdown details={details} lang={lang} />
+                  <EventCountdown details={details} eventId={event?.id} user={user} lang={lang} />
 
-                  {/* ⭐ زر مراسلة منظم الحدث */}
+                  {/* ⭐ زر مراسلة منظم الحدث
                   <button
                      onClick={handleMessageHost}
                      className="w-full px-6 py-3 rounded-lg bg-violet text-white font-bold shadow-lg hover:bg-violet/80 transition"
@@ -207,7 +180,7 @@ const EventDetails = () => {
                      {lang === "ar"
                         ? "مراسلة منظم الحدث"
                         : "Message Event Host"}
-                  </button>
+                  </button> */}
 
                   {/* Share Card */}
                   <div className="gradient-card rounded-xl p-6 text-center">
