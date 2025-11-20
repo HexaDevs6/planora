@@ -23,7 +23,7 @@ import { createOrGetConversation } from "@/lib/chatService";
 
 const details = {
    start_date: "2025-11-01T18:00:00Z",
-   end_date: "2025-11-03T21:00:00Z",
+   end_date: "2026-11-03T21:00:00Z",
    price: 299,
    address: {
       ar: "العنوان بالعربي",
@@ -98,6 +98,7 @@ const EventDetails = () => {
          }
       };
       fetchEvent();
+   
    }, [eventId]);
 
    const handleThumbnail = (el) => {
@@ -126,6 +127,7 @@ const EventDetails = () => {
       }
    };
 
+
    if (loading) {
       return <Spinner />;
    }
@@ -133,6 +135,7 @@ const EventDetails = () => {
    return (
       <main>
          <div className="container">
+
             {/* hero */}
             <DetailsHero
                lang={lang}
@@ -223,8 +226,10 @@ const EventDetails = () => {
                         </button>
                      </div>
                   </div>
+
                </div>
             </div>
+
          </div>
       </main>
    );
