@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
-   createOrGetConversation,
    getInbox,
    getMessages,
    sendMessage,
@@ -100,14 +99,17 @@ export default function MessagesPage() {
          setMessages((prev) => {
             // Check if message already exists
             if (prev.some((m) => m.id === newMsg.id)) return prev;
-            
+
             // Remove any temporary message with same content from same sender
             const withoutTemp = prev.filter(
-               (m) => !(m.id.toString().startsWith('temp-') && 
-                       m.content === newMsg.content && 
-                       m.sender_id === newMsg.sender_id)
+               (m) =>
+                  !(
+                     m.id.toString().startsWith("temp-") &&
+                     m.content === newMsg.content &&
+                     m.sender_id === newMsg.sender_id
+                  )
             );
-            
+
             return [...withoutTemp, newMsg];
          });
 
@@ -168,7 +170,7 @@ export default function MessagesPage() {
    );
 
    return (
-      <div className="container pb-16">
+      <div className="container">
          <header className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
             <div>
                <h1 className="text-3xl font-bold text-primary mb-2">
@@ -183,6 +185,84 @@ export default function MessagesPage() {
          </header>
 
          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* RIGHT SIDE → Messages */}
+            <div className="md:col-span-2 flex flex-col min-h-[60vh] border rounded-lg bg-background">
+               <header className="p-5 border-b">
+                  {activeConvId ? (
+                     <h1 className="font-bold text-primary">
+                        {
+                           inbox.find(
+                              (c) =>
+                                 (c.conversation_id || c.id) === activeConvId
+                           )?.other_user_name
+                        }
+                     </h1>
+                  ) : (
+                     <p className="text-gray-500">
+                        {lang === "ar"
+                           ? "اختر محادثة..."
+                           : "Select a conversation..."}
+                     </p>
+                  )}
+               </header>
+
+               <div className="flex-1 p-6 overflow-y-auto max-h-[70vh] space-y-3">
+                  {loadingMessages ? (
+                     <div className="text-center text-gray-500">
+                        {t("common.loading")}
+                     </div>
+                  ) : (
+                     messages.length === 0 ? (
+                     <div className="text-center text-gray-500">
+                        {t("common.messages.noMessages")}
+                     </div>
+                  ) : (
+                     messages.map((m) => {
+                        const mine = m.sender_id === userId;
+                        return (
+                           <div
+                              key={m.id}
+                              className={`flex gap-3 ${
+                                 mine ? "justify-end" : "justify-start"
+                              }`}
+                           >
+                              <div
+                                 className={`p-3 rounded-lg max-w-[70%] ${
+                                    mine
+                                       ? "bg-primary text-white"
+                                       : "bg-gray-200 text-gray-800"
+                                 }`}
+                              >
+                                 {m.content}
+                              </div>
+                           </div>
+                        );
+                     })
+                  ))}
+
+                  <div ref={messagesEndRef} />
+               </div>
+
+               {/* SEND MESSAGE */}
+               <footer className="p-5 border-t flex gap-3 items-center">
+                  <Input
+                     type="text"
+                     placeholder={t("common.messages.typeMessage")}
+                     value={text}
+                     onChange={(e) => setText(e.target.value)}
+                     onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                     disabled={!activeConvId}
+                     className="flex-1 bg-sidebar-content"
+                  />
+                  <Button
+                     variant="amber"
+                     onClick={handleSend}
+                     disabled={!activeConvId}
+                  >
+                     {t("common.buttons.send")}
+                  </Button>
+               </footer>
+            </div>
             {/* LEFT SIDE → Inbox */}
             <div className="md:col-span-1 border rounded-lg bg-background">
                <div className="p-5 flex items-center gap-3 border-b">
@@ -198,7 +278,9 @@ export default function MessagesPage() {
 
                <div className="overflow-y-auto max-h-[70vh]">
                   {loadingInbox ? (
-                     <div className="p-4 text-center">{t("common.loading")}</div>
+                     <div className="p-4 text-center">
+                        {t("common.loading")}
+                     </div>
                   ) : inbox.length === 0 ? (
                      <div className="p-6 text-center">
                         <p>{t("common.messages.noConversations")}</p>
@@ -248,76 +330,6 @@ export default function MessagesPage() {
                      })
                   )}
                </div>
-            </div>
-
-            {/* RIGHT SIDE → Messages */}
-            <div className="md:col-span-2 flex flex-col min-h-[60vh] border rounded-lg bg-background">
-               <header className="p-5 border-b">
-                  {activeConvId ? (
-                     <h1 className="font-bold text-primary">
-                        {
-                           inbox.find(
-                              (c) =>
-                                 (c.conversation_id || c.id) === activeConvId
-                           )?.other_user_name
-                        }
-                     </h1>
-                  ) : (
-                     <p className="text-gray-500">{lang === "ar" ? "اختر محادثة..." : "Select a conversation..."}</p>
-                  )}
-               </header>
-
-               <div className="flex-1 p-6 overflow-y-auto max-h-[70vh] space-y-3">
-                  {messages.length === 0 ? (
-                     <div className="text-center text-gray-500">
-                        {t("common.messages.noMessages")}
-                     </div>
-                  ) : (
-                     messages.map((m) => {
-                        const mine = m.sender_id === userId;
-                        return (
-                           <div
-                              key={m.id}
-                              className={`flex gap-3 ${
-                                 mine ? "justify-end" : "justify-start"
-                              }`}
-                           >
-                              <div
-                                 className={`p-3 rounded-lg max-w-[70%] ${
-                                    mine
-                                       ? "bg-primary text-white"
-                                       : "bg-gray-200 text-gray-800"
-                                 }`}
-                              >
-                                 {m.content}
-                              </div>
-                           </div>
-                        );
-                     })
-                  )}
-
-                  <div ref={messagesEndRef} />
-               </div>
-
-               {/* SEND MESSAGE */}
-               <footer className="p-5 border-t flex gap-3 items-center">
-                  <Input
-                     type="text"
-                     placeholder={t("common.messages.typeMessage")}
-                     value={text}
-                     onChange={(e) => setText(e.target.value)}
-                     onKeyDown={(e) => e.key === "Enter" && handleSend()}
-                     disabled={!activeConvId}
-                     className="flex-1 bg-sidebar-content"
-                  />
-                  <Button
-                     variant="amber"
-                     onClick={handleSend}
-                     disabled={!activeConvId}
-                  >
-                     {t("common.buttons.send")}
-                  </Button>
-               </footer>
             </div>
          </div>
       </div>

@@ -172,7 +172,7 @@ const UserServices = () => {
          }
       };
       fetchUserServices();
-   }, [loadingDelete]);
+   }, [loadingDelete, user.id]);
 
    useEffect(() => {
       if (!categories || categories.length === 0) {

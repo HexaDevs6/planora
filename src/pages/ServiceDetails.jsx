@@ -50,26 +50,6 @@ const ServiceDetails = () => {
     return "";
   };
 
-  // send message (create conversation → go to user messages)
-  const handleMessageHost = async () => {
-    if (!user?.id) {
-      return alert("You must be logged in to message the host.");
-    }
-
-    if (!service?.client_id) {
-      return alert("Host ID not found for this service.");
-    }
-
-    try {
-      const convoId = await createOrGetConversation(user.id, service.client_id);
-      //use search params to pass conversation id???
-      navigate(`/user/messages?cid=${convoId}`);
-    } catch (err) {
-      console.error("Failed to start conversation:", err.message);
-      alert("Cannot start conversation right now.");
-    }
-  };
-
   const getImages = (images) => {
     if (!images) return [];
 
@@ -104,14 +84,6 @@ const ServiceDetails = () => {
         {/* LEFT SIDE - Provider Info */}
         <div className="md:col-span-2">
           <ProviderCard provider_id={service.client_id} />
-
-          {/* >>>>>>>>>> ADD MESSAGE BUTTON HERE <<<<<<<<<< */}
-          <button
-            onClick={handleMessageHost}
-            className="mt-4 w-full px-6 py-3 bg-violet text-white rounded-lg font-bold shadow-md hover:bg-violet/80 transition"
-          >
-            {lang === "ar" ? "مراسلة مقدم الخدمة" : "Message Provider"}
-          </button>
         </div>
 
         {/* RIGHT SIDE - Details */}

@@ -20,14 +20,17 @@ import DragZone from "@/components/services/DragZone";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { uploadFile, deleteFile } from "@/lib/storage";
+import { Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 
 export default function PublishEvent() {
-	const [searchParams] = useSearchParams();
+   const [searchParams] = useSearchParams();
    const eventId = searchParams.get("eventId");
    const dispatch = useDispatch();
    const { lang } = useDirection();
-	const navigate = useNavigate();
+   const { t } = useTranslation();
+   const navigate = useNavigate();
    const user = useSelector((state) => state.auth.user);
    const { data: categories, loading: categoriesLoading } = useSelector(
       (state) => state.categories
@@ -51,9 +54,9 @@ export default function PublishEvent() {
       images: [],
    });
 
-	const [originalData, setOriginalData] = useState(null);
+   const [originalData, setOriginalData] = useState(null);
 
-	useEffect(() => {
+   useEffect(() => {
       if (eventId) {
          setLoading(true);
          const fetchService = async () => {
@@ -92,7 +95,7 @@ export default function PublishEvent() {
       }
    }, [eventId]);
 
-	const handleCancel = () => {
+   const handleCancel = () => {
       Swal.fire({
          title: lang === "ar" ? "هل أنت متأكد؟" : "Are you sure?",
          text:
@@ -143,7 +146,7 @@ export default function PublishEvent() {
       });
    };
 
-	const clearFormData = () => {
+   const clearFormData = () => {
       setFormData({
          name: "",
          name_ar: "",
@@ -195,7 +198,6 @@ export default function PublishEvent() {
           * ----------------------------- */
          const folder = eventId ? originalData.slug : slug;
 
-
          /** -----------------------------
           * 4. If editing: check and delete old files if replaced
           * ----------------------------- */
@@ -212,7 +214,9 @@ export default function PublishEvent() {
             }
 
             // Delete old gallery if new images are selected
-            const newImages = formData.images.filter((img) => img instanceof File);
+            const newImages = formData.images.filter(
+               (img) => img instanceof File
+            );
             if (newImages.length > 0 && originalData.images?.length > 0) {
                const oldPaths = originalData.images.map((img) =>
                   typeof img === "string" ? img : img.path
@@ -227,12 +231,12 @@ export default function PublishEvent() {
          let thumbnailPath = formData.thumbnail;
          if (formData.thumbnail && formData.thumbnail instanceof File) {
             const thumbFile = formData.thumbnail;
-            const path = `events/${user.id}/${folder}/thumbnail_${Date.now()}_${thumbFile.name}`;
+            const path = `events/${user.id}/${folder}/thumbnail_${Date.now()}_${
+               thumbFile.name
+            }`;
             await uploadFile("events", path, thumbFile);
             thumbnailPath = path;
          }
-
-
 
          /** -----------------------------
           * 6. Upload event images if any
@@ -242,7 +246,9 @@ export default function PublishEvent() {
             for (const img of formData.images) {
                if (img instanceof File) {
                   // New image to upload
-                  const path = `events/${user.id}/${folder}/gallery/${Date.now()}_${img.name}`;
+                  const path = `events/${
+                     user.id
+                  }/${folder}/gallery/${Date.now()}_${img.name}`;
                   await uploadFile("events", path, img);
                   imagePaths.push({ path });
                } else if (typeof img === "object" && img.path) {
@@ -282,13 +288,13 @@ export default function PublishEvent() {
                   ? `تم تحديث الحدث "${formData.name_ar}" بنجاح!`
                   : `Event "${formData.name}" updated successfully!`
             );
+            setLoading(false);
             navigate("/host/events");
-         }
+         } else {
 
          /** -----------------------------
           * 8. Handle Create (new event)
           * ----------------------------- */
-         else {
             const { data, error } = await supabase
                .from("events")
                .insert([
@@ -319,6 +325,7 @@ export default function PublishEvent() {
                   ? `تم إنشاء الحدث "${formData.name}" بنجاح!`
                   : `Event "${formData.name}" created successfully!`
             );
+            setLoading(false);
             navigate("/host/events");
          }
 
@@ -344,10 +351,7 @@ export default function PublishEvent() {
       }
    };
 
-
-
-
-	const handleChangeImages = (files) => {
+   const handleChangeImages = (files) => {
       setFormData({ ...formData, images: files });
    };
 
@@ -358,7 +362,7 @@ export default function PublishEvent() {
 
    // واجهة المستخدم
    return (
-      <section className="justify-center items-center text-content transition-colors duration-500">
+      <section className="container justify-center items-center text-content transition-colors duration-500">
          <div className="w-full max-w-4xl mx-auto">
             <header className="text-center mb-10">
                <h1 className="text-3xl md:text-4xl font-bold text-primary mb-2">
@@ -389,6 +393,7 @@ export default function PublishEvent() {
                      id="name"
                      value={formData.name}
                      onChange={handleChange}
+                     dir="ltr"
                      placeholder={
                         lang === "ar"
                            ? "اكتب اسم الحدث بالإنجليزية"
@@ -434,6 +439,7 @@ export default function PublishEvent() {
                   <Textarea
                      id="description"
                      value={formData.description}
+                     dir="ltr"
                      onChange={handleChange}
                      rows={3}
                      placeholder={
@@ -531,8 +537,6 @@ export default function PublishEvent() {
                   )}
                </div>
 
-
-
                {/* Dates */}
                <div>
                   <Label
@@ -567,7 +571,7 @@ export default function PublishEvent() {
                </div>
 
                {/* Capacity & Price */}
-					<div>
+               <div>
                   <Label
                      htmlFor="capacity"
                      className="block text-sm font-semibold mb-2"
@@ -607,7 +611,7 @@ export default function PublishEvent() {
                   />
                </div>
 
-					{/* Thumbnail */}
+               {/* Thumbnail */}
                <div className="md:col-span-2">
                   <Label
                      htmlFor="thumbnail"
@@ -615,7 +619,7 @@ export default function PublishEvent() {
                   >
                      {lang === "ar" ? "الصورة المصغرة" : "Thumbnail"}
                   </Label>
-						<DragZone
+                  <DragZone
                      onChange={handleChangeThumbnail}
                      acceptMultiple={false}
                      files={eventId ? [formData.thumbnail] : null}
@@ -640,37 +644,40 @@ export default function PublishEvent() {
                {/* Submit */}
                <div className="md:col-span-2 flex justify-end gap-4">
                   {eventId ? (
-							<Button
-                     type="submit"
-                     disabled={loading}
-                     variant="amber"
-                     size="lg"
-                  >
-                     {loading
-                        ? lang === "ar"
-                           ? "جاري التحديث..."
-                           : "Updating..."
-                        : lang === "ar"
-                        ? "تحديث الحدث"
-                        : "Update Event"}
-                  </Button>
-						) : (
-						<Button
-                     type="submit"
-                     disabled={loading}
-                     variant="amber"
-                     size="lg"
-                  >
-                     {loading
-                        ? lang === "ar"
-                           ? "جاري النشر..."
-                           : "Creating..."
-                        : lang === "ar"
-                        ? "إنشاء الحدث"
-                        : "Create Event"}
-                  </Button>
-					)}
-						<Button
+                     <Button
+                        type="submit"
+                        disabled={loading}
+                        variant="amber"
+                        size="lg"
+                     >
+                        {loading
+                           ? lang === "ar"
+                              ? "جاري التحديث..."
+                              : "Updating..."
+                           : lang === "ar"
+                           ? "تحديث الحدث"
+                           : "Update Event"}
+                     </Button>
+                  ) : (
+                     <Button
+                        type="submit"
+                        disabled={loading}
+                        variant="amber"
+                        size="lg"
+                     >
+                        {loading ? (
+                           <>
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                              <span>{t("common.loading")}</span>
+                           </>
+                        ) : lang === "ar" ? (
+                           "إنشاء الحدث"
+                        ) : (
+                           "Create Event"
+                        )}
+                     </Button>
+                  )}
+                  <Button
                      type="button"
                      disabled={loading}
                      variant="outline"

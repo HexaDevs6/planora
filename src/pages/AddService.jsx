@@ -21,10 +21,12 @@ import Spinner from "@/components/SpinnerLoader";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { uploadFile, deleteFile } from "@/lib/storage";
-
+import { useTranslation } from "react-i18next";
+import { Loader2 } from "lucide-react";
 
 export default function AddService() {
    const [searchParams] = useSearchParams();
+   const { t } = useTranslation();
    const serviceId = searchParams.get("serviceId");
    const [originalData, setOriginalData] = useState(null);
    const navigate = useNavigate();
@@ -57,6 +59,7 @@ export default function AddService() {
                .select("*")
                .eq("id", serviceId);
             if (error) {
+               toast.error(lang === "ar" ? "حدث خطأ أثناء تحميل الخدمة" : "Error loading service");
                console.error(error);
                return;
             } else {
@@ -196,7 +199,9 @@ export default function AddService() {
             }
 
             // If new gallery chosen → delete old gallery
-            const newImages = formData.images.filter((img) => img instanceof File);
+            const newImages = formData.images.filter(
+               (img) => img instanceof File
+            );
             if (newImages.length > 0 && originalData.images?.length > 0) {
                const oldPaths = originalData.images.map((img) =>
                   typeof img === "string" ? img : img.path
@@ -211,7 +216,9 @@ export default function AddService() {
          let thumbnailPath = formData.thumbnail;
          if (formData.thumbnail && formData.thumbnail instanceof File) {
             const thumbFile = formData.thumbnail;
-            const path = `services/${user.id}/${folder}/thumbnail_${Date.now()}_${thumbFile.name}`;
+            const path = `services/${
+               user.id
+            }/${folder}/thumbnail_${Date.now()}_${thumbFile.name}`;
             await uploadFile("services", path, thumbFile);
             thumbnailPath = path;
          }
@@ -223,7 +230,9 @@ export default function AddService() {
          if (formData.images && formData.images.length > 0) {
             for (const img of formData.images) {
                if (img instanceof File) {
-                  const path = `services/${user.id}/${folder}/gallery/${Date.now()}_${img.name}`;
+                  const path = `services/${
+                     user.id
+                  }/${folder}/gallery/${Date.now()}_${img.name}`;
                   await uploadFile("services", path, img);
                   imagePaths.push({ path });
                } else if (typeof img === "object" && img.path) {
@@ -260,6 +269,7 @@ export default function AddService() {
                   ? `تم تحديث الخدمة "${formData.name_ar}" بنجاح!`
                   : `Service "${formData.name}" updated successfully!`
             );
+            setLoading(false);
             navigate("/user/services");
          } else {
             const { data, error } = await supabase
@@ -288,6 +298,7 @@ export default function AddService() {
                   : `Service "${formData.name}" created successfully!`
             );
 
+            setLoading(false);
             navigate("/user/services");
          }
 
@@ -306,7 +317,6 @@ export default function AddService() {
          setLoading(false);
       }
    };
-
 
    if (loading && serviceId) {
       return <Spinner />;
@@ -343,6 +353,7 @@ export default function AddService() {
                      id="name"
                      value={formData.name}
                      onChange={handleChange}
+                     dir="ltr"
                      placeholder={
                         lang === "ar"
                            ? "اكتب عنوان الخدمة بالإنجليزية"
@@ -387,6 +398,7 @@ export default function AddService() {
                      id="description"
                      value={formData.description}
                      onChange={handleChange}
+                     dir="ltr"
                      rows={3}
                      placeholder={
                         lang === "ar"
@@ -537,7 +549,17 @@ export default function AddService() {
                         variant="amber"
                         size="lg"
                      >
-                        {loading ? "Publishing..." : "Publish Service"}
+                        {loading ? (
+                           <>
+                              <Loader2 className="h-4 w-4 animate-spin" />
+
+                              <span>{t("common.loading")}</span>
+                           </>
+                        ) : lang === "ar" ? (
+                           "نشر الخدمة"
+                        ) : (
+                           "Publish Service"
+                        )}
                      </Button>
                   )}
                   <Button

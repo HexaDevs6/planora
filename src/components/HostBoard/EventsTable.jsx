@@ -126,7 +126,7 @@ const EventsTable = () => {
          }
       };
       fetchUserEvents();
-   }, [user.id, loadingDelete]);
+   }, [loadingDelete]);
 
    useEffect(() => {
       if (!categories || categories.length === 0) {
