@@ -27,7 +27,7 @@ import AddService from "./pages/AddService";
 import UserServices from "./pages/UserServices";
 import PlanoraAi from "./pages/PlanoraAi";
 import ChatWidget from "./components/ChatWidget";
-import MessagesPage from "./pages/Messages";
+import MessagesPage from "./pages/MessagesPage";
 
 function App() {
     useDirection();

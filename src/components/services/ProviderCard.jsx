@@ -65,7 +65,7 @@ const ProviderCard = ({ provider_id }) => {
   }
 
   return (
-    <Link to={`/user/${provider_id}`}>
+    // <Link to={`/user/${provider_id}`}>
       <div className="group gradient-card rounded-xl p-4 flex md:flex-col gap-4 items-center text-center">
         <img
           src={provider.image || avatarPlaceholderImg}
@@ -74,7 +74,7 @@ const ProviderCard = ({ provider_id }) => {
         />
 
         <div className="text-start md:text-center flex flex-col gap-2 items-start md:items-center w-full">
-          <h3 className="text-lg font-bold group-hover:underline">
+          <h3 className="text-lg font-bold">
             {provider.full_name}
           </h3>
 
@@ -95,7 +95,7 @@ const ProviderCard = ({ provider_id }) => {
           </button>
         </div>
       </div>
-    </Link>
+    // </Link>
   );
 };
 
