@@ -217,6 +217,7 @@ function Signin() {
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder=' '
                                     required
+                                    dir="ltr"
                                     className='peer w-full border rounded-sm px-4 pt-5 pb-2 text-primary placeholder-transparent focus:outline-none focus:ring-2 focus:ring-amber focus:border-transparent'
                                 />
                                 <label
@@ -236,6 +237,7 @@ function Signin() {
                                         setPassword(e.target.value)
                                     }
                                     placeholder=' '
+                                    dir="ltr"
                                     required
                                     className='peer w-full border rounded-sm px-4 pt-5 pb-2 pr-12 text-primary placeholder-transparent focus:outline-none focus:ring-2 focus:ring-amber focus:border-transparent'
                                 />

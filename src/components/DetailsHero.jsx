@@ -5,7 +5,6 @@ const DetailsHero = ({
    img ,
    title,
 }) => {
-   console.log(img);
    
    return (
       <div className="hero mt-28">

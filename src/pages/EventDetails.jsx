@@ -16,12 +16,10 @@ import Spinner from "@/components/SpinnerLoader";
 import { supabase } from "@/lib/supabaseClient";
 import { getPublicUrl } from "@/lib/storage";
 import loremImg from "@/assets/lorem.jfif";
-
-// ⭐ الإضافات المطلوبة فقط
+import ServiceGallery from "@/components/services/ServiceGallery";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { createOrGetConversation } from "@/lib/chatService";
-
 
 const details = {
    start_date: "2025-11-01T18:00:00Z",
@@ -31,7 +29,26 @@ const details = {
       ar: "العنوان بالعربي",
       en: "English Address",
    },
-}
+};
+
+const getImages = (images) => {
+   if (!images) return [];
+
+   if (typeof images === "string") {
+      try {
+         const parsed = JSON.parse(images);
+         return parsed.map((img) => getPublicUrl("events", img.path));
+      } catch {
+         return [];
+      }
+   }
+
+   if (Array.isArray(images)) {
+      return images.map((img) => getPublicUrl("events", img.path));
+   }
+
+   return [];
+};
 
 const highlights = [
    {
@@ -51,7 +68,6 @@ const highlights = [
 const location =
    "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3418.8272013926735!2d30.466650274469004!3d31.031063671155543!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14f66bd729891573%3A0x4f36bd676063305c!2sInternational%20Academy%20of%20Information%20Technology%20and%20Languages!5e0!3m2!1sen!2seg!4v1761057016093!5m2!1sen!2seg";
 
-
 const EventDetails = () => {
    const { lang } = useDirection();
    const { eventId } = useParams();
@@ -61,7 +77,6 @@ const EventDetails = () => {
    // ⭐ الإضافات المطلوبة فقط
    const user = useSelector((state) => state.auth.user);
    const navigate = useNavigate();
-
 
    useEffect(() => {
       const fetchEvent = async () => {
@@ -75,6 +90,7 @@ const EventDetails = () => {
 
             if (error) throw error;
             setEvent(data);
+            console.log(data);
          } catch (error) {
             console.error(error);
          } finally {
@@ -84,15 +100,12 @@ const EventDetails = () => {
       fetchEvent();
    }, [eventId]);
 
-
-
    const handleThumbnail = (el) => {
       if (!el) return loremImg;
       if (typeof el === "string" && el.startsWith("http")) return el;
       if (typeof el === "string") return getPublicUrl("events", el);
       return loremImg;
    };
-
 
    // ⭐ دالة إرسال الرسالة / إنشاء المحادثة
    const handleMessageHost = async () => {
@@ -113,7 +126,6 @@ const EventDetails = () => {
       }
    };
 
-
    if (loading) {
       return <Spinner />;
    }
@@ -121,7 +133,6 @@ const EventDetails = () => {
    return (
       <main>
          <div className="container">
-
             {/* hero */}
             <DetailsHero
                lang={lang}
@@ -133,7 +144,6 @@ const EventDetails = () => {
             <Details lang={lang} details={details} />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-
                {/* LEFT SECTION */}
                <div className="md:col-span-2 space-y-10">
                   <section>
@@ -141,11 +151,16 @@ const EventDetails = () => {
                         {lang === "en" ? "About the Event" : "حول الحدث"}
                      </h3>
                      <p className="text-foreground leading-relaxed">
-                        {lang === "ar" ? event.description_ar : event.description}
+                        {lang === "ar"
+                           ? event.description_ar
+                           : event.description}
                      </p>
                   </section>
 
-                  <Highlights lang={lang} highlights={highlights} />
+                  {/* <Highlights lang={lang} highlights={highlights} /> */}
+                  {event?.images?.length > 0 && (
+                     <ServiceGallery images={getImages(event.images)} />
+                  )}
                   <Location lang={lang} />
                   <WhyAttend lang={lang} />
                   <HostInfo lang={lang} />
@@ -153,10 +168,14 @@ const EventDetails = () => {
                   <section className="gradient-card rounded-xl p-8 flex flex-col md:flex-row items-center justify-between gap-6">
                      <div>
                         <h3 className="text-2xl font-bold text-gradient-amber">
-                           {lang === "en" ? "Ready to Innovate?" : "هل أنت مستعد للابتكار؟"}
+                           {lang === "en"
+                              ? "Ready to Innovate?"
+                              : "هل أنت مستعد للابتكار؟"}
                         </h3>
                         <p className="text-gray-600 dark:text-gray-400 mt-1">
-                           {lang === "en" ? "Secure your spot at the summit today." : "احجز مكانك في القمة اليوم."}
+                           {lang === "en"
+                              ? "Secure your spot at the summit today."
+                              : "احجز مكانك في القمة اليوم."}
                         </p>
                      </div>
 
@@ -172,10 +191,8 @@ const EventDetails = () => {
                   </section>
                </div>
 
-
                {/* RIGHT SECTION */}
                <div className="md:col-span-1 space-y-8">
-
                   {/* Countdown */}
                   <EventCountdown details={details} lang={lang} />
 
@@ -184,7 +201,9 @@ const EventDetails = () => {
                      onClick={handleMessageHost}
                      className="w-full px-6 py-3 rounded-lg bg-violet text-white font-bold shadow-lg hover:bg-violet/80 transition"
                   >
-                     {lang === "ar" ? "مراسلة منظم الحدث" : "Message Event Host"}
+                     {lang === "ar"
+                        ? "مراسلة منظم الحدث"
+                        : "Message Event Host"}
                   </button>
 
                   {/* Share Card */}
@@ -204,10 +223,8 @@ const EventDetails = () => {
                         </button>
                      </div>
                   </div>
-
                </div>
             </div>
-
          </div>
       </main>
    );

@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { MessageCircle } from "lucide-react";
 import { useDirection } from "@/hooks/useDirection";
 import { supabase } from "@/lib/supabaseClient";
 import Spinner from "@/components/SpinnerLoader";
 import avatarPlaceholderImg from "@/assets/user_placeholder3.png";
-
-// ⭐ IMPORTS الناقصة
 import { useSelector } from "react-redux";
 import { createOrGetConversation } from "@/lib/chatService";
 
@@ -14,8 +12,6 @@ const ProviderCard = ({ provider_id }) => {
   const [provider, setProvider] = useState(null);
   const navigate = useNavigate();
   const { lang } = useDirection();
-
-  // ⭐ جيب اليوزر من Redux
   const user = useSelector((state) => state.auth.user);
 
   const fetchProvider = async () => {
@@ -36,9 +32,8 @@ const ProviderCard = ({ provider_id }) => {
     fetchProvider();
   }, [provider_id]);
 
-  // ⭐ MESSAGE SYSTEM
   const handleMessageClick = async (e) => {
-    e.preventDefault(); // مهم جداً علشان يمنع الـ <Link> من فتح صفحة غلط
+    e.preventDefault();
 
     if (!user?.id) {
       return alert("You must be logged in to message the provider.");
@@ -49,10 +44,8 @@ const ProviderCard = ({ provider_id }) => {
     }
 
     try {
-      // إنشاء/إحضار المحادثة
       const convoId = await createOrGetConversation(user.id, provider_id);
 
-      // تحويل المستخدم لصفحة الرسائل الصح
       navigate(`/user/messages?cid=${convoId}`);
     } catch (err) {
       console.error("Message start error:", err);
@@ -84,7 +77,6 @@ const ProviderCard = ({ provider_id }) => {
               : provider.bio || "Has no bio yet!"}
           </p>
 
-          {/* ⭐ زر الرسائل */}
           <button
             onClick={handleMessageClick}
             className="mt-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-violet text-white font-semibold hover:bg-violet/80 transition-colors"
