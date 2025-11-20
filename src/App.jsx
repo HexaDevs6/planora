@@ -7,7 +7,6 @@ import Signin from "./pages/Signin";
 import Register from "./pages/Register";
 import { Navigate } from "react-router-dom";
 import SidebarLayout from "./layout/SidebarLayout";
-import UserMessages from "./components/UserBoard/UserMessages";
 import UserOverview from "./components/UserBoard/UserOverview";
 import UserSettings from "./components/UserBoard/UserSettings";
 import UserTickets from "./components/UserBoard/UserTickets";
@@ -22,13 +21,13 @@ import Services from "./pages/Services";
 import EventDetails from "./pages/EventDetails";
 import HostOverview from "./components/HostBoard/HostOverview";
 import HostEvents from "./components/HostBoard/EventsTable";
-import HostMessages from "./components/HostBoard/HostMessages";
 import HostSettings from "./components/HostBoard/HostSettings";
 import ServiceDetails from "./pages/ServiceDetails";
 import AddService from "./pages/AddService";
 import UserServices from "./pages/UserServices";
 import PlanoraAi from "./pages/PlanoraAi";
 import ChatWidget from "./components/ChatWidget";
+import MessagesPage from "./pages/MessagesPage";
 
 function App() {
     useDirection();
@@ -82,7 +81,7 @@ function App() {
                         <Route path='overview' element={<UserOverview />} />
                         <Route path='settings' element={<UserSettings />} />
                         <Route path='tickets' element={<UserTickets />} />
-                        <Route path='messages' element={<UserMessages />} />
+                        <Route path='messages' element={<MessagesPage />} />
                         <Route path='services' element={<UserServices />} />
                         <Route path='create-service' element={<AddService />} />
                     </Route>
@@ -102,7 +101,7 @@ function App() {
                         <Route path='overview' element={<HostOverview />} />
                         <Route path='settings' element={<HostSettings />} />
                         <Route path='events' element={<HostEvents />} />
-                        <Route path='messages' element={<HostMessages />} />
+                        <Route path='messages' element={<MessagesPage />} />
                         <Route path='create-event' element={<CreateEvent />} />
                     </Route>
                 </Routes>
