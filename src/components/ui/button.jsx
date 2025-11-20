@@ -10,7 +10,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         amber: "bg-amber text-violet-dark hover:bg-[#ffb936] shadow-sm hover:shadow-md",
-        primary: "bg-primary text-amber  hover:scale-105",
+        primary: "bg-primary text-background  hover:scale-105",
         glass: "bg-secondary/10 backdrop-blur-xs text-secondary border border-secondary/30 hover:bg-primary/40 dark:text-primary",
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive:
@@ -25,9 +25,9 @@ const buttonVariants = cva(
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
-        sm: "h-8 rounded-sm gap-1.5 px-3 has-[>svg]:px-2.5",
-        lg: "h-10 rounded-sm px-6 has-[>svg]:px-4",
-        CTA: "h-10 rounded-sm px-9 py-7 text-lg font-semibold [&_svg]:size-6 ",
+        sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
+        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
+        CTA: "h-10 rounded-md px-9 py-7 text-lg font-semibold [&_svg]:size-6 ",
         icon: "size-9",
         "icon-sm": "size-8",
         "icon-lg": "size-10",

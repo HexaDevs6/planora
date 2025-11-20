@@ -45,7 +45,6 @@ export default function AddService() {
       description: "",
       description_ar: "",
       category_id: "",
-      price: "",
       thumbnail: null,
       images: [],
    });
@@ -72,7 +71,6 @@ export default function AddService() {
                   description: service.description,
                   description_ar: service.description_ar,
                   category_id: service.category_id,
-                  price: service.price,
                   thumbnail: service.thumbnail,
                   images: service.images,
                };
@@ -136,7 +134,6 @@ export default function AddService() {
          description: "",
          description_ar: "",
          category_id: "",
-         price: "",
          thumbnail: null,
          images: [],
       });
@@ -283,7 +280,6 @@ export default function AddService() {
                      description: formData.description,
                      description_ar: formData.description_ar,
                      category_id: formData.category_id || null,
-                     price: Number(formData.price) || 0,
                      thumbnail: thumbnailPath,
                      images: imagePaths,
                   },
@@ -319,7 +315,7 @@ export default function AddService() {
    };
 
    if (loading && serviceId) {
-      return <Spinner />;
+      return <Spinner message={t("common.loading")} />;
    }
 
    // ✅ واجهة المستخدم
@@ -477,31 +473,8 @@ export default function AddService() {
                   )}
                </div>
 
-               {/* Price */}
-
-               <div>
-                  <Label
-                     htmlFor="price"
-                     className="block text-sm font-semibold mb-2"
-                  >
-                     {lang === "ar" ? "سعر الخدمة" : "Service Price"}
-                  </Label>
-                  <Input
-                     id="price"
-                     type="number"
-                     value={formData.price}
-                     onChange={handleChange}
-                     placeholder={
-                        lang === "ar"
-                           ? 'على سبيل المثال "100" أو "0"'
-                           : "e.g. 100 or 0"
-                     }
-                     className="bg-muted shadow-none"
-                  />
-               </div>
-
                {/* Thumbnail */}
-               <div>
+               <div className="md:col-span-2 lg:col-span-1">
                   <Label
                      htmlFor="thumbnail"
                      className="block text-sm font-semibold mb-2"
@@ -516,7 +489,7 @@ export default function AddService() {
                </div>
 
                {/* Images */}
-               <div>
+               <div className="md:col-span-2 lg:col-span-1">
                   <Label
                      htmlFor="images"
                      className="block text-sm font-semibold mb-2"

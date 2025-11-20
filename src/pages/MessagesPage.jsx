@@ -8,7 +8,7 @@ import {
    subscribeToNewMessages,
    subscribeToInbox,
 } from "@/lib/chatService";
-import { Search } from "lucide-react";
+import { Search, Triangle } from "lucide-react";
 import avatarPlaceholderImg from "@/assets/user_placeholder2.png";
 import { useDirection } from "@/hooks/useDirection";
 import { Input } from "@/components/ui/input";
@@ -227,12 +227,17 @@ export default function MessagesPage() {
                               }`}
                            >
                               <div
-                                 className={`p-3 rounded-lg max-w-[70%] ${
+                                 className={`p-3 rounded-lg max-w-[70%] relative ${
                                     mine
-                                       ? "bg-primary text-white"
-                                       : "bg-gray-200 text-gray-800"
+                                       ? "bg-primary text-background rounded-br-none"
+                                       : "bg-gray-200 text-gray-800 rounded-bl-none"
                                  }`}
                               >
+                                    {/* <Triangle
+                                       className={`size-6 absolute bottom-0 ${
+                                          mine ? "rotate-0 fill-amber stroke-amber right-0 translate-x-1/2" : "rotate-270 fill-gray-200 stroke-gray-200 left-0 -translate-x-1/2"
+                                       }`}
+                                    /> */}
                                  {m.content}
                               </div>
                            </div>

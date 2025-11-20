@@ -448,7 +448,7 @@ export default function ProfileSettings() {
                                             ? "اكتب نبذة قصيرة..."
                                             : "Write a short bio…"
                                     }
-                                    className='w-full rounded-md bg-background border border-border px-3 py-2 text-sm focus:ring-primary focus:ring-2 focus:outline-none'
+                                    className='w-full rounded-md bg-muted border border-border px-3 py-2 text-sm focus:ring-primary focus:ring-2 focus:outline-none'
                                 />
                             </div>
 

@@ -9,52 +9,52 @@ import QRCode from "react-qr-code";
 import StyledQR from "../qrcode";
 import TicketFrame from "../TicketFrame";
 
-const EventCountdown = ({ details, eventId,user, lang = "en" }) => {
-
-   const dispatch =useDispatch();
+const EventCountdown = ({ details, eventId, user, lang = "en" }) => {
+   const dispatch = useDispatch();
    // Function to calculate time left and event status
 
-const [isTicketBooked, setIsTicketBooked] = useState(false);
-const [ticket, setTicket] = useState(null);
+   const [isTicketBooked, setIsTicketBooked] = useState(false);
+   const [ticket, setTicket] = useState(null);
 
+   useEffect(() => {
+      const checkExistingTicket = async () => {
+         const client = await user;
 
-useEffect(() => {
-  const checkExistingTicket = async () => {
-    const client = await user;
+         const { data: existingTicket } = await supabase
+            .from("tickets")
+            .select("*")
+            .eq("event_id", eventId)
+            .eq("client_id", client.id)
+            .single();
 
-    const { data: existingTicket } = await supabase
-      .from("tickets")
-      .select("*")
-      .eq("event_id", eventId)
-      .eq("client_id", client.id)
-      .single();
+         if (existingTicket) {
+            setIsTicketBooked(true);
+            setTicket(existingTicket);
+         }
+      };
 
-    if (existingTicket) {
-      setIsTicketBooked(true);
-      setTicket(existingTicket);
-    }
-  };
+      checkExistingTicket();
+   }, [eventId, user]);
 
-  checkExistingTicket();
-}, [eventId, user]);
-
-const handleCreateTicket = async () => {
-   try {
-      const client = await user;
-      const tic =await dispatch(createTicket({ eventId, clientId: client.id})).unwrap();
-      if (tic) {
-         toast.success("Ticket booked successfully");
-         setIsTicketBooked(true);
-         setTicket(tic);
-         console.log(tic);
+   const handleCreateTicket = async () => {
+      try {
+         const client = await user;
+         const tic = await dispatch(
+            createTicket({ eventId, clientId: client.id })
+         ).unwrap();
+         if (tic) {
+            toast.success("Ticket booked successfully");
+            setIsTicketBooked(true);
+            setTicket(tic);
+            console.log(tic);
+         }
+      } catch (error) {
+         console.error(error);
       }
-   } catch (error) {
-      console.error(error);
-   }
-}
+   };
    const calculateTimeLeft = () => {
       const now = new Date().getTime();
-      const start = new Date(details.start_date).getTime();
+      const start = new Date(details.date).getTime();
       const end = new Date(details.end_date).getTime();
 
       const diff = start - now;
@@ -86,7 +86,7 @@ const handleCreateTicket = async () => {
       }, 1000);
 
       return () => clearInterval(timer);
-   }, [details.start_date, details.end_date]);
+   }, [details.date, details.end_date]);
 
    const formatNumber = (num) => num.toString().padStart(2, "0");
 
@@ -118,91 +118,91 @@ const handleCreateTicket = async () => {
    };
 
    return (
-     <div
-       className={`gradient-card rounded-xl p-6 ${
-         lang === "ar" ? "text-right font-[Cairo]" : "text-left"
-       }`}
-     >
-       <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-2 text-center">
-         {lang === "ar" ? "العد التنازلي للحدث" : "Event Countdown"}
-       </h4>
+      <div
+         className={`gradient-card rounded-xl p-4 xl:p-6 ${
+            lang === "ar" ? "text-right font-[Cairo]" : "text-left"
+         }`}
+      >
+         <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-2 text-center">
+            {lang === "ar" ? "العد التنازلي للحدث" : "Event Countdown"}
+         </h4>
 
-       {renderStatus()}
+         {renderStatus()}
 
-       {countdown.status === "upcoming" ? (
-         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-           <div className="p-3 bg-primary/5 dark:bg-primary/10 rounded-lg">
-             <p className="text-4xl font-bold text-gradient-amber ">
-               {formatNumber(countdown.days)}
-             </p>
-             <p className="text-xs uppercase tracking-wider text-foreground mt-1">
-               {lang === "ar" ? "يوم" : "Days"}
-             </p>
-           </div>
-           <div className="p-3 bg-primary/5 dark:bg-primary/10 rounded-lg">
-             <p className="text-4xl font-bold text-gradient-amber ">
-               {formatNumber(countdown.hours)}
-             </p>
-             <p className="text-xs uppercase tracking-wider text-foreground mt-1">
-               {lang === "ar" ? "ساعة" : "Hours"}
-             </p>
-           </div>
-           <div className="p-3 bg-primary/5 dark:bg-primary/10 rounded-lg">
-             <p className="text-4xl font-bold text-gradient-amber ">
-               {formatNumber(countdown.minutes)}
-             </p>
-             <p className="text-xs uppercase tracking-wider text-foreground mt-1">
-               {lang === "ar" ? "دقيقة" : "Minutes"}
-             </p>
-           </div>
-           <div className="p-3 bg-primary/5 dark:bg-primary/10 rounded-lg">
-             <p className="text-4xl font-bold text-gradient-amber ">
-               {formatNumber(countdown.seconds)}
-             </p>
-             <p className="text-xs uppercase tracking-wider text-foreground mt-1">
-               {lang === "ar" ? "ثانية" : "Seconds"}
-             </p>
-           </div>
-         </div>
-       ) : (
-         <div className="text-center text-gray-600 dark:text-gray-300 mt-4">
-           {countdown.status === "ongoing"
-             ? lang === "ar"
-               ? "الحدث جاري حالياً."
-               : "The event is live now."
-             : lang === "ar"
-             ? "تابعنا لمزيد من الأحداث القادمة."
-             : "Stay tuned for upcoming events."}
-         </div>
-       )}
+         {countdown.status === "upcoming" ? (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+               <div className="p-3 bg-primary/5 dark:bg-primary/10 rounded-lg">
+                  <p className="text-2xl xl:text-4xl font-bold text-gradient-amber ">
+                     {formatNumber(countdown.days)}
+                  </p>
+                  <p className="text-xs uppercase tracking-wider text-foreground mt-1">
+                     {lang === "ar" ? "يوم" : "Days"}
+                  </p>
+               </div>
+               <div className="p-3 bg-primary/5 dark:bg-primary/10 rounded-lg">
+                  <p className="text-2xl xl:text-4xl font-bold text-gradient-amber ">
+                     {formatNumber(countdown.hours)}
+                  </p>
+                  <p className="text-xs uppercase tracking-wider text-foreground mt-1">
+                     {lang === "ar" ? "ساعة" : "Hours"}
+                  </p>
+               </div>
+               <div className="p-3 bg-primary/5 dark:bg-primary/10 rounded-lg">
+                  <p className="text-2xl xl:text-4xl font-bold text-gradient-amber ">
+                     {formatNumber(countdown.minutes)}
+                  </p>
+                  <p className="text-xs uppercase tracking-wider text-foreground mt-1">
+                     {lang === "ar" ? "دقيقة" : "Minutes"}
+                  </p>
+               </div>
+               <div className="p-3 bg-primary/5 dark:bg-primary/10 rounded-lg">
+                  <p className="text-2xl xl:text-4xl font-bold text-gradient-amber ">
+                     {formatNumber(countdown.seconds)}
+                  </p>
+                  <p className="text-xs uppercase tracking-wider text-foreground mt-1">
+                     {lang === "ar" ? "ثانية" : "Seconds"}
+                  </p>
+               </div>
+            </div>
+         ) : (
+            <div className="text-center text-gray-600 dark:text-gray-300 mt-4">
+               {countdown.status === "ongoing"
+                  ? lang === "ar"
+                     ? "الحدث جاري حالياً."
+                     : "The event is live now."
+                  : lang === "ar"
+                  ? "تابعنا لمزيد من الأحداث القادمة."
+                  : "Stay tuned for upcoming events."}
+            </div>
+         )}
 
-       {isTicketBooked && ticket ? (
-         <TicketFrame>
-           <h3 className="text-center text-lg font-semibold mb-4">
-             {lang === "ar" ? "تذكرة الدخول" : "Your Event Ticket"}
-           </h3>
+         {isTicketBooked && ticket ? (
+            <TicketFrame>
+               <h3 className="text-center text-lg font-semibold mb-4">
+                  {lang === "ar" ? "تذكرة الدخول" : "Your Event Ticket"}
+               </h3>
 
-           <div className="flex justify-center mb-4">
-             <StyledQR value={ticket.qr_code} size={260} />
-           </div>
+               <div className="flex justify-center mb-4">
+                  <StyledQR value={ticket.qr_code} size={260} />
+               </div>
 
-           <div className="text-center text-sm text-muted-foreground mt-4">
-             Ticket ID: {ticket.id}
-           </div>
-         </TicketFrame>
-       ) : (
-         <Button
-           className="mt-6 w-full"
-           variant="default"
-           size="CTA"
-           onClick={handleCreateTicket}
-           disabled={countdown.status === "ended"}
-         >
-           <Ticket className="size-4" />
-           {lang === "ar" ? "أحجز الان" : "Book Now"}
-         </Button>
-       )}
-     </div>
+               <div className="text-center text-sm text-muted-foreground mt-4">
+                  Ticket ID: {ticket.id}
+               </div>
+            </TicketFrame>
+         ) : (
+            <Button
+               className="mt-6 w-full"
+               variant="default"
+               size="CTA"
+               onClick={handleCreateTicket}
+               disabled={countdown.status === "ended"}
+            >
+            	<Ticket className="size-4" />
+               {lang === "ar" ? "أحجز الان" : "Book Now"}
+            </Button>
+         )}
+      </div>
    );
 };
 

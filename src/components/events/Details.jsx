@@ -8,7 +8,7 @@ import {
 
 const Details = ({ details, lang = "en" }) => {
    // Convert to Date objects
-   const start = new Date(details.start_date);
+   const start = new Date(details.date);
    const end = new Date(details.end_date);
 
    // Format Date (October 26, 2024) or (٢٦ أكتوبر ٢٠٢٤)
@@ -68,7 +68,7 @@ const Details = ({ details, lang = "en" }) => {
                      {lang === "ar" ? "الموقع" : "Location"}
                   </p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                     {details.address[lang]}
+                     {details.location}
                   </p>
                </div>
             </div>
