@@ -46,6 +46,7 @@ export default function Events() {
 
   // get categories from supabase
   const { data, loading } = useSelector((state) => state.categories);
+  console.log(data.map(category => category.name));
 
   const icons = [
     Palette,
