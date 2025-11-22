@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { useSelector } from "react-redux";
 import { useDirection } from "@/hooks/useDirection";
 import { getPublicUrl } from "@/lib/storage";
+import { useGetTotalAttendeesQuery, useGetTotalEventsQuery, useGetTotalRevenueQuery, useGetTotalTicketsQuery } from "@/features/hostDashboard/hostDashboard.api";
 
 export default function UserOverview() {
   const [events, setEvents] = useState([]);
@@ -68,8 +69,10 @@ export default function UserOverview() {
   ];
 
   useEffect(() => {
+    if (!user?.id) return;
+
     const fetchUserEvents = async () => {
-      const { data, error } = await supabase
+      const { data: fetched, error } = await supabase
         .from("events")
         .select("*")
         .eq("host_id", user.id);
@@ -77,39 +80,56 @@ export default function UserOverview() {
         console.error(error);
         return;
       } else {
-        setEvents(data);
+        setEvents(fetched || []);
       }
     };
     fetchUserEvents();
-  }, [user.id]);
+  }, [user?.id]);
 
   const handleThumbnail = function (el) {
     if (el) {
-      if (el.startsWith("http")) {
+      if (typeof el === "string" && el.startsWith("http")) {
         return el;
       } else {
         return getPublicUrl("events", el);
       }
     }
+    return undefined;
   };
 
-  const interestOptions = data
+  const interestOptions = (data || [])
     .filter((category) => category.type === "event")
     .map((category) => ({
       ...category,
       displayName: lang === "ar" ? category.name_ar : category.name,
     }));
 
+  const { data: totalEvents } = useGetTotalEventsQuery({
+    hostId: user?.id,
+  });
+
+  const { data: totalTickets } = useGetTotalTicketsQuery({
+    hostId: user?.id,
+  });
+
+  const { data: totalAttendees } = useGetTotalAttendeesQuery({
+    hostId: user?.id,
+  });
+
+  const { data: totalRevenue } = useGetTotalRevenueQuery({
+    hostId: user?.id,
+  });
+
   const hostStats = [
-    { label: "Total Events", value: events.length, change: "+5%", trend: "up" },
+    { label: "Total Events", value: totalEvents, change: "+5%", trend: "up" },
     {
       label: "Total Tickets Sold",
-      value: "1,234",
+      value: totalTickets,
       change: "+12%",
       trend: "up",
     },
-    { label: "Revenue", value: "$56,789", change: "+8%", trend: "up" },
-    { label: "Total Attendees", value: 890, change: "+3%", trend: "up" },
+    { label: "Revenue", value: totalRevenue, change: "+8%", trend: "up" },
+    { label: "Total Attendees", value: totalAttendees, change: "+3%", trend: "up" },
   ];
 
   return (
@@ -131,26 +151,29 @@ export default function UserOverview() {
           </div>
           <div className="host__next-event space-y-2">
             <div>
-              <EventCard
-                id={events[0]?.id}
-                title={lang === "en" ? events[0]?.name : events[0]?.name_ar}
-                image={handleThumbnail(events[0]?.thumbnail)}
-                date={events[0]?.date}
-                location={events[0]?.location}
-                category={
-                  interestOptions.filter(
-                    (item) => item.id === events[0]?.category_id
-                  )[0]?.displayName
-                }
-                price={
-                  events[0]?.price === 0
-                    ? lang === "en"
-                      ? "Free"
-                      : "مجانا"
-                    : events[0]?.price
-                }
-                attendees={events[0]?.capacity}
-              />
+              {events.length > 0 ? (
+                <EventCard
+                  id={events[0]?.id}
+                  title={lang === "en" ? events[0]?.name : events[0]?.name_ar}
+                  image={handleThumbnail(events[0]?.thumbnail)}
+                  date={events[0]?.date}
+                  location={events[0]?.location}
+                  category={
+                    interestOptions.find((item) => item.id === events[0]?.category_id)
+                      ?.displayName
+                  }
+                  price={
+                    events[0]?.price === 0
+                      ? lang === "en"
+                        ? "Free"
+                        : "مجانا"
+                      : events[0]?.price
+                  }
+                  attendees={events[0]?.capacity}
+                />
+              ) : (
+                <div className="p-4 text-muted-foreground">No upcoming event</div>
+              )}
             </div>
           </div>
         </div>
