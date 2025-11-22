@@ -37,7 +37,6 @@ import { motion } from "framer-motion";
 import { getPublicUrl } from "@/lib/storage";
 
 export default function Events() {
-  7;
   const query = useSelector((state) =>
     state.eventsSearchAndFilter.query.toLowerCase().trim()
   );
