@@ -29,6 +29,7 @@ import PlanoraAi from "./pages/PlanoraAi";
 import ChatWidget from "./components/ChatWidget";
 import MessagesPage from "./pages/MessagesPage";
 import EventAttendeeDetails from "./components/HostBoard/EventAttendeeDetails";
+import NotFoundPage from "./components/NotFoundPage";
 
 function App() {
     useDirection();
@@ -106,6 +107,7 @@ function App() {
                         <Route path='messages' element={<MessagesPage />} />
                         <Route path='create-event' element={<CreateEvent />} />
                     </Route>
+                    <Route path='*' element={<NotFoundPage />} />
                 </Routes>
             </BrowserRouter>
         </main>

@@ -104,6 +104,7 @@ export default function NavBar() {
                            <AvatarImage
                               src={user.avatar || avatarPlaceholderImg}
                               alt={user.full_name || "User"}
+                              className="object-cover"
                            />
                            <AvatarFallback>
                               {user.full_name?.charAt(0).toUpperCase() || "U"}
