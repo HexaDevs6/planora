@@ -212,7 +212,7 @@ export default function UserOverview() {
                         <BarChartComponent
                             title={lang === "en" ? "Popular Events" : "الفعاليات الشائعة"}
                             data={popularEvents}
-                            xKey='event_name'
+                            xKey="event_name"
                             yKey='total_tickets'
                         />
                         <GroupedBarChart

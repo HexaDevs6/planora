@@ -34,10 +34,19 @@ export default function BarChartComponent({
                     />
 
                     <XAxis
+                        className='hidden md:block'
                         dataKey={xKey}
                         tick={{ fill: "var(--content)" }}
                         tickLine={false}
                         axisLine={false}
+                        interval={0}
+                        angle={-10}
+                        textAnchor='end'
+                        tickFormatter={(value) =>
+                            value.length > 15
+                                ? value.slice(0, 8) + "..."
+                                : value
+                        }
                     />
 
                     <YAxis
