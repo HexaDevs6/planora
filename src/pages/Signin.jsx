@@ -12,7 +12,7 @@ import { signInWithEmail } from "@/store/authThunks";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabaseClient";
 import { setUser } from "@/store/authSlice";
-import { SigninSchema } from "@/validators/authSchemas";
+import { SigninSchema } from "@/validators";
 
 function Signin() {
     const [showPassword, setShowPassword] = useState(false);

@@ -23,7 +23,7 @@ import { useNavigate } from "react-router-dom";
 import { uploadFile, deleteFile } from "@/lib/storage";
 import { useTranslation } from "react-i18next";
 import { Loader2 } from "lucide-react";
-import { ServiceSchema } from "@/validators/serviceSchemas";
+import { ServiceSchema } from "@/validators";
 
 
 export default function AddService() {

@@ -11,7 +11,7 @@ import HostInfoForm from "@/components/auth/HostInfoForm";
 import { useTranslation } from "react-i18next";
 import ClientInfoFrom from "@/components/auth/ClientInfoFrom";
 import CreateUserFrom from "@/components/auth/CreateUserFrom";
-import { RegisterSchema } from "@/validators/authSchemas";
+import { RegisterSchema } from "@/validators";
 
 
 

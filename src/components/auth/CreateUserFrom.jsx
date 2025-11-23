@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { registerUserWithEmail, saveUserInfo } from "@/store/authThunks";
 import { setLoading } from "@/store/authSlice";
 import { supabase } from "@/lib/supabaseClient";
-import { RegisterSchema } from "@/validators/authSchemas";
+import { RegisterSchema } from "@/validators";
 
 const CreateUserForm = ({
   formData,

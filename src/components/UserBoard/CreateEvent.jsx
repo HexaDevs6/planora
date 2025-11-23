@@ -21,7 +21,7 @@ import Swal from "sweetalert2";
 import { uploadFile, deleteFile } from "@/lib/storage";
 import { Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { EventSchema } from "@/validators/eventSchemas"; // فوق
+import { EventSchema } from "@/validators"; 
 
 
 

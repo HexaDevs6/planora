@@ -11,7 +11,7 @@ import { getPublicUrl } from "@/lib/storage";
 import Spinner from "../SpinnerLoader";
 import { toast } from "sonner";
 import { PasswordChangeModal } from "../PasswordChangeModal";
-import { ProfileSettingsSchema } from "@/validators/settingsSchemas";
+import { ProfileSettingsSchema } from "@/validators";
 
 
 export default function ProfileSettings() {
