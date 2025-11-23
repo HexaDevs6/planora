@@ -1,123 +1,69 @@
-import React from "react";
-import { Search, Menu, X, User2Icon } from "lucide-react";
-import { useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import React, { useState, useCallback } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Menu, X, User2Icon } from "lucide-react";
+import { motion } from "framer-motion";
+import { useSelector, useDispatch } from "react-redux";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import ThemeToggle from "@/components/ThemeToggle";
 import LanguageSwitcher from "./LanguageSwitcher";
-import { Link, useNavigate } from "react-router-dom";
+import avatarPlaceholderImg from "@/assets/user_placeholder3.png";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Button } from "./ui/button";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import avatarPlaceholderImg from "@/assets/user_placeholder3.png";
-import {
-   DropdownMenu,
-   DropdownMenuTrigger,
-   DropdownMenuContent,
-   DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
 import { handleSignOut } from "@/components/auth/handleSignOut";
 
-function NavBar() {
-   const [isOpen, setIsOpen] = useState(false);
+export default function NavBar() {
+   const [open, setOpen] = useState(false);
+   const toggleMenu = useCallback(() => setOpen((prev) => !prev), []);
+   const { pathname } = useLocation();
    const { user } = useSelector((state) => state.auth);
    const dispatch = useDispatch();
    const { t } = useTranslation();
    const navigate = useNavigate();
 
-   const toggleMenu = () => setIsOpen(!isOpen);
+   const navLinksLeft = [
+      { to: "/", label: t("nav.home") },
+      { to: "/about", label: t("nav.about") },
+      { to: "/events", label: t("nav.events") },
+   ];
+
+   const navLinksRight = [
+      { to: "/services", label: t("nav.services") },
+      { to: "/contact", label: t("nav.contact") },
+   ];
+
+   const linkClass = (to) =>
+      `px-3 py-2 rounded-sm transition-all duration-300 cursor-pointer ${pathname === to ? "text-primary font-semibold" : "hover:bg-primary/10"
+      }`;
+
    return (
-      <>
-         <nav className="navbar navbar-expand-lg  fixed top-0 z-50 w-full drop-shadow-lg  backdrop-blur supports-[backdrop-filter]:bg-background/25 [&_*]:no-underline">
-            <div className="flex justify-evenly items-center text-foreground ">
-               {/* Menu icon for mobile */}
-               <button
-                  onClick={toggleMenu}
-                  className="lg:hidden cursor-pointer rounded-sm p-2 transition-all ease-in-out duration-300"
-               >
-                  {isOpen ? (
-                     <X size={28} color="#FFA704" />
-                  ) : (
-                     <Menu size={28} color="#FFA704" />
-                  )}
-               </button>
-               {!user ? (
-                  // المستخدم مش داخل 👇
-                  <Link to="/signin">
-                     <Button
-                        variant="glass"
-                        size="sm"
-                        className="text-foreground"
-                     >
-                        <User2Icon />
-                     </Button>
-                  </Link>
-               ) : (
-                  // المستخدم داخل ✅
-                  <DropdownMenu>
-                     <DropdownMenuTrigger asChild>
-                        <Avatar className="cursor-pointer">
-                           <AvatarImage
-                              src={user.avatar || avatarPlaceholderImg}
-                              alt={user.full_name || ""}
-                              className="object-cover"
-                           />
-                           <AvatarFallback>
-                              {user.avatar
-                                 ? user.full_name.toUpperCase()
-                                 : user.email
-                                 ? user.email[0].toUpperCase()
-                                 : "U"}
-                           </AvatarFallback>
-                        </Avatar>
-                     </DropdownMenuTrigger>
+      <nav
+         className="fixed top-0 z-50 w-full backdrop-blur-lg bg-background/30
+                shadow-md supports-[backdrop-filter]:bg-background/20">
+         <div className="max-w-7xl mx-auto flex justify-around items-center ">
 
-                     <DropdownMenuContent align="end" className="w-fit">
-                        <DropdownMenuItem asChild>
-                           <Link
-                              to={
-                                 user.role === "host"
-                                    ? `/host/overview`
-                                    : `/user/overview`
-                              }
-                           >
-                              {user?.full_name.split(" ")[0]}'s Dashboard
-                           </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                           <Link
-                              to={
-                                 user.role === "host"
-                                    ? `/host/settings`
-                                    : `/user/settings`
-                              }
-                           >
-                              Settings
-                           </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                           onSelect={() => handleSignOut(dispatch, navigate, t)}
-                           className="text-amper focus:text-amper/80 hover:bg-red-600/10"
-                        >
-                           {t("common.buttons.logout")}
-                        </DropdownMenuItem>
-                     </DropdownMenuContent>
-                  </DropdownMenu>
-               )}
+            {/* Mobile Menu Button */}
+            <button
+               onClick={toggleMenu}
+               className="lg:hidden p-2 rounded-sm hover:bg-primary/10 transition"
+               aria-label="Toggle Menu">
+               {open ? <X size={26} className="text-primary" /> : <Menu size={26} className="text-primary" />}
+            </button>
 
-               <ul className="navbar-links__left text-violet dark:text-foreground  justify-center lg:gap-8 text-md lg:text-lg font-medium hidden lg:flex ">
-                  <li className="navbar-link__left px-3 py-2 rounded-sm hover:bg-violet/10 transition-all ease-in-out duration-300 cursor-pointer">
-                     <Link to="/">{t("nav.home")}</Link>
+            {/* Left Links */}
+            <ul className="hidden lg:flex gap-6 text-foreground font-medium">
+               {navLinksLeft.map((link) => (
+                  <li key={link.to}>
+                     <Link to={link.to} className={linkClass(link.to)}>
+                        {link.label}
+                     </Link>
                   </li>
-                  <li className="navbar-link__left px-3 py-2 rounded-sm hover:bg-violet/10 transition-all ease-in-out duration-300 cursor-pointer">
-                     <Link to="/about">{t("nav.about")}</Link>
-                  </li>
-                  <li className="navbar-link__left px-3 py-2 rounded-sm hover:bg-violet/10 transition-all ease-in-out duration-300 cursor-pointer">
-                     <Link to="/events">{t("nav.events")}</Link>
-                  </li>
-               </ul>
-               <Link
-                  to="/"
+               ))}
+            </ul>
+
+            {/* Logo */}
+             <a
+                  href="/"
                   className="navbar-logo w-55 md:bg-[linear-gradient(to_right,rgba(169,158,173,0.4)_0%,rgba(51,12,47,0.4)_100%)] px-3 md:px-8 py-5 md:supports-[backdrop-filter]:bg-background/25 md:[clip-path:polygon(0_1%,100%_0,85%_100%,16%_99%)]"
                >
                   <img
@@ -130,53 +76,91 @@ function NavBar() {
                      alt="Planora"
                      className="w-full h-full object-cover hidden dark:block"
                   />
-               </Link>
-               <ul className="text-violet dark:text-foreground justify-center lg:gap-8 text-md lg:text-lg font-medium hidden lg:flex  ">
-                  <li className="px-3 py-2 rounded-sm hover:bg-violet/10 transition-all ease-in-out duration-300 cursor-pointer">
-                     <Link to="/services">{t("nav.services")}</Link>
-                  </li>
-                  <li className="px-3 py-2 rounded-sm hover:bg-violet/10 transition-all ease-in-out duration-300 cursor-pointer">
-                     <Link to="/contact">{t("nav.contact")}</Link>
-                  </li>
-               </ul>
-               <div className="px-3 py-2 rounded-sm  text-violet dark:text-foreground hover:bg-violet/10 transition-all ease-in-out duration-300 cursor-pointer">
-                  <div className="nav__toggles flex gap-2">
-                     <ThemeToggle />
-                     <LanguageSwitcher />
-                  </div>
-               </div>
-            </div>
+               </a>
 
-            {/* Mobile dropdown menu */}
-            {isOpen && (
-               <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.4, ease: "easeInOut" }}
-               >
-                  <div className="lg:hidden backdrop-blur-sm text-center py-4 space-y-3 text-lg font-medium text-violet dark:text-foreground animate-slideDown">
-                     <a href="#" className="block py-2 hover:bg-violet/10">
-                        {t("nav.home")}
-                     </a>
-                     <a href="#" className="block py-2 hover:bg-violet/10">
-                        {t("nav.about")}
-                     </a>
-                     <a href="#" className="block py-2 hover:bg-violet/10">
-                        {t("nav.events")}
-                     </a>
-                     <a href="#" className="block py-2 hover:bg-violet/10">
-                        {t("nav.services")}
-                     </a>
-                     <a href="#" className="block py-2 hover:bg-violet/10">
-                        {t("nav.contact")}
-                     </a>
-                  </div>
-               </motion.div>
-            )}
-         </nav>
-      </>
+            {/* Right Links */}
+            <ul className="hidden lg:flex gap-6 text-foreground font-medium">
+               {navLinksRight.map((link) => (
+                  <li key={link.to}>
+                     <Link to={link.to} className={linkClass(link.to)}>
+                        {link.label}
+                     </Link>
+                  </li>
+               ))}
+            </ul>
+
+            {/* User + Theme + Language */}
+            <div className="flex items-center gap-3">
+               {!user ? (
+                  <Link to="/signin">
+                     <Button size="sm" variant="glass">
+                        <User2Icon />
+                     </Button>
+                  </Link>
+               ) : (
+                  <DropdownMenu>
+                     <DropdownMenuTrigger asChild>
+                        <Avatar className="cursor-pointer">
+                           <AvatarImage
+                              src={user.avatar || avatarPlaceholderImg}
+                              alt={user.full_name || "User"}
+                           />
+                           <AvatarFallback>
+                              {user.full_name?.charAt(0).toUpperCase() || "U"}
+                           </AvatarFallback>
+                        </Avatar>
+                     </DropdownMenuTrigger>
+                     <DropdownMenuContent align="end">
+                        <DropdownMenuItem asChild>
+                           <Link to={user.role === "host" ? "/host/overview" : "/user/overview"}>
+                              Dashboard
+                           </Link>
+                        </DropdownMenuItem>
+
+                        <DropdownMenuItem asChild>
+                           <Link to={user.role === "host" ? "/host/settings" : "/user/settings"}>
+                              Settings
+                           </Link>
+                        </DropdownMenuItem>
+
+                        <DropdownMenuItem
+                           className="text-red-600 hover:bg-red-600/10"
+                           onSelect={() => handleSignOut(dispatch, navigate, t)}>
+                           {t("common.buttons.logout")}
+                        </DropdownMenuItem>
+                     </DropdownMenuContent>
+                  </DropdownMenu>
+               )}
+
+               <ThemeToggle />
+               <LanguageSwitcher />
+            </div>
+         </div>
+
+         {/* MOBILE MENU */}
+         {open && (
+            <motion.div
+               initial={{ opacity: 0, y: -15 }}
+               animate={{ opacity: 1, y: 0 }}
+               exit={{ opacity: 0, y: -15 }}
+               transition={{ duration: 0.35 }}
+               className="lg:hidden bg-background/60 backdrop-blur-md shadow-inner">
+
+               <div className="flex flex-col text-center py-4 text-lg font-medium text-foreground space-y-3">
+
+                  {[...navLinksLeft, ...navLinksRight].map((link) => (
+                     <Link
+                        key={link.to}
+                        to={link.to}
+                        onClick={() => setOpen(false)}
+                        className={`py-2 ${linkClass(link.to)}`}>
+                        {link.label}
+                     </Link>
+                  ))}
+               </div>
+            </motion.div>
+         )}
+      </nav>
    );
 }
 
-export default NavBar;
