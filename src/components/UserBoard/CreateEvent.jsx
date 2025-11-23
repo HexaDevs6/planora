@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { supabase } from "@/lib/supabaseClient";
 import { toast } from "sonner";
 import { fetchCategories } from "@/store/fetchCategoriesThunk";
-import { validateEvent } from "@/utils/validation/eventValidation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -22,6 +21,8 @@ import Swal from "sweetalert2";
 import { uploadFile, deleteFile } from "@/lib/storage";
 import { Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { EventSchema } from "@/validators"; 
+
 
 
 export default function PublishEvent() {
@@ -31,6 +32,8 @@ export default function PublishEvent() {
    const { lang } = useDirection();
    const { t } = useTranslation();
    const navigate = useNavigate();
+   const [errors, setErrors] = useState({});
+
    const user = useSelector((state) => state.auth.user);
    const { data: categories, loading: categoriesLoading } = useSelector(
       (state) => state.categories
@@ -141,8 +144,8 @@ export default function PublishEvent() {
                   ? Array.from(files)
                   : files[0]
                : type === "checkbox"
-               ? checked
-               : value,
+                  ? checked
+                  : value,
       });
    };
 
@@ -168,6 +171,22 @@ export default function PublishEvent() {
       e.preventDefault();
 
       try {
+         /** -----------------------------
+          * 0. Validate before submit using Zod
+          * ----------------------------- */
+         const parsed = EventSchema.safeParse(formData);
+
+         if (!parsed.success) {
+            setErrors(parsed.error.flatten().fieldErrors);
+
+            const firstKey = Object.keys(parsed.error.flatten().fieldErrors)[0];
+            const el = document.getElementById(firstKey);
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+
+            return;
+         }
+
+         setErrors({});
          setLoading(true);
 
          /** -----------------------------
@@ -182,7 +201,7 @@ export default function PublishEvent() {
             : formattedDate;
 
          /** -----------------------------
-          * 2. Generate unique slug (used for event folder in storage)
+          * 2. Generate unique slug
           * ----------------------------- */
          let slug = formData.name
             .toLowerCase()
@@ -193,16 +212,14 @@ export default function PublishEvent() {
          slug = `${slug}-${uniqueSuffix}`;
 
          /** -----------------------------
-          * 3. Define folder name for storage
-          * (Use existing slug if editing, otherwise create a new one)
+          * 3. Folder for storage
           * ----------------------------- */
          const folder = eventId ? originalData.slug : slug;
 
          /** -----------------------------
-          * 4. If editing: check and delete old files if replaced
+          * 4. Editing: delete old files if replaced
           * ----------------------------- */
          if (eventId && originalData) {
-            // Delete old thumbnail if user selected a new one
             const thumbnailChanged =
                formData.thumbnail &&
                formData.thumbnail instanceof File &&
@@ -213,10 +230,8 @@ export default function PublishEvent() {
                await deleteFile("events", originalData.thumbnail);
             }
 
-            // Delete old gallery if new images are selected
-            const newImages = formData.images.filter(
-               (img) => img instanceof File
-            );
+            const newImages = formData.images.filter((img) => img instanceof File);
+
             if (newImages.length > 0 && originalData.images?.length > 0) {
                const oldPaths = originalData.images.map((img) =>
                   typeof img === "string" ? img : img.path
@@ -226,45 +241,38 @@ export default function PublishEvent() {
          }
 
          /** -----------------------------
-          * 5. Upload thumbnail if exists
+          * 5. Upload thumbnail
           * ----------------------------- */
          let thumbnailPath = formData.thumbnail;
          if (formData.thumbnail && formData.thumbnail instanceof File) {
             const thumbFile = formData.thumbnail;
-            const path = `events/${user.id}/${folder}/thumbnail_${Date.now()}_${
-               thumbFile.name
-            }`;
+            const path = `events/${user.id}/${folder}/thumbnail_${Date.now()}_${thumbFile.name}`;
             await uploadFile("events", path, thumbFile);
             thumbnailPath = path;
          }
 
          /** -----------------------------
-          * 6. Upload event images if any
+          * 6. Upload images
           * ----------------------------- */
          let imagePaths = [];
          if (formData.images && formData.images.length > 0) {
             for (const img of formData.images) {
                if (img instanceof File) {
-                  // New image to upload
-                  const path = `events/${
-                     user.id
-                  }/${folder}/gallery/${Date.now()}_${img.name}`;
+                  const path = `events/${user.id}/${folder}/gallery/${Date.now()}_${img.name}`;
                   await uploadFile("events", path, img);
                   imagePaths.push({ path });
                } else if (typeof img === "object" && img.path) {
-                  // Existing image (already uploaded before)
                   imagePaths.push(img);
                }
             }
          }
 
          /** -----------------------------
-          * 7. Handle Update (if eventId exists)
+          * 7. Update mode
           * ----------------------------- */
          if (eventId) {
             const changedFields = {};
 
-            // Detect changed text/number fields
             Object.keys(formData).forEach((key) => {
                if (key === "images" || key === "thumbnail") return;
                if (formData[key] !== originalData[key]) {
@@ -272,11 +280,10 @@ export default function PublishEvent() {
                }
             });
 
-            // Always include thumbnail and images
             changedFields.thumbnail = thumbnailPath;
             changedFields.images = imagePaths;
 
-            const { data, error } = await supabase
+            const { error } = await supabase
                .from("events")
                .update(changedFields)
                .eq("id", eventId);
@@ -288,14 +295,12 @@ export default function PublishEvent() {
                   ? `تم تحديث الحدث "${formData.name_ar}" بنجاح!`
                   : `Event "${formData.name}" updated successfully!`
             );
-            setLoading(false);
             navigate("/host/events");
          } else {
-
-         /** -----------------------------
-          * 8. Handle Create (new event)
-          * ----------------------------- */
-            const { data, error } = await supabase
+            /** -----------------------------
+             * 8. Create new event
+             * ----------------------------- */
+            const { error } = await supabase
                .from("events")
                .insert([
                   {
@@ -315,8 +320,7 @@ export default function PublishEvent() {
                      thumbnail: thumbnailPath,
                      images: imagePaths,
                   },
-               ])
-               .select();
+               ]);
 
             if (error) throw error;
 
@@ -325,18 +329,11 @@ export default function PublishEvent() {
                   ? `تم إنشاء الحدث "${formData.name}" بنجاح!`
                   : `Event "${formData.name}" created successfully!`
             );
-            setLoading(false);
             navigate("/host/events");
          }
 
-         /** -----------------------------
-          * 9. Clear form after success
-          * ----------------------------- */
          clearFormData();
       } catch (err) {
-         /** -----------------------------
-          * 10. Handle errors
-          * ----------------------------- */
          console.error("Insert Error:", err.message);
          toast.error(
             lang === "ar"
@@ -344,12 +341,10 @@ export default function PublishEvent() {
                : `Error saving event: ${err.message}`
          );
       } finally {
-         /** -----------------------------
-          * 11. Stop loading spinner
-          * ----------------------------- */
          setLoading(false);
       }
    };
+
 
    const handleChangeImages = (files) => {
       setFormData({ ...formData, images: files });
@@ -401,6 +396,9 @@ export default function PublishEvent() {
                      }
                      className="bg-background shadow-none"
                   />
+                  {errors?.name && (
+                     <p className="text-red-500 text-xs mt-1">{errors.name[0]}</p>
+                  )}
                </div>
 
                <div>
@@ -424,6 +422,10 @@ export default function PublishEvent() {
                      }
                      className="bg-background shadow-none"
                   />
+                  {errors?.name_ar && (
+                     <p className="text-red-500 text-xs mt-1">{errors.name_ar[0]}</p>
+                  )}
+
                </div>
 
                {/* Descriptions */}
@@ -449,6 +451,10 @@ export default function PublishEvent() {
                      }
                      className="bg-background shadow-none"
                   />
+
+                  {errors?.description && (
+                     <p className="text-red-500 text-xs mt-1">{errors.description[0]}</p>
+                  )}
                </div>
 
                <div className="md:col-span-2">
@@ -471,6 +477,9 @@ export default function PublishEvent() {
                      }
                      className="bg-background shadow-none"
                   />
+                  {errors?.description_ar && (
+                     <p className="text-red-500 text-xs mt-1">{errors.description_ar[0]}</p>
+                  )}
                </div>
 
                {/* Location */}
@@ -492,6 +501,9 @@ export default function PublishEvent() {
                      }
                      className="bg-background shadow-none"
                   />
+                  {errors?.location && (
+                     <p className="text-red-500 text-xs mt-1">{errors.location[0]}</p>
+                  )}
                </div>
 
                {/* Category */}
@@ -502,40 +514,48 @@ export default function PublishEvent() {
                   >
                      {lang === "ar" ? "فئة الحدث" : "Event Category"}
                   </Label>
+
                   {categoriesLoading ? (
                      <p className="text-sm text-muted-foreground">
-                        {lang === "ar"
-                           ? "جاري تحميل الفئات..."
-                           : "Loading categories..."}
+                        {lang === "ar" ? "جاري تحميل الفئات..." : "Loading categories..."}
                      </p>
                   ) : (
-                     <Select
-                        value={formData.category}
-                        id="category"
-                        onValueChange={(value) =>
-                           setFormData({ ...formData, category: value })
-                        }
-                        dir={lang === "ar" ? "rtl" : "ltr"}
-                     >
-                        <SelectTrigger className="w-full">
-                           <SelectValue
-                              placeholder={
-                                 lang === "ar"
-                                    ? "اختر فئة الحدث"
-                                    : "Select category"
-                              }
-                           />
-                        </SelectTrigger>
-                        <SelectContent>
-                           {CategoryOptions.map((cat) => (
-                              <SelectItem key={cat.id} value={cat.id}>
-                                 {cat.displayName}
-                              </SelectItem>
-                           ))}
-                        </SelectContent>
-                     </Select>
+                     <>
+                        <Select
+                           value={formData.category}
+                           id="category"
+                           onValueChange={(value) =>
+                              setFormData({ ...formData, category: value })
+                           }
+                           dir={lang === "ar" ? "rtl" : "ltr"}
+                        >
+                           <SelectTrigger className="w-full">
+                              <SelectValue
+                                 placeholder={
+                                    lang === "ar" ? "اختر فئة الحدث" : "Select category"
+                                 }
+                              />
+                           </SelectTrigger>
+
+                           <SelectContent>
+                              {CategoryOptions.map((cat) => (
+                                 <SelectItem key={cat.id} value={cat.id}>
+                                    {cat.displayName}
+                                 </SelectItem>
+                              ))}
+                           </SelectContent>
+                        </Select>
+
+                        {/* ⭐ Error Message */}
+                        {errors?.category && (
+                           <p className="text-red-500 text-xs mt-1">
+                              {errors.category[0]}
+                           </p>
+                        )}
+                     </>
                   )}
                </div>
+
 
                {/* Dates */}
                <div>
@@ -552,6 +572,9 @@ export default function PublishEvent() {
                      onChange={handleChange}
                      className="bg-background shadow-none"
                   />
+                  {errors?.date && (
+                     <p className="text-red-500 text-xs mt-1">{errors.date[0]}</p>
+                  )}
                </div>
 
                <div>
@@ -568,6 +591,9 @@ export default function PublishEvent() {
                      onChange={handleChange}
                      className="bg-background shadow-none"
                   />
+                  {errors?.end_date && (
+                     <p className="text-red-500 text-xs mt-1">{errors.end_date[0]}</p>
+                  )}
                </div>
 
                {/* Capacity & Price */}
@@ -590,6 +616,9 @@ export default function PublishEvent() {
                      }
                      className="bg-background shadow-none"
                   />
+                  {errors?.capacity && (
+                     <p className="text-red-500 text-xs mt-1">{errors.capacity[0]}</p>
+                  )}
                </div>
 
                <div>
@@ -609,6 +638,9 @@ export default function PublishEvent() {
                      }
                      className="bg-background shadow-none"
                   />
+                  {errors?.price && (
+                     <p className="text-red-500 text-xs mt-1">{errors.price[0]}</p>
+                  )}
                </div>
 
                {/* Thumbnail */}
@@ -624,6 +656,10 @@ export default function PublishEvent() {
                      acceptMultiple={false}
                      files={eventId ? [formData.thumbnail] : null}
                   />
+                  {errors?.thumbnail && (
+                     <p className="text-red-500 text-xs mt-1">{errors.thumbnail[0]}</p>
+                  )}
+
                </div>
 
                {/* Submit */}
@@ -640,8 +676,8 @@ export default function PublishEvent() {
                               ? "جاري التحديث..."
                               : "Updating..."
                            : lang === "ar"
-                           ? "تحديث الحدث"
-                           : "Update Event"}
+                              ? "تحديث الحدث"
+                              : "Update Event"}
                      </Button>
                   ) : (
                      <Button

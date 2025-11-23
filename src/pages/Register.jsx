@@ -1,6 +1,3 @@
-
-import { doc, serverTimestamp, setDoc } from "firebase/firestore";
-import { db } from "@/lib/firebaseConfig";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -11,6 +8,7 @@ import HostInfoForm from "@/components/auth/HostInfoForm";
 import { useTranslation } from "react-i18next";
 import ClientInfoFrom from "@/components/auth/ClientInfoFrom";
 import CreateUserFrom from "@/components/auth/CreateUserFrom";
+import { RegisterSchema } from "@/validators";
 
 
 
@@ -18,6 +16,8 @@ const Register = () => {
    const [step, setStep] = useState(1);
    const [userType, setUserType] = useState(""); // "client", "host", or
    const { t } = useTranslation();
+   const [errors, setErrors] = useState({});
+
 
    const [formData, setFormData] = useState({
       email: "",
