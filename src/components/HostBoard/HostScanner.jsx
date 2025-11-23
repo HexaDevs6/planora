@@ -12,8 +12,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Camera } from "lucide-react";
+import { useDirection } from "@/hooks/useDirection";
 
 const HostScanner = ({ eventId }) => {
+  const { lang } = useDirection();
   const [ticket, setTicket] = useState(null);
   const [open, setOpen] = useState(false);
 
@@ -69,14 +71,14 @@ console.log(ticketData, error);
   return (
     <div className="max-w-md  p-4">
       <Button  onClick={() => setOpen(true)}>
-        <Camera /> Scan Ticket
+        <Camera /> {lang === "ar" ? "مسح التذكرة" : "Scan Ticket"}
       </Button>
 
       {/* Dialog */}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Scan Ticket</DialogTitle>
+            <DialogTitle>{lang === "ar" ? "مسح التذكرة" : "Scan Ticket"}</DialogTitle>
           </DialogHeader>
 
           <div className="flex flex-col items-center py-4">
