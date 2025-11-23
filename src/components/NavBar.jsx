@@ -93,7 +93,7 @@ export default function NavBar() {
             <div className="flex items-center gap-3">
                {!user ? (
                   <Link to="/signin">
-                     <Button size="sm" variant="glass">
+                     <Button size="sm" variant="glass" className='text-primary'>
                         <User2Icon />
                      </Button>
                   </Link>
