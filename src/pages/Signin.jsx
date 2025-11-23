@@ -6,19 +6,21 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { Building2, Chrome, Eye, EyeOff, User2, Users } from "lucide-react";
-
 // Redux + Thunks (Supabase)
 import { useDispatch } from "react-redux";
 import { signInWithEmail } from "@/store/authThunks";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabaseClient";
 import { setUser } from "@/store/authSlice";
+import { SigninSchema } from "@/validators/authSchemas";
 
 function Signin() {
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    const [errors, setErrors] = useState({});
+
 
     const navigate = useNavigate();
 
@@ -30,24 +32,36 @@ function Signin() {
         e.preventDefault();
         setLoading(true);
 
+        // ⭐ 1) Validate before submitting
+        const result = SigninSchema.safeParse({ email, password });
+
+        if (!result.success) {
+            setErrors(result.error.flatten().fieldErrors); // <-- display errors
+            setLoading(false);
+            return; // stop the submit
+        }
+        setErrors({}); // clear errors
+
         try {
-            // استخدم unwrap عشان تحصل على النتيجة مباشرة أو throw error
-            const result = await dispatch(
+            const response = await dispatch(
                 signInWithEmail({ email, password })
             ).unwrap();
 
             toast.success(t("auth.signin.toast.success.title"), {
                 description: t("auth.signin.toast.success.description"),
             });
+
         } catch (error) {
             console.error("Sign in failed:", error);
             toast.error(t("auth.signin.toast.error.title"), {
                 description: error,
             });
+
         } finally {
             setLoading(false);
         }
     };
+
 
     const handleGoogleSignIn = async () => {
         try {
@@ -156,11 +170,10 @@ function Signin() {
                                 onClick={handleGoogleSignIn}
                                 disabled={loading}
                                 variant='outline'
-                                className={`w-full flex items-center justify-center gap-2 border border-amber/40 bg-white dark:bg-background hover:bg-amber/10 transition rounded-sm py-3 shadow-sm font-medium ${
-                                    loading
-                                        ? "opacity-60 cursor-not-allowed"
-                                        : ""
-                                }`}
+                                className={`w-full flex items-center justify-center gap-2 border border-amber/40 bg-white dark:bg-background hover:bg-amber/10 transition rounded-sm py-3 shadow-sm font-medium ${loading
+                                    ? "opacity-60 cursor-not-allowed"
+                                    : ""
+                                    }`}
                             >
                                 {!loading ? (
                                     <>
@@ -209,6 +222,8 @@ function Signin() {
 
                         {/* Email & Password form */}
                         <form onSubmit={handleSubmit} className='space-y-6'>
+
+                            {/* EMAIL FIELD */}
                             <div className='relative w-full'>
                                 <input
                                     type='email'
@@ -216,8 +231,7 @@ function Signin() {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder=' '
-                                    required
-                                    dir="ltr"
+                                    dir='ltr'
                                     className='peer w-full border rounded-sm px-4 pt-5 pb-2 text-primary placeholder-transparent focus:outline-none focus:ring-2 focus:ring-amber focus:border-transparent'
                                 />
                                 <label
@@ -226,19 +240,24 @@ function Signin() {
                                 >
                                     {t("common.form.email")}
                                 </label>
+
+                                {/* ⭐ EMAIL ERROR MESSAGE */}
+                                {errors.email && (
+                                    <p className='text-red-500 text-xs mt-1'>
+                                        {errors.email[0]}
+                                    </p>
+                                )}
                             </div>
 
+                            {/* PASSWORD FIELD */}
                             <div className='relative w-full'>
                                 <input
                                     type={showPassword ? "text" : "password"}
                                     id='password'
                                     value={password}
-                                    onChange={(e) =>
-                                        setPassword(e.target.value)
-                                    }
+                                    onChange={(e) => setPassword(e.target.value)}
                                     placeholder=' '
-                                    dir="ltr"
-                                    required
+                                    dir='ltr'
                                     className='peer w-full border rounded-sm px-4 pt-5 pb-2 pr-12 text-primary placeholder-transparent focus:outline-none focus:ring-2 focus:ring-amber focus:border-transparent'
                                 />
                                 <label
@@ -250,31 +269,35 @@ function Signin() {
 
                                 <button
                                     type='button'
-                                    onClick={() =>
-                                        setShowPassword(!showPassword)
-                                    }
+                                    onClick={() => setShowPassword(!showPassword)}
                                     className='absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 peer-focus:text-amber'
                                 >
                                     {showPassword ? <EyeOff /> : <Eye />}
                                 </button>
+
+                                {/* ⭐ PASSWORD ERROR MESSAGE */}
+                                {errors.password && (
+                                    <p className='text-red-500 text-xs mt-1'>
+                                        {errors.password[0]}
+                                    </p>
+                                )}
                             </div>
 
                             <div>
                                 <button
                                     type='submit'
                                     disabled={loading}
-                                    className={`w-full bg-violet hover:brightness-110 text-white font-semibold py-4 rounded-md shadow-inner flex items-center justify-center gap-2 ${
-                                        loading
-                                            ? "opacity-70 cursor-not-allowed"
-                                            : ""
-                                    }`}
+                                    className={`w-full bg-violet hover:brightness-110 text-white font-semibold py-4 rounded-md shadow-inner flex items-center justify-center gap-2 ${loading ? "opacity-70 cursor-not-allowed" : ""
+                                        }`}
                                 >
                                     {loading
                                         ? t("common.buttons.signingIn")
                                         : t("common.buttons.letsGetStarted")}
                                 </button>
                             </div>
+
                         </form>
+
 
                         <div className='mt-6 text-center font-[12.8px] text-text'>
                             <h5>
