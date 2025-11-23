@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import QRCodeStyling from "qr-code-styling";
 
 const logoImage = "/favPlanora.svg";
@@ -6,7 +6,7 @@ const logoImage = "/favPlanora.svg";
 const StyledQR = ({ value, size = 260 }) => {
   const ref = useRef(null);
 
-  const qrCode = new QRCodeStyling({
+   const qrCode = useMemo(() => new QRCodeStyling({
     width: size,
     height: size,
     data: value,
@@ -32,7 +32,7 @@ const StyledQR = ({ value, size = 260 }) => {
       imageSize: 0.25,
       backgroundColor: "#ffffff",
     },
-  });
+  }), [size, value]);
 
   useEffect(() => {
     if (ref.current) {
