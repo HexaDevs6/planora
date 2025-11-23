@@ -4,9 +4,12 @@ export default function ChartCard({ title, subtitle, children }) {
     return (
         <div
             className='
+            flex
+            flex-col
+            justify-between
         w-full 
-        rounded-xl 
-        p-5 
+        rounded-sm
+        p-3 
         bg-card 
         text-card-foreground 
         shadow-[0_4px_20px_rgba(0,0,0,0.05)]
