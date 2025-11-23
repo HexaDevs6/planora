@@ -28,6 +28,7 @@ import UserServices from "./pages/UserServices";
 import PlanoraAi from "./pages/PlanoraAi";
 import ChatWidget from "./components/ChatWidget";
 import MessagesPage from "./pages/MessagesPage";
+import EventAttendeeDetails from "./components/HostBoard/EventAttendeeDetails";
 
 function App() {
     useDirection();
@@ -99,6 +100,7 @@ function App() {
                             element={<Navigate to='overview' replace />}
                         />
                         <Route path='overview' element={<HostOverview />} />
+                        <Route path='attendees' element={<EventAttendeeDetails />} />
                         <Route path='settings' element={<HostSettings />} />
                         <Route path='events' element={<HostEvents />} />
                         <Route path='messages' element={<MessagesPage />} />
