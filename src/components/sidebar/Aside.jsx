@@ -1,7 +1,3 @@
-"use client";
-
-import * as React from "react";
-
 import NavMain from "./nav-main";
 import NavUser from "./nav-user";
 import {
@@ -26,7 +22,8 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { useSelector } from "react-redux";
 import avatarPlaceholderImg from "@/assets/user_placeholder3.png";
 import { useDirection } from "@/hooks/useDirection";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const hostNavMain = [
    {
@@ -82,7 +79,8 @@ const userNavMain = [
 export default function Aside({ ...props }) {
    const { user } = useSelector((state) => state.auth);
    const { lang } = useDirection();
-   const { open } = useSidebar();
+   const { open, setOpenMobile } = useSidebar();
+   const navigate = useNavigate();
    const data = {
       user: {
          name: user?.full_name || user?.email?.split("@")[0],
@@ -91,6 +89,9 @@ export default function Aside({ ...props }) {
       },
       navMain: user.role === "host" ? hostNavMain : userNavMain,
    };
+   useEffect(() => {
+      setOpenMobile(false);
+   }, [navigate]);
    return (
       <Sidebar
          collapsible="icon"
