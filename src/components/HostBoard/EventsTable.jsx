@@ -223,11 +223,14 @@ const EventsTable = () => {
                                  >
                                     <td className="py-4 px-4">
                                        <div>
-                                          <p className="font-medium">
+                                          <Link className="font-medium" to={{
+    pathname: "/host/attendees",
+    search: `?id=${event.id}&title=${ lang === "ar" ? event.name_ar : event.name}&date=${event.date }&location=${event.location }`,
+  }}>
                                              {lang === "ar"
                                                 ? event.name_ar
                                                 : event.name}
-                                          </p>
+                                          </Link>
                                        </div>
                                     </td>
                                     <td className="py-4 px-4">
