@@ -23,6 +23,8 @@ import { useNavigate } from "react-router-dom";
 import { uploadFile, deleteFile } from "@/lib/storage";
 import { useTranslation } from "react-i18next";
 import { Loader2 } from "lucide-react";
+import { ServiceSchema } from "@/validators";
+
 
 export default function AddService() {
    const [searchParams] = useSearchParams();
@@ -32,6 +34,8 @@ export default function AddService() {
    const navigate = useNavigate();
    const { lang } = useDirection();
    const dispatch = useDispatch();
+   const [errors, setErrors] = useState({});
+
    const user = useSelector((state) => state.auth.user);
    const { data: categories, loading: categoriesLoading } = useSelector(
       (state) => state.categories
@@ -113,8 +117,8 @@ export default function AddService() {
                   ? Array.from(files)
                   : files[0]
                : type === "checkbox"
-               ? checked
-               : value,
+                  ? checked
+                  : value,
       });
    };
 
@@ -162,6 +166,25 @@ export default function AddService() {
       e.preventDefault();
       setLoading(true);
 
+      /** -----------------------------
+       * (0) Validate using Zod
+       * ----------------------------- */
+      const result = ServiceSchema.safeParse(formData);
+
+      if (!result.success) {
+         setErrors(result.error.flatten().fieldErrors);
+         toast.error(
+            lang === "ar"
+               ? "من فضلك صحّح الأخطاء قبل المتابعة"
+               : "Please fix the highlighted errors"
+         );
+         setLoading(false);
+         return;
+      }
+
+      // Clear previous errors
+      setErrors({});
+
       try {
          /** -----------------------------
           * 1. Generate unique slug
@@ -184,7 +207,7 @@ export default function AddService() {
           * 3. If editing: delete old files if replaced
           * ----------------------------- */
          if (serviceId && originalData) {
-            // If new thumbnail chosen → delete old one
+            // Delete old thumbnail
             const thumbnailChanged =
                formData.thumbnail &&
                formData.thumbnail instanceof File &&
@@ -195,10 +218,8 @@ export default function AddService() {
                await deleteFile("services", originalData.thumbnail);
             }
 
-            // If new gallery chosen → delete old gallery
-            const newImages = formData.images.filter(
-               (img) => img instanceof File
-            );
+            // Delete old gallery
+            const newImages = formData.images.filter((img) => img instanceof File);
             if (newImages.length > 0 && originalData.images?.length > 0) {
                const oldPaths = originalData.images.map((img) =>
                   typeof img === "string" ? img : img.path
@@ -208,28 +229,24 @@ export default function AddService() {
          }
 
          /** -----------------------------
-          * 4. Upload thumbnail if exists
+          * 4. Upload thumbnail
           * ----------------------------- */
          let thumbnailPath = formData.thumbnail;
          if (formData.thumbnail && formData.thumbnail instanceof File) {
             const thumbFile = formData.thumbnail;
-            const path = `services/${
-               user.id
-            }/${folder}/thumbnail_${Date.now()}_${thumbFile.name}`;
+            const path = `services/${user.id}/${folder}/thumbnail_${Date.now()}_${thumbFile.name}`;
             await uploadFile("services", path, thumbFile);
             thumbnailPath = path;
          }
 
          /** -----------------------------
-          * 5. Upload gallery images if exists
+          * 5. Upload gallery images
           * ----------------------------- */
          let imagePaths = [];
          if (formData.images && formData.images.length > 0) {
             for (const img of formData.images) {
                if (img instanceof File) {
-                  const path = `services/${
-                     user.id
-                  }/${folder}/gallery/${Date.now()}_${img.name}`;
+                  const path = `services/${user.id}/${folder}/gallery/${Date.now()}_${img.name}`;
                   await uploadFile("services", path, img);
                   imagePaths.push({ path });
                } else if (typeof img === "object" && img.path) {
@@ -254,7 +271,7 @@ export default function AddService() {
             changedFields.thumbnail = thumbnailPath;
             changedFields.images = imagePaths;
 
-            const { data, error } = await supabase
+            const { error } = await supabase
                .from("services")
                .update(changedFields)
                .eq("id", serviceId);
@@ -266,10 +283,10 @@ export default function AddService() {
                   ? `تم تحديث الخدمة "${formData.name_ar}" بنجاح!`
                   : `Service "${formData.name}" updated successfully!`
             );
-            setLoading(false);
+
             navigate("/user/services");
          } else {
-            const { data, error } = await supabase
+            const { error } = await supabase
                .from("services")
                .insert([
                   {
@@ -294,13 +311,9 @@ export default function AddService() {
                   : `Service "${formData.name}" created successfully!`
             );
 
-            setLoading(false);
             navigate("/user/services");
          }
 
-         /** -----------------------------
-          * 7. Clear form after success
-          * ----------------------------- */
          clearFormData();
       } catch (err) {
          console.error("Insert Error:", err.message);
@@ -313,6 +326,7 @@ export default function AddService() {
          setLoading(false);
       }
    };
+
 
    if (loading && serviceId) {
       return <Spinner message={t("common.loading")} />;
@@ -357,6 +371,10 @@ export default function AddService() {
                      }
                      className="bg-muted shadow-none"
                   />
+                  {errors?.name && (
+                     <p className="text-red-500 text-xs mt-1">{errors.name[0]}</p>
+                  )}
+
                </div>
 
                <div>
@@ -378,6 +396,10 @@ export default function AddService() {
                      }
                      className="bg-muted shadow-none"
                   />
+                  {errors?.name_ar && (
+                     <p className="text-red-500 text-xs mt-1">{errors.name_ar[0]}</p>
+                  )}
+
                </div>
 
                {/* Descriptions */}
@@ -403,6 +425,10 @@ export default function AddService() {
                      }
                      className="bg-muted shadow-none"
                   />
+                  {errors?.description && (
+                     <p className="text-red-500 text-xs mt-1">{errors.description[0]}</p>
+                  )}
+
                </div>
 
                <div className="md:col-span-2">
@@ -425,6 +451,10 @@ export default function AddService() {
                      }
                      className="bg-muted shadow-none"
                   />
+                  {errors?.description_ar && (
+                     <p className="text-red-500 text-xs mt-1">{errors.description_ar[0]}</p>
+                  )}
+
                </div>
 
                {/* Category */}
@@ -470,7 +500,12 @@ export default function AddService() {
                            </SelectItem>
                         </SelectContent>
                      </Select>
+
                   )}
+                  {errors?.category_id && (
+                     <p className="text-red-500 text-xs mt-1">{errors.category_id[0]}</p>
+                  )}
+
                </div>
 
                {/* Thumbnail */}
@@ -486,6 +521,10 @@ export default function AddService() {
                      acceptMultiple={false}
                      files={serviceId ? [formData.thumbnail] : null}
                   />
+                  {errors?.thumbnail && (
+                     <p className="text-red-500 text-xs mt-1">{errors.thumbnail[0]}</p>
+                  )}
+
                </div>
 
                {/* Images */}
@@ -502,6 +541,10 @@ export default function AddService() {
                      files={serviceId ? formData.images : null}
                      maxFiles={5}
                   />
+                  {errors?.images && (
+                     <p className="text-red-500 text-xs mt-1">{errors.images[0]}</p>
+                  )}
+
                </div>
 
                {/* Submit */}

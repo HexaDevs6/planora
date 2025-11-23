@@ -11,6 +11,8 @@ import { getPublicUrl } from "@/lib/storage";
 import Spinner from "../SpinnerLoader";
 import { toast } from "sonner";
 import { PasswordChangeModal } from "../PasswordChangeModal";
+import { ProfileSettingsSchema } from "@/validators";
+
 
 export default function ProfileSettings() {
     const { lang } = useDirection();
@@ -21,6 +23,8 @@ export default function ProfileSettings() {
     );
     const [saving, setSaving] = useState(false);
     const originalRef = useRef(null); // Store original data
+    const [errors, setErrors] = useState({});
+
     const [formData, setFormData] = useState({
         full_name: "",
         email: "",
@@ -113,12 +117,28 @@ export default function ProfileSettings() {
     //handle form submit to supabase
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // ---------------------------
+        // 0) Validate using Zod
+        // ---------------------------
+        const result = ProfileSettingsSchema.safeParse({
+            ...formData,
+            role: user.role, // لازم client أو host
+        });
+
+        if (!result.success) {
+            setErrors(result.error.flatten().fieldErrors);
+            toast.error(lang === "ar" ? "برجاء تصحيح الأخطاء" : "Please fix the errors");
+            return;
+        }
+
+        setErrors({}); // clear old errors
+
+        // ---------------------------
+        // 1) التأكد من وجود المستخدم
+        // ---------------------------
         if (!user?.id) {
-            toast.error(
-                lang === "ar"
-                    ? "يجب تسجيل الدخول أولاً"
-                    : "You must be logged in"
-            );
+            toast.error(lang === "ar" ? "يجب تسجيل الدخول أولاً" : "You must be logged in");
             return;
         }
 
@@ -128,14 +148,13 @@ export default function ProfileSettings() {
             let avatarUrl = formData.avatarUrl;
             const original = originalRef.current;
 
-            // -------------------------
-            // 1) Upload avatar if changed
-            // -------------------------
+            // ---------------------------
+            // 2) Upload avatar if changed
+            // ---------------------------
             if (formData.avatarFile) {
                 const file = formData.avatarFile;
                 const ext = file.name.split(".").pop();
-                const path = `avatars/${user.full_name}/${user.id
-                    }-${Date.now()}.${ext}`;
+                const path = `avatars/${user.full_name}/${user.id}-${Date.now()}.${ext}`;
 
                 const { error: uploadErr } = await supabase.storage
                     .from("avatars")
@@ -150,11 +169,10 @@ export default function ProfileSettings() {
                 avatarUrl = publicUrlData?.publicUrl;
             }
 
-            // -------------------------
-            // 2) Build "changed fields only"
-            // -------------------------
+            // ---------------------------
+            // 3) Build only CHANGED FIELDS
+            // ---------------------------
             const updatedFields = {};
-
             const keysToCheck = [
                 "full_name",
                 "phone",
@@ -175,9 +193,9 @@ export default function ProfileSettings() {
                 updatedFields.avatar = avatarUrl || null;
             }
 
-            // -------------------------
-            // 3) Update users table (only changed fields)
-            // -------------------------
+            // ---------------------------
+            // 4) Update USERS table
+            // ---------------------------
             if (Object.keys(updatedFields).length > 0) {
                 const { error: userErr } = await supabase
                     .from("users")
@@ -187,9 +205,9 @@ export default function ProfileSettings() {
                 if (userErr) throw userErr;
             }
 
-            // -------------------------
-            // 4) Update categories (only if changed)
-            // -------------------------
+            // ---------------------------
+            // 5) Update CATEGORIES if changed
+            // ---------------------------
             const originalCat = original.categories || [];
             const newCat = formData.categories || [];
 
@@ -217,24 +235,21 @@ export default function ProfileSettings() {
                 }
             }
 
-            // -------------------------
-            // 5) Save success
-            // -------------------------
+            // ---------------------------
+            // 6) Success message
+            // ---------------------------
             toast.success(
-                lang === "ar"
-                    ? "تم حفظ التعديلات بنجاح"
-                    : "Changes saved successfully"
+                lang === "ar" ? "تم حفظ التعديلات بنجاح" : "Changes saved successfully"
             );
 
-            // -------------------------
-            // 6) Update original data
-            // -------------------------
+            // ---------------------------
+            // 7) Update original data
+            // ---------------------------
             originalRef.current = {
                 ...formData,
                 avatarUrl,
             };
 
-            // Reset extra fields (avatarFile)
             setFormData((prev) => ({
                 ...prev,
                 avatarUrl,
@@ -243,14 +258,13 @@ export default function ProfileSettings() {
         } catch (err) {
             console.error(err);
             toast.error(
-                lang === "ar"
-                    ? "حدث خطأ أثناء حفظ البيانات"
-                    : "Failed to save profile"
+                lang === "ar" ? "حدث خطأ أثناء حفظ البيانات" : "Failed to save profile"
             );
         } finally {
             setSaving(false);
         }
     };
+
 
     if (loading) {
         return <Spinner />;
@@ -361,6 +375,10 @@ export default function ProfileSettings() {
                                     }
                                     className='bg-background'
                                 />
+                                {errors?.full_name && (
+                                    <p className="text-red-500 text-xs mt-1">{errors.full_name[0]}</p>
+                                )}
+
                             </div>
 
                             {/* Email (Read-only) */}
@@ -448,8 +466,13 @@ export default function ProfileSettings() {
                                             ? "اكتب نبذة قصيرة..."
                                             : "Write a short bio…"
                                     }
-                                    className='w-full rounded-md bg-muted border border-border px-3 py-2 text-sm focus:ring-primary focus:ring-2 focus:outline-none'
+                                    class
+                                    Name='w-full rounded-md bg-muted border border-border px-3 py-2 text-sm focus:ring-primary focus:ring-2 focus:outline-none'
                                 />
+                                {errors?.bio && (
+                                    <p className="text-red-500 text-xs mt-1">{errors.bio[0]}</p>
+                                )}
+
                             </div>
 
                             {/* Social Links */}
@@ -467,6 +490,10 @@ export default function ProfileSettings() {
                                     placeholder='https://facebook.com/username'
                                     className='bg-background'
                                 />
+                                {errors?.facebook_url && (
+                                    <p className="text-red-500 text-xs mt-1">{errors.facebook_url[0]}</p>
+                                )}
+
                             </div>
 
                             <div>
@@ -485,6 +512,10 @@ export default function ProfileSettings() {
                                     placeholder='https://instagram.com/username'
                                     className='bg-background'
                                 />
+                                {errors?.instagram_url && (
+                                    <p className="text-red-500 text-xs mt-1">{errors.instagram_url[0]}</p>
+                                )}
+
                             </div>
                         </div>
                         {/* categories / interests */}
@@ -505,8 +536,8 @@ export default function ProfileSettings() {
                                     className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${formData.categories.includes(
                                         interest.id
                                     )
-                                            ? "border-primary bg-primary/10"
-                                            : "border-border hover:border-primary/50"
+                                        ? "border-primary bg-primary/10"
+                                        : "border-border hover:border-primary/50"
                                         }`}
                                 >
                                     <div className='flex items-center gap-2'>
@@ -517,6 +548,12 @@ export default function ProfileSettings() {
                                 </div>
                             ))}
                         </div>
+                        {errors?.categories && (
+                            <p className="text-red-500 text-xs mt-1 col-span-2 md:col-span-3">
+                                {errors.categories[0]}
+                            </p>
+                        )}
+
                     </section>
 
                     {/* Notification Preferences */}
@@ -611,13 +648,13 @@ export default function ProfileSettings() {
                         </Button>
                     </div>
                 </form>
-                  {/* Security */}
-                    <section className="space-y-4 pt-8">
-                        <h2 className='text-xl font-semibold text-primary border-b border-border pb-4 '>
-                            {lang === "en" ? "Security" : "الأمان"}
-                        </h2>
-                        <PasswordChangeModal lang={lang} user={user}/>
-                    </section>
+                {/* Security */}
+                <section className="space-y-4 pt-8">
+                    <h2 className='text-xl font-semibold text-primary border-b border-border pb-4 '>
+                        {lang === "en" ? "Security" : "الأمان"}
+                    </h2>
+                    <PasswordChangeModal lang={lang} user={user} />
+                </section>
             </div>
         </main>
     );

@@ -11,6 +11,7 @@ import { getPublicUrl } from "@/lib/storage";
 import Spinner from "../SpinnerLoader";
 import { toast } from "sonner";
 import { PasswordChangeModal } from "../PasswordChangeModal";
+import { ProfileSettingsSchema } from "@/validators";
 
 export default function ProfileSettings() {
    const { lang } = useDirection();
@@ -21,6 +22,8 @@ export default function ProfileSettings() {
    );
    const [saving, setSaving] = useState(false);
    const originalRef = useRef(null); // Store original data
+   const [errors, setErrors] = useState({});
+
    const [formData, setFormData] = useState({
       full_name: "",
       email: "",
@@ -113,28 +116,44 @@ export default function ProfileSettings() {
    //handle form submit to supabase
    const handleSubmit = async (e) => {
       e.preventDefault();
+
+      // ---------------------------
+      // 0) Validate using Zod
+      // ---------------------------
+      const result = ProfileSettingsSchema.safeParse({
+         ...formData,
+         role: user.role, // لازم نمرّر الدور عشان الشروط تختلف بين host/client
+      });
+
+      if (!result.success) {
+         setErrors(result.error.flatten().fieldErrors);
+         toast.error(lang === "ar" ? "برجاء تصحيح الأخطاء" : "Please fix the errors");
+         return;
+      }
+
+      setErrors({}); // مسح الأخطاء القديمة
+
+      // ---------------------------
+      // لو المستخدم مش موجود
+      // ---------------------------
       if (!user?.id) {
-         toast.error(
-            lang === "ar" ? "يجب تسجيل الدخول أولاً" : "You must be logged in"
-         );
+         toast.error(lang === "ar" ? "يجب تسجيل الدخول أولاً" : "You must be logged in");
          return;
       }
 
       setSaving(true);
 
       try {
-         let avatarUrl = formData.avatarUrl;
          const original = originalRef.current;
+         let avatarUrl = formData.avatarUrl;
 
-         // -------------------------
+         // ---------------------------
          // 1) Upload avatar if changed
-         // -------------------------
+         // ---------------------------
          if (formData.avatarFile) {
             const file = formData.avatarFile;
             const ext = file.name.split(".").pop();
-            const path = `avatars/${user.full_name}/${
-               user.id
-            }-${Date.now()}.${ext}`;
+            const path = `avatars/${user.full_name}/${user.id}-${Date.now()}.${ext}`;
 
             const { error: uploadErr } = await supabase.storage
                .from("avatars")
@@ -149,9 +168,9 @@ export default function ProfileSettings() {
             avatarUrl = publicUrlData?.publicUrl;
          }
 
-         // -------------------------
-         // 2) Build "changed fields only"
-         // -------------------------
+         // ---------------------------
+         // 2) Build only CHANGED fields
+         // ---------------------------
          const updatedFields = {};
 
          const keysToCheck = [
@@ -174,9 +193,9 @@ export default function ProfileSettings() {
             updatedFields.avatar = avatarUrl || null;
          }
 
-         // -------------------------
-         // 3) Update users table (only changed fields)
-         // -------------------------
+         // ---------------------------
+         // 3) Update USERS table
+         // ---------------------------
          if (Object.keys(updatedFields).length > 0) {
             const { error: userErr } = await supabase
                .from("users")
@@ -186,9 +205,9 @@ export default function ProfileSettings() {
             if (userErr) throw userErr;
          }
 
-         // -------------------------
-         // 4) Update categories (only if changed)
-         // -------------------------
+         // ---------------------------
+         // 4) Update categories (Only if changed)
+         // ---------------------------
          const originalCat = original.categories || [];
          const newCat = formData.categories || [];
 
@@ -197,11 +216,10 @@ export default function ProfileSettings() {
             originalCat.some((c) => !newCat.includes(c));
 
          if (categoriesChanged) {
-            await supabase
-               .from("user_categories")
-               .delete()
-               .eq("user_id", user.id);
+            // delete old
+            await supabase.from("user_categories").delete().eq("user_id", user.id);
 
+            // insert new
             if (newCat.length > 0) {
                const rows = newCat.map((id) => ({
                   user_id: user.id,
@@ -216,24 +234,23 @@ export default function ProfileSettings() {
             }
          }
 
-         // -------------------------
-         // 5) Save success
-         // -------------------------
+         // ---------------------------
+         // 5) Success Toast
+         // ---------------------------
          toast.success(
             lang === "ar"
                ? "تم حفظ التعديلات بنجاح"
                : "Changes saved successfully"
          );
 
-         // -------------------------
-         // 6) Update original data
-         // -------------------------
+         // ---------------------------
+         // 6) Update originalRef + reset avatarFile
+         // ---------------------------
          originalRef.current = {
             ...formData,
             avatarUrl,
          };
 
-         // Reset extra fields (avatarFile)
          setFormData((prev) => ({
             ...prev,
             avatarUrl,
@@ -242,14 +259,13 @@ export default function ProfileSettings() {
       } catch (err) {
          console.error(err);
          toast.error(
-            lang === "ar"
-               ? "حدث خطأ أثناء حفظ البيانات"
-               : "Failed to save profile"
+            lang === "ar" ? "حدث خطأ أثناء حفظ البيانات" : "Failed to save profile"
          );
       } finally {
          setSaving(false);
       }
    };
+
 
    if (loading) {
       return <Spinner />;
@@ -336,6 +352,9 @@ export default function ProfileSettings() {
                            }
                            className="bg-background"
                         />
+                        {errors?.full_name && (
+                           <p className="text-red-500 text-xs mt-1">{errors.full_name[0]}</p>
+                        )}
                      </div>
 
                      {/* Email (Read-only) */}
@@ -352,6 +371,7 @@ export default function ProfileSettings() {
                            readOnly
                            className="bg-muted cursor-not-allowed"
                         />
+
                         <p className="text-xs text-muted-foreground mt-1">
                            {lang === "ar"
                               ? "لا يمكن تعديل البريد لأنه مرتبط بحسابك."
@@ -378,6 +398,9 @@ export default function ProfileSettings() {
                            }
                            className="bg-background"
                         />
+                        {errors?.phone && (
+                           <p className="text-red-500 text-xs mt-1">{errors.phone[0]}</p>
+                        )}
                      </div>
 
                      {/* Location */}
@@ -399,6 +422,9 @@ export default function ProfileSettings() {
                            }
                            className="bg-background"
                         />
+                        {errors?.location && (
+                           <p className="text-red-500 text-xs mt-1">{errors.location[0]}</p>
+                        )}
                      </div>
 
                      {/* Bio */}
@@ -421,6 +447,9 @@ export default function ProfileSettings() {
                            }
                            className="w-full rounded-md bg-muted border border-border px-3 py-2 text-sm focus:ring-primary focus:ring-2 focus:outline-none"
                         />
+                        {errors?.bio && (
+                           <p className="text-red-500 text-xs mt-1">{errors.bio[0]}</p>
+                        )}
                      </div>
 
                      {/* Social Links */}
@@ -438,6 +467,10 @@ export default function ProfileSettings() {
                            placeholder="https://facebook.com/username"
                            className="bg-background"
                         />
+                        {errors?.facebook_url && (
+                           <p className="text-red-500 text-xs mt-1">{errors.facebook_url[0]}</p>
+                        )}
+
                      </div>
 
                      <div>
@@ -454,6 +487,9 @@ export default function ProfileSettings() {
                            placeholder="https://instagram.com/username"
                            className="bg-background"
                         />
+                        {errors?.instagram_url && (
+                           <p className="text-red-500 text-xs mt-1">{errors.instagram_url[0]}</p>
+                        )}
                      </div>
                   </div>
                   {/* categories / interests */}
@@ -471,11 +507,10 @@ export default function ProfileSettings() {
                               e.preventDefault();
                               toggleInterest(interest.id); // store id instead of name
                            }}
-                           className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
-                              formData.categories.includes(interest.id)
-                                 ? "border-primary bg-primary/10"
-                                 : "border-border hover:border-primary/50"
-                           }`}
+                           className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${formData.categories.includes(interest.id)
+                              ? "border-primary bg-primary/10"
+                              : "border-border hover:border-primary/50"
+                              }`}
                         >
                            <div className="flex items-center gap-2">
                               <span className="text-sm font-medium">
@@ -484,6 +519,12 @@ export default function ProfileSettings() {
                            </div>
                         </div>
                      ))}
+                     {errors?.categories && (
+                        <p className="text-red-500 text-xs mt-1 col-span-2 md:col-span-3">
+                           {errors.categories[0]}
+                        </p>
+                     )}
+
                   </div>
                </section>
 

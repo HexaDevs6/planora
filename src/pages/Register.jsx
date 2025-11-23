@@ -8,6 +8,7 @@ import HostInfoForm from "@/components/auth/HostInfoForm";
 import { useTranslation } from "react-i18next";
 import ClientInfoFrom from "@/components/auth/ClientInfoFrom";
 import CreateUserFrom from "@/components/auth/CreateUserFrom";
+import { RegisterSchema } from "@/validators";
 
 
 
@@ -15,6 +16,8 @@ const Register = () => {
    const [step, setStep] = useState(1);
    const [userType, setUserType] = useState(""); // "client", "host", or
    const { t } = useTranslation();
+   const [errors, setErrors] = useState({});
+
 
    const [formData, setFormData] = useState({
       email: "",
