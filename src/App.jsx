@@ -30,10 +30,18 @@ import ChatWidget from "./components/ChatWidget";
 import MessagesPage from "./pages/MessagesPage";
 import EventAttendeeDetails from "./components/HostBoard/EventAttendeeDetails";
 import NotFoundPage from "./components/NotFoundPage";
+import { useEffect } from "react";
+import { startAuthListener } from "./store/authListener";
+import { store } from "./store/store";
 
 function App() {
     useDirection();
-    // useTranslation hook provides access to the translation function 't'
+
+    useEffect(() => {
+        const stop = startAuthListener(store);
+        return () => stop && stop();
+    }, []);
+
     return (
         <main>
             <BrowserRouter>
@@ -101,7 +109,10 @@ function App() {
                             element={<Navigate to='overview' replace />}
                         />
                         <Route path='overview' element={<HostOverview />} />
-                        <Route path='attendees' element={<EventAttendeeDetails />} />
+                        <Route
+                            path='attendees'
+                            element={<EventAttendeeDetails />}
+                        />
                         <Route path='settings' element={<HostSettings />} />
                         <Route path='events' element={<HostEvents />} />
                         <Route path='messages' element={<MessagesPage />} />
