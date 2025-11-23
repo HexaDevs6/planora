@@ -1,7 +1,8 @@
 import React from "react";
-import { Mail } from "lucide-react";
+import { LucideUsers2, Mail } from "lucide-react";
 import { Phone } from "lucide-react";
 import { t } from "i18next";
+import { Link } from "react-router-dom";
 
 export default function FooterSection() {
   return (
@@ -32,14 +33,14 @@ export default function FooterSection() {
               {t("footer.platform")}
             </h4>
             <ul className="flex flex-col gap-4">
-              {["features", "events", "signup"].map((item) => (
+              {["services", "events", "register"].map((item) => (
                 <li
                   key={item}
                   className="transition-all duration-500 hover:translate-x-2 hover:text-[var(--color-amber)] py-1 cursor-pointer"
                 >
-                  <a className="text-content dark:text-foreground/70" href="#">
+                  <Link to={`/${item}`} className="text-content dark:text-foreground/70" href="#">
                     {t(`footer.${item}`)}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -55,9 +56,9 @@ export default function FooterSection() {
                   key={item}
                   className="transition-all duration-500 hover:translate-x-2 hover:text-[var(--color-amber)] py-1 cursor-pointer"
                 >
-                  <a className="text-content dark:text-foreground/70" href="#">
+                  <Link to={`/${item}`} className="text-content dark:text-foreground/70" href="#">
                     {t(`footer.${item}`)}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -71,20 +72,20 @@ export default function FooterSection() {
               <li className="transition-all duration-500 hover:translate-x-2 hover:text-[var(--color-amber)] py-1 cursor-pointer">
                 <a
                   className="text-content dark:text-foreground/70 flex items-center gap-2"
-                  href="#"
+                  href="mailto:hexadevs06@googlegroups.com"
                 >
                   <Mail className="w-5 h-5 text-[var(--color-amber)]" />
-                  service@planora.com
+                  hexadevs06@googlegroups.com
                 </a>
               </li>
               <li className="transition-all duration-500 hover:translate-x-2 hover:text-[var(--color-amber)] py-1 cursor-pointer">
-                <a
+                <Link
                   className="text-content dark:text-foreground/70 flex items-center gap-2"
-                  href="#"
-                >
-                  <Phone className="w-5 h-5 text-[var(--color-amber)]" />
-                  01112345678
-                </a>
+                  to ='https://discord.gg/8kG9zaUKwS'
+>
+                  <LucideUsers2 className="w-5 h-5 text-[var(--color-amber)]" />
+                  Discord: HexaDevs
+                </Link>
               </li>
             </ul>
           </div>

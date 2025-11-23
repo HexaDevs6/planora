@@ -8,6 +8,8 @@ import { supabase } from "@/lib/supabaseClient";
 import QRCode from "react-qr-code";
 import StyledQR from "../qrcode";
 import TicketFrame from "../TicketFrame";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const EventCountdown = ({ details, eventId, user, lang = "en" }) => {
    const dispatch = useDispatch();
@@ -15,6 +17,7 @@ const EventCountdown = ({ details, eventId, user, lang = "en" }) => {
 
    const [isTicketBooked, setIsTicketBooked] = useState(false);
    const [ticket, setTicket] = useState(null);
+   const navigate = useNavigate();
 
    useEffect(() => {
       const checkExistingTicket = async () => {
@@ -37,6 +40,28 @@ const EventCountdown = ({ details, eventId, user, lang = "en" }) => {
    }, [eventId, user]);
 
    const handleCreateTicket = async () => {
+
+      if (!user) {
+         Swal.fire({
+            title: lang === "ar" ? "يرجى تسجيل الدخول لتتمكن من الحجز" : "Please login to book a ticket",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: 'var(--primary)',
+            cancelButtonColor: "var(--secondary)",
+            confirmButtonText: lang === "ar" ? "تسجيل الدخول" : "Login",
+         }).then((result) => {
+            if (result.isConfirmed) {
+               navigate('/signin');
+            }
+         })
+      }
+
+      if (user.role === "host") {
+         toast.error(lang === "ar" ? "لا يمكنك حجز التذاكر للمستضيفين" : "You can't book tickets for hosts");
+         return;
+         
+      }
+
       try {
          const client = await user;
          const tic = await dispatch(
