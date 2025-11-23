@@ -1,4 +1,4 @@
-import React, {useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDirection } from "@/hooks/useDirection";
 import { useDispatch, useSelector } from "react-redux";
 import { supabase } from "@/lib/supabaseClient";
@@ -6,43 +6,41 @@ import { fetchEvents } from "@/store/fetchEventsThunk";
 import { motion } from "framer-motion";
 import { t } from "i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import TicketFrame from './../TicketFrame';
+import TicketFrame from "./../TicketFrame";
 import StyledQR from "../qrcode";
 import { Calendar, MapPin, StopCircle, Users } from "lucide-react";
-import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
-import {Dialog,DialogContent,DialogHeader,DialogTitle,} from "@/components/ui/dialog"
-
-
-
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export default function UserTickets() {
-  const {user} = useSelector((state) => state.auth);
-  const [userTickets, setUserTickets] =useState([]);
-  const [openTicket, setOpenTicket] = useState(null); 
+  const { user } = useSelector((state) => state.auth);
+  const [userTickets, setUserTickets] = useState([]);
+  const [openTicket, setOpenTicket] = useState(null);
   const [filteredEvents, setFilteredEvents] = useState([]);
-  const {lang} = useDirection();
+  const { lang } = useDirection();
   const dispatch = useDispatch();
 
-
-
   // get events from supabase
-    const {
-      items: eventsData,
-      loading: eventsLoading,
-      error,
-    } = useSelector((state) => state.events);
-  
-    useEffect(() => {
-      // Fetch only if data not loaded before
-      if (!eventsData.length) dispatch(fetchEvents());
-    
-    }, [dispatch, eventsData.length]);
+  const {
+    items: eventsData,
+    loading: eventsLoading,
+    error,
+  } = useSelector((state) => state.events);
 
   useEffect(() => {
+    // Fetch only if data not loaded before
+    if (!eventsData.length) dispatch(fetchEvents());
+  }, [dispatch, eventsData.length]);
 
+  useEffect(() => {
     async function fetchTickets() {
-      const {data, error} = await supabase
+      const { data, error } = await supabase
         .from("tickets")
         .select("*")
         .eq("client_id", user.id);
@@ -50,17 +48,17 @@ export default function UserTickets() {
         console.error("Error fetching tickets:", error);
       } else {
         setUserTickets(data);
-       
       }
     }
     fetchTickets();
     console.log("Fetched tickets:", userTickets);
   }, [user]);
 
-
   useEffect(() => {
     const mergedData = userTickets.map((ticket) => {
-      const eventDetails = eventsData.find((event) => event.id === ticket.event_id);
+      const eventDetails = eventsData.find(
+        (event) => event.id === ticket.event_id
+      );
       return {
         ...ticket,
         eventDetails,
@@ -68,10 +66,7 @@ export default function UserTickets() {
     });
     setFilteredEvents(mergedData);
     console.log("Merged ticket and event data:", filteredEvents);
-    
-
   }, [userTickets, eventsData]);
-
 
   return (
     <>
@@ -268,97 +263,115 @@ export default function UserTickets() {
         </section>
 
         {/* Featured Event */}
-        <section className="mb-20">
+        {/* <section className="mb-20">
           <h2 className="text-3xl font-bold text-primary border-b border-border pb-4 mb-8">
             {lang === "ar" ? " التذاكر القادمة" : "upcoming tickets"}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
-  {filteredEvents.map((el, i) => (
-    <motion.div
-      key={el.id}
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: i * 0.1 }}
-    >
-      <Card className="overflow-hidden rounded-xl shadow-sm hover:shadow-md p-0 hover:scale-[1.02] duration-300 transition-all">
-        <div className="p-4 border-b">
-          <div 
-  className="cursor-pointer"
-  onClick={() => setOpenTicket(el.id)}
->
-  <TicketFrame>
-    <h3 className="text-center text-lg font-semibold mb-4 text-amber">
-      {lang === "ar" ? "لا تشارك هذه التذكرة مع احد" : "Don't share this ticket with anyone!"}
-    </h3>
+            {filteredEvents.map((el, i) => (
+              <motion.div
+                key={el.id}
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+              >
+                <Card className="overflow-hidden rounded-xl shadow-sm hover:shadow-md p-0 hover:scale-[1.02] duration-300 transition-all">
+                  <div className="p-4 border-b">
+                    <div
+                      className="cursor-pointer"
+                      onClick={() => setOpenTicket(el.id)}
+                    >
+                      <TicketFrame>
+                        <h3 className="text-center text-lg font-semibold mb-4 text-amber">
+                          {lang === "ar"
+                            ? "لا تشارك هذه التذكرة مع احد"
+                            : "Don't share this ticket with anyone!"}
+                        </h3>
 
-    <div className="flex justify-center mb-4">
-      <StyledQR value={el?.qr_code} size={200} />
-    </div>
-  </TicketFrame>
-</div>
+                        <div className="flex justify-center mb-4">
+                          <StyledQR value={el?.qr_code} size={200} />
+                        </div>
+                      </TicketFrame>
+                    </div>
+                  </div>
 
-        </div>
+                  <CardHeader>
+                    <div className="flex justify-between items-start">
+                      <CardTitle className="text-lg font-semibold">
+                        {lang === "ar"
+                          ? el.eventDetails?.name_ar
+                              .split(" ")
+                              .slice(0, 2)
+                              .join(" ") + "..."
+                          : el.eventDetails?.name
+                              .split(" ")
+                              .slice(0, 2)
+                              .join(" ") + "..."}
+                      </CardTitle>
 
-       
-        <CardHeader>
-          <div className="flex justify-between items-start">
-            <CardTitle className="text-lg font-semibold">
-              {lang === "ar" ? el.eventDetails?.name_ar : el.eventDetails?.name}
-            </CardTitle>
+                      <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
+                        {el.eventDetails.is_free
+                          ? t("eventsPage.free")
+                          : `$${el.eventDetails.price}`}
+                      </span>
+                    </div>
+                  </CardHeader>
 
-            <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
-              {el.eventDetails.is_free ? t("eventsPage.free") : `$${el.eventDetails.price}`}
-            </span>
+                  <CardContent className="space-y-2 text-sm pb-4">
+                    <p className="text-muted-foreground flex gap-2">
+                      <Calendar size={16} />{" "}
+                      {el.eventDetails.date
+                        ? new Date(el.eventDetails.date).toLocaleDateString(
+                            lang
+                          )
+                        : "N/A"}
+                    </p>
+
+                    <p className="text-muted-foreground flex gap-2 truncate">
+                      <MapPin size={16} />{" "}
+                      {el.eventDetails.location || "Unspecified"}
+                    </p>
+
+                    <p className="text-muted-foreground flex gap-2">
+                      <Users size={16} /> {el.eventDetails.capacity} attendees
+                    </p>
+                    <div className={`flex items-center pt-2 w-full`}>
+                      <Link
+                        className="w-full"
+                        to={`/events/${el.eventDetails.id}`}
+                      >
+                        <Button className="w-full" variant="amber" size="lg">
+                          {t("eventsPage.category.cards.viewDetails")}
+                        </Button>
+                      </Link>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Dialog
+                  open={openTicket === el.id}
+                  onOpenChange={() => setOpenTicket(null)}
+                >
+                  <DialogContent className="max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>
+                        {lang === "ar" ? "تفاصيل التذكرة" : "Ticket Details"}
+                      </DialogTitle>
+                    </DialogHeader>
+
+                    <div className="flex flex-col items-center py-4">
+                      <StyledQR value={el?.qr_code} size={260} />
+                      <p className="mt-4 text-sm text-muted-foreground">
+                        {lang === "ar"
+                          ? el.eventDetails?.name_ar
+                          : el.eventDetails?.name}
+                      </p>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </motion.div>
+            ))}
           </div>
-        </CardHeader>
-
-        <CardContent className="space-y-2 text-sm pb-4">
-          <p className="text-muted-foreground flex gap-2">
-            <Calendar size={16} /> {el.eventDetails.date
-              ? new Date(el.eventDetails.date).toLocaleDateString(lang)
-              : "N/A"}
-          </p>
-
-          <p className="text-muted-foreground flex gap-2">
-            <MapPin size={16} /> {el.eventDetails.location || "Unspecified"}
-          </p>
-
-          <p className="text-muted-foreground flex gap-2">
-            <Users size={16} /> {el.eventDetails.capacity} attendees
-          </p>
-          <div className={`flex items-center pt-2 w-full`}>
-          <Link className="w-full" to={`/events/${el.eventDetails.id}`}>
-            <Button className="w-full" variant="amber" size="lg">
-              {t('eventsPage.category.cards.viewDetails')}
-            </Button>
-          </Link>
-        </div>
-        </CardContent>
-
-      </Card>
-      <Dialog open={openTicket === el.id} onOpenChange={() => setOpenTicket(null)}>
-  <DialogContent className="max-w-md">
-    <DialogHeader>
-      <DialogTitle>
-        {lang === "ar" ? "تفاصيل التذكرة" : "Ticket Details"}
-      </DialogTitle>
-    </DialogHeader>
-
-    <div className="flex flex-col items-center py-4">
-      <StyledQR value={el?.qr_code} size={260} />
-      <p className="mt-4 text-sm text-muted-foreground">
-        {lang === "ar" ? el.eventDetails?.name_ar : el.eventDetails?.name}
-      </p>
-    </div>
-  </DialogContent>
-</Dialog>
-    </motion.div>
-  ))}
-</div>
-
-
-
-        </section>
+        </section> */}
       </main>
     </>
   );

@@ -1,14 +1,33 @@
-import React from "react";
-import { Link, NavLink } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import BoardCard from "../BoardCard";
-import { ArrowUpRightFromSquareIcon } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import Stats from "./StatsSection";
 import EventCard from "../Cards/EventCard";
 import RecentMessages from "./RecentMessagesSec";
 import ReviewsSection from "../Reviews";
+import { supabase } from "@/lib/supabaseClient";
+import { useSelector } from "react-redux";
+import { useDirection } from "@/hooks/useDirection";
+import { getPublicUrl } from "@/lib/storage";
+import {
+    useGetBookingsOverTimeQuery,
+    useGetEventPerformanceQuery,
+    useGetPopularEventsQuery,
+    useGetTotalAttendeesQuery,
+    useGetTotalEventsQuery,
+    useGetTotalRevenueQuery,
+    useGetTotalTicketsQuery,
+    useGetUpcomingEventsCountQuery,
+} from "@/features/hostDashboard/hostDashboard.api";
+import AreaChartComponent from "../Charts/AreaChartComponent";
+import RadialProgressComponent from "../Charts/RadialProgressComponent";
+import BarChartComponent from "../Charts/BarChartComponent";
+import GroupedBarChart from "../Charts/GroupedBarChart";
 
 export default function UserOverview() {
+    const [events, setEvents] = useState([]);
+    const user = useSelector((state) => state.auth.user);
+    const { lang } = useDirection();
+    const { data } = useSelector((state) => state.categories);
+
     const hostMessages = [
         {
             name: "Jane Smith",
@@ -60,51 +79,188 @@ export default function UserOverview() {
         },
     ];
 
+    useEffect(() => {
+        if (!user?.id) return;
+
+        const fetchUserEvents = async () => {
+            const { data: fetched, error } = await supabase
+                .from("events")
+                .select("*")
+                .eq("host_id", user.id);
+            if (error) {
+                console.error(error);
+                return;
+            } else {
+                setEvents(fetched || []);
+            }
+        };
+        fetchUserEvents();
+    }, [user?.id]);
+
+    const handleThumbnail = function (el) {
+        if (el) {
+            if (typeof el === "string" && el.startsWith("http")) {
+                return el;
+            } else {
+                return getPublicUrl("events", el);
+            }
+        }
+        return undefined;
+    };
+
+    const interestOptions = (data || [])
+        .filter((category) => category.type === "event")
+        .map((category) => ({
+            ...category,
+            displayName: lang === "ar" ? category.name_ar : category.name,
+        }));
+
+    const { data: totalEvents } = useGetTotalEventsQuery({
+        hostId: user?.id,
+    });
+
+    const { data: totalTickets } = useGetTotalTicketsQuery({
+        hostId: user?.id,
+    });
+
+    const { data: totalAttendees } = useGetTotalAttendeesQuery({
+        hostId: user?.id,
+    });
+
+    const { data: totalRevenue } = useGetTotalRevenueQuery({
+        hostId: user?.id,
+    });
+
+    const { data: totalUpcomingEvents } = useGetUpcomingEventsCountQuery({
+        hostId: user?.id,
+    });
+
+    const { data: bookingsOverTime } = useGetBookingsOverTimeQuery({
+        hostId: user?.id,
+    });
+
+    const { data: popularEvents } = useGetPopularEventsQuery({
+        hostId: user?.id,
+    });
+
+    const{data:eventPerfomance} = useGetEventPerformanceQuery({
+        hostId: user?.id,
+    })
+
     const hostStats = [
-        { label: "Total Events", value: 12, change: "+5%", trend: "up" },
+        {
+            label: "Total Events",
+            label_ar: "الأحداث",
+            value: totalEvents,
+            change: "+5%",
+            trend: "up",
+        },
         {
             label: "Total Tickets Sold",
-            value: "1,234",
+            label_ar: "التذاكر المباعة",
+            value: totalTickets,
             change: "+12%",
             trend: "up",
         },
-        { label: "Revenue", value: "$56,789", change: "+8%", trend: "up" },
-        { label: "Total Attendees", value: 890, change: "+3%", trend: "up" },
+        { label: "Revenue", label_ar: "إجمالي العوائد", value: totalRevenue, change: "+8%", trend: "up" },
+        {
+            label: "Total Attendees",
+            label_ar: "إجمالي الحضور",
+            value: totalAttendees,
+            change: "+3%",
+            trend: "up",
+        },
+        {
+            label: "Upcoming Events",
+            label_ar: "الأحداث القادمة",
+            value: totalUpcomingEvents,
+            change: "-2%",
+            trend: "down",
+        },
     ];
 
     return (
-        <div className="container">
+        <div className='container'>
             <div className='overview flex flex-col gap-2 transition-all duration-300 ease-in-out '>
                 <div className='host-stats'>
                     <div className=' host-stats__header flex justify-between'>
                         <h2 className='text-2xl font-bold text-primary mb-2 '>
-                            Insights
+                            {lang === "en" ? "Overview" : "النظرة عامة"}
                         </h2>
                     </div>
-                    <div className='host-stats__content '>
-                        <Stats stats={hostStats} />
+                    <div className='host-stats__content grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4'>
+                        {hostStats.map((item, i) => (
+                          <RadialProgressComponent
+                            key={i}
+                            title={lang === "en" ? item.label : item.label_ar}
+                            value={item.value}
+                        />
+                        ))}
                     </div>
                 </div>
                 <h2 className='text-2xl font-bold text-primary mb-2 '>
-                    Highlights
+                    {lang === "en" ? "Insights" : "الإحصائيات"}
                 </h2>
                 <div className='highlights grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
                     <div className='col-span-2 space-y-4'>
-                        <RecentMessages messages={hostMessages} />
-                        <ReviewsSection reviews={sampleReviews} />
+                        <AreaChartComponent
+                            title={lang === "en" ? "Bookings Over Time" : "الحجوزات على الوقت"}
+                            data={bookingsOverTime}
+                            xKey='day'
+                            yKey='bookings'
+                        />
+                        <BarChartComponent
+                            title={lang === "en" ? "Popular Events" : "الفعاليات الشائعة"}
+                            data={popularEvents}
+                            xKey='event_name'
+                            yKey='total_tickets'
+                        />
+                        <GroupedBarChart
+                            title={lang === "en" ? "Event Performance" : "تحليل الفعاليات "}
+                            data={eventPerfomance}
+                            xKey="event_name"
+                            keys={["total_tickets", "attendees", "revenue"]}
+                        />
+                            
+                        {/* <RecentMessages messages={hostMessages} /> */}
+                        {/* <ReviewsSection reviews={sampleReviews} /> */}
                     </div>
                     <div className='host__next-event space-y-2'>
                         <div>
-                            <EventCard
-                                id={1}
-                                title='Event 1'
-                                image=' https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80'
-                                date='2023-06-01'
-                                location='Location 1'
-                                category='Category 1'
-                                price='100'
-                                attendees='50'
-                            />
+                            {events.length > 0 ? (
+                                <EventCard
+                                    id={events[0]?.id}
+                                    title={
+                                        lang === "en"
+                                            ? events[0]?.name
+                                            : events[0]?.name_ar
+                                    }
+                                    image={handleThumbnail(
+                                        events[0]?.thumbnail
+                                    )}
+                                    date={events[0]?.date.split("T")[0]}
+                                    location={events[0]?.location}
+                                    category={
+                                        interestOptions.find(
+                                            (item) =>
+                                                item.id ===
+                                                events[0]?.category_id
+                                        )?.displayName
+                                    }
+                                    price={
+                                        events[0]?.price === 0
+                                            ? lang === "en"
+                                                ? "Free"
+                                                : "مجانا"
+                                            : events[0]?.price
+                                    }
+                                    attendees={events[0]?.capacity}
+                                />
+                            ) : (
+                                <div className='p-4 text-muted-foreground'>
+                                    No upcoming event
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

@@ -28,21 +28,21 @@ export default function BoardCard({
 
     return (
         <>
-            <div className='bg-background rounded-xl border overflow-hidden group w-80 '>
+            <div className='bg-background flex flex-col gap-5 justify-between rounded-xl border overflow-hidden group w-80 '>
                 <img
                     alt='Music Festival'
                     className='w-full h-48 object-cover'
                     src={handleThumbnail(image)}
                 />
-                <div className='p-3'>
+                <div className='p-3 space-y-2'>
                     <p className='text-sm font-semibold text-amber-dark flex items-center gap-2'>
                         <Calendar size={16} /> {date.split("T")[0]}
                     </p>
                     <h3 className='text-xl font-bold text-foreground mt-2 truncate'>
                         {title}
                     </h3>
-                    <p className='text-gray-500 mt-1 flex items-center gap-2'>
-                        <MapPin size={16} />
+                    <p className='text-gray-500 truncate'>
+                        <MapPin size={16} className=" inline mr-2 my-auto "  />
                         {location}
                     </p>
                     <div className='mt-4 flex items-center justify-between'>
