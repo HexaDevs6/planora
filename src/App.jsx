@@ -32,10 +32,12 @@ import EventAttendeeDetails from "./components/HostBoard/EventAttendeeDetails";
 import NotFoundPage from "./components/NotFoundPage";
 import { useEffect } from "react";
 import { startAuthListener } from "./store/authListener";
-import { store } from "./store/store";
-
+import { useStore } from "react-redux";
 function App() {
     useDirection();
+    console.log("APP MOUNTED");
+
+    const store = useStore();
 
     useEffect(() => {
         const stop = startAuthListener(store);

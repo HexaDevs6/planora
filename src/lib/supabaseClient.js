@@ -18,3 +18,6 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
  * You can import { supabase } anywhere in your project
  * to access authentication, database, and storage APIs.
  */
+if (typeof window !== "undefined") {
+    window.supabase = supabase;
+}

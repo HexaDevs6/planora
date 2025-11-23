@@ -10,6 +10,7 @@ import hostEventTicketsReducer from "@/store/tickets/hostEventTicketsSlice";
 import { hostDashboardApi } from "@/features/hostDashboard/hostDashboard.api";
 
 export const store = configureStore({
+  
   reducer: {
     auth: authReducer,
     categories: categoriesReducer,
@@ -21,6 +22,10 @@ export const store = configureStore({
     hostTickets: hostEventTicketsReducer,
     [hostDashboardApi.reducerPath]: hostDashboardApi.reducer,
   },
+  
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(hostDashboardApi.middleware),
+  
 });
+
+
