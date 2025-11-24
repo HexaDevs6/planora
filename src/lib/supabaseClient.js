@@ -11,13 +11,27 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
         storage: localStorage,
         persistSession: true,
         autoRefreshToken: true,
+        detectSessionInUrl: true,
+        flowType: 'pkce',
+    },
+    global: {
+        headers: {
+            'x-client-info': 'planora-web',
+        },
+    },
+    db: {
+        schema: 'public',
+    },
+    // Add timeout for requests
+    realtime: {
+        timeout: 10000,
     },
 });
 /**
- *  This file initializes the Supabase client once.
- * You can import { supabase } anywhere in your project
- * to access authentication, database, and storage APIs.
- */
+ 
+This file initializes the Supabase client once.
+You can import { supabase } anywhere in your project
+to access authentication, database, and storage APIs.*/
 if (typeof window !== "undefined") {
     window.supabase = supabase;
 }
