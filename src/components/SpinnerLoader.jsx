@@ -1,5 +1,6 @@
 import { useDirection } from "@/hooks/useDirection";
 import React from "react";
+import { Button } from "./ui/button";
 
 export default function Spinner({ message }) {
     const { lang } = useDirection();
@@ -30,6 +31,12 @@ export default function Spinner({ message }) {
                 <p className='text-primary text-sm font-medium text-center leading-relaxed'>
                     {finalMessage}
                 </p>
+                <Button
+                    className='w-36'
+                    variant='link'
+                    onClick={() => window.location.reload()}>
+                    {lang === "ar" ?  "اذا لم يتم تحويلك، اضغط هنا" : "Feel stuck? Click here."}
+                </Button>
             </div>
         </div>
     );
