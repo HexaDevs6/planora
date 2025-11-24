@@ -55,7 +55,8 @@ export const Dropzone = ({
   return (
     <DropzoneContext.Provider
       key={JSON.stringify(src)}
-      value={{ src, accept, maxSize, minSize, maxFiles }}>
+      value={{ src, accept, maxSize, minSize, maxFiles }}
+      >
       <Button
         className={cn(
           'relative h-auto w-full flex-col overflow-hidden p-2 md:p-4 lg:p-8',
@@ -87,7 +88,8 @@ const maxLabelItems = 3;
 
 export const DropzoneContent = ({
   children,
-  className
+  className,
+  lang = "en"
 }) => {
   const { src } = useDropzoneContext();
 
@@ -111,7 +113,7 @@ export const DropzoneContent = ({
           : new Intl.ListFormat('en').format(src.map((file) => file.name))}
       </p>
       <p className="w-full text-wrap text-muted-foreground text-xs">
-        Drag and drop or click to replace
+        {lang === "ar" ? "اسحب وأفلت أو انقر لتبديل" : "Drag and drop or click to replace"}
       </p>
     </div>
   );
@@ -119,7 +121,8 @@ export const DropzoneContent = ({
 
 export const DropzoneEmptyState = ({
   children,
-  className
+  className,
+  lang = "en"
 }) => {
   const { src, accept, maxSize, minSize, maxFiles } = useDropzoneContext();
 
@@ -153,10 +156,10 @@ export const DropzoneEmptyState = ({
         <UploadIcon size={16} />
       </div>
       <p className="my-2 w-full truncate text-wrap font-medium text-sm">
-        Upload {maxFiles === 1 ? 'a file' : 'files'}
+        {lang === "ar" ? "حمل ملف" : "Upload"} {maxFiles === 1 ? 'a file' : 'files'}
       </p>
       <p className="w-full truncate text-wrap text-muted-foreground text-xs">
-        Drag and drop or click to upload
+        {lang === "ar" ? "اسحب وأفلت أو انقر لتحميل" : "Drag and drop or click to upload"}
       </p>
       {caption && (
         <p className="text-wrap text-muted-foreground text-xs">{caption}.</p>

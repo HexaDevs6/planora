@@ -129,6 +129,7 @@ export default function UserOverview() {
             <div key={event.id} className="flex-shrink-0 min-w-[300px]">
               <BoardCard
                 title={event.name}
+                title_ar={event.name_ar}
                 image={event.thumbnail}
                 location={event.location}
                 date={event.date}

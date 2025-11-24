@@ -8,9 +8,10 @@ import {
    SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { CirclePlus } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 export default function NavMain({ items, lang = "en", userRole }) {
+   const { pathname } = useLocation();
    const addButtonLabel =
       userRole === "host"
          ? lang === "ar"
@@ -43,16 +44,18 @@ export default function NavMain({ items, lang = "en", userRole }) {
                </SidebarMenuItem>
             </SidebarMenu>
             <SidebarMenu>
-               {items.map((item, i) => (
-                  <SidebarMenuItem key={i}>
-                     <SidebarMenuButton tooltip={item.label[lang]} asChild>
+               {items.map((item, i) => {
+                  const isActive = pathname === item.url;
+                  return (<SidebarMenuItem key={i}>
+                     <SidebarMenuButton tooltip={item.label[lang]} asChild isActive={isActive}>
                         <Link to={item.url}>
                            {item.icon && <item.icon />}
                            <span>{item.label[lang]}</span>
                         </Link>
                      </SidebarMenuButton>
-                  </SidebarMenuItem>
-               ))}
+                  </SidebarMenuItem>)
+               }
+               )}
             </SidebarMenu>
          </SidebarGroupContent>
       </SidebarGroup>

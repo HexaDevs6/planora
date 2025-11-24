@@ -1,10 +1,18 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { planoraEvents, planoraServices, planoraFAQs, aboutPlanora, userInterests } from "../data/planoraData";
+import { planoraFAQs, aboutPlanora, userInterests } from "../data/planoraData";
+import { supabase } from "@/lib/supabaseClient";
 
 // Initialize Gemini AI
 let genAI = null;
 let model = null;
+
 let currentLanguage = 'en';
+// Cache for events and services data
+let cachedEvents = [];
+let cachedServices = [];
+let cachedCategories = [];
+let lastFetchTime = null;
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 export const initializeGemini = (apiKey, language = 'en') => {
   try {
@@ -19,28 +27,121 @@ export const initializeGemini = (apiKey, language = 'en') => {
   }
 };
 
-// Create context from Planora data
-const createPlanoraContext = (language = 'en') => {
-  const eventsContext = planoraEvents.map(event => 
-    `Event: ${event.title}
-    Category: ${event.category}
-    Date: ${event.date} at ${event.time}
-    Location: ${event.location}, ${event.city}
-    Description: ${event.description}
-    Ticket Price: ${event.ticketPrice} EGP
-    Capacity: ${event.capacity} attendees
-    Tags: ${event.tags.join(", ")}`
-  ).join("\n\n");
+// Fetch categories from Supabase
+const fetchCategories = async () => {
+  try {
+    const { data, error } = await supabase
+      .from("categories")
+      .select("*");
 
-  const servicesContext = planoraServices.map(service =>
-    `Service: ${service.name} (${service.category})
-    Description: ${service.description}`
-  ).join("\n\n");
+    if (error) throw error;
+    cachedCategories = data || [];
+    return cachedCategories;
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    return [];
+  }
+};
+
+// Fetch events from Supabase
+const fetchEvents = async () => {
+  try {
+    const { data, error } = await supabase
+      .from("events")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+    cachedEvents = data || [];
+    return cachedEvents;
+  } catch (error) {
+    console.error("Error fetching events:", error);
+    return [];
+  }
+};
+
+// Fetch services from Supabase
+const fetchServices = async () => {
+  try {
+    const { data, error } = await supabase
+      .from("services")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+    cachedServices = data || [];
+    return cachedServices;
+  } catch (error) {
+    console.error("Error fetching services:", error);
+    return [];
+  }
+};
+
+// Get or refresh cached data
+const getPlanoraData = async () => {
+  const now = Date.now();
+  
+  // If cache is empty or expired, fetch fresh data
+  if (!lastFetchTime || (now - lastFetchTime) > CACHE_DURATION || 
+      cachedEvents.length === 0 || cachedServices.length === 0) {
+    
+    // Fetch all data in parallel
+    await Promise.all([
+      fetchCategories(),
+      fetchEvents(),
+      fetchServices()
+    ]);
+    
+    lastFetchTime = now;
+  }
+  
+  return {
+    events: cachedEvents,
+    services: cachedServices,
+    categories: cachedCategories
+  };
+};
+
+// Helper to get category name by ID
+const getCategoryName = (categoryId, language = 'en') => {
+  const category = cachedCategories.find(cat => cat.id === categoryId);
+  if (!category) return 'Unknown Category';
+  return language === 'ar' ? (category.name_ar || category.name) : category.name;
+};
+
+// Create context from Planora data (now uses Supabase data)
+const createPlanoraContext = async (language = 'en') => {
+  // Get fresh or cached data from Supabase
+  const { events, services } = await getPlanoraData();
+  
+  // Map events to context format
+  const eventsContext = events.map(event => {
+    const categoryName = getCategoryName(event.category_id, language);
+    return `Event: ${event.name}
+    ID: ${event.id}
+    Category: ${categoryName}
+    Date: ${event.date} at ${event.time || 'TBD'}
+    Location: ${event.location || 'TBD'}
+    Description: ${event.description || 'No description available'}
+    Ticket Price: ${event.price || 0} EGP
+    Capacity: ${event.capacity || 'N/A'} attendees`;
+  }).join("\n\n");
+
+  // Map services to context format
+  const servicesContext = services.map(service => {
+    const categoryName = getCategoryName(service.category_id, language);
+    return `Service: ${service.name} (${categoryName})
+    Description: ${service.description || 'No description available'}`;
+  }).join("\n\n");
 
   const faqsContext = planoraFAQs.map(faq =>
     `Q: ${faq.question}
     A: ${faq.answer}`
   ).join("\n\n");
+
+  // Return empty contexts if no data available
+  const eventsText = eventsContext || (language === 'ar' ? 'لا توجد فعاليات متاحة حالياً.' : 'No events available at the moment.');
+  const servicesText = servicesContext || (language === 'ar' ? 'لا توجد خدمات متاحة حالياً.' : 'No services available at the moment.');
 
   if (language === 'ar') {
     return `
@@ -68,10 +169,10 @@ ${aboutPlanora.features.map(f => `- ${f}`).join("\n")}
 ${userInterests.join("، ")}
 
 الفعاليات الحالية على بلانورا:
-${eventsContext}
+${eventsText}
 
 الخدمات المتاحة:
-${servicesContext}
+${servicesText}
 
 الأسئلة الشائعة:
 ${faqsContext}
@@ -102,6 +203,10 @@ ${faqsContext}
 4. استخدمي أمثلة محددة من الفعاليات المتاحة لما تتكلمي
 5. لو حد سألك "عامل ايه؟" أو "ازيك؟"، رديلهم زي الصديقة: "الحمد لله كويسة! 😊 عايز أساعدك تلاقي فعالية حلوة تحضرها؟"
 6. استخدمي ايموجي بشكل طبيعي ومش كتير (واحد أو اتنين بس)
+7. **مهم جداً:** لما ترشحي فعاليات محددة من الفعاليات اللي فوق، في آخر الرد بتاعك حطي تاج بالشكل ده:
+   - لو فعالية واحدة: [EVENT_IDS:معرف_الفعالية]
+   - لو أكتر من فعالية: [EVENT_IDS:معرف1,معرف2,معرف3]
+   استخدمي الـ ID اللي موجود في بيانات الفعالية. التاج ده سري ومش للعرض - ما تشرحيهوش أو تذكريه في كلامك للمستخدم
 
 ** التخصيص الشخصي المهم جداً: **
 - لو في معلومات شخصية عن المستخدم (اسمه، اهتماماته، نوعه)، استخدميها علشان تديله اقتراحات مخصصة ليه!
@@ -139,10 +244,10 @@ AVAILABLE EVENT CATEGORIES:
 ${userInterests.join(", ")}
 
 CURRENT EVENTS ON PLANORA:
-${eventsContext}
+${eventsText}
 
 AVAILABLE SERVICES:
-${servicesContext}
+${servicesText}
 
 FREQUENTLY ASKED QUESTIONS:
 ${faqsContext}
@@ -173,6 +278,10 @@ IMPORTANT RULES:
 4. Use specific examples from the available events when you talk
 5. If someone asks "How are you?" or "What's up?", respond like a friend: "I'm doing great! 😊 Want me to help you find some awesome events to check out?"
 6. Use emojis naturally but sparingly (just one or two)
+7. **CRITICAL:** When you recommend specific events from the list above, at the very end of your response add a tag in this format:
+   - For one event: [EVENT_IDS:event_identifier]
+   - For multiple events: [EVENT_IDS:id1,id2,id3]
+   Use the exact IDs from the event data above. This tag is secret and internal - do NOT explain or mention it in your response to the user
 
 ** PERSONALIZATION IS KEY: **
 - If you have personal information about the user (name, interests, user type), USE IT to give personalized suggestions!
@@ -193,12 +302,12 @@ const createUserContext = (userData, language = 'en') => {
   if (language === 'ar') {
     let userContext = '\n\nمعلومات المستخدم الشخصية:\n';
     
-    if (userData.name) {
-      userContext += `- الاسم: ${userData.name}\n`;
+    if (userData.full_name) {
+      userContext += `- الاسم: ${userData.full_name}\n`;
     }
     
-    if (userData.userType) {
-      const typeLabel = userData.userType === 'vendor' ? 'منظم/مقدم خدمات' : 'عميل/حاضر فعاليات';
+    if (userData.role) {
+      const typeLabel = userData.role === 'host' ? 'منظم' : 'عميل/حاضر فعاليات';
       userContext += `- النوع: ${typeLabel}\n`;
     }
     
@@ -225,6 +334,22 @@ const createUserContext = (userData, language = 'en') => {
     if (userData.businessDescription) {
       userContext += `- وصف العمل: ${userData.businessDescription}\n`;
     }
+
+    if (userData.bio) {
+      userContext += `- البيوغرافيا: ${userData.bio}\n`;
+    }
+
+    if (userData.location) {
+      userContext += `- الموقع: ${userData.location}\n`;
+    }
+
+    if (userData.facebook_url) {
+      userContext += `- Facebook URL: ${userData.facebook_url}\n`;
+    }
+
+    if (userData.instagram_url) {
+      userContext += `- Instagram URL: ${userData.instagram_url}\n`;
+    }
     
     userContext += '\n** استخدمي هذه المعلومات لتقديم اقتراحات شخصية ومناسبة للمستخدم! **\n';
     return userContext;
@@ -233,12 +358,12 @@ const createUserContext = (userData, language = 'en') => {
   // English version
   let userContext = '\n\nUSER PROFILE INFORMATION:\n';
   
-  if (userData.name) {
-    userContext += `- Name: ${userData.name}\n`;
+  if (userData.full_name) {
+    userContext += `- Name: ${userData.full_name}\n`;
   }
   
-  if (userData.userType) {
-    const typeLabel = userData.userType === 'vendor' ? 'Organizer/Service Provider' : 'Client/Event Attendee';
+  if (userData.role) {
+    const typeLabel = userData.role === 'host' ? 'Host' : 'Client';
     userContext += `- User Type: ${typeLabel}\n`;
   }
   
@@ -265,7 +390,23 @@ const createUserContext = (userData, language = 'en') => {
   if (userData.businessDescription) {
     userContext += `- Business Description: ${userData.businessDescription}\n`;
   }
-  
+
+  if (userData.bio) {
+    userContext += `- Bio: ${userData.bio}\n`;
+  }
+
+  if (userData.location) {
+    userContext += `- Location: ${userData.location}\n`;
+  }
+
+  if (userData.facebook_url) {
+    userContext += `- Facebook URL: ${userData.facebook_url}\n`;
+  }
+
+  if (userData.instagram_url) {
+    userContext += `- Instagram URL: ${userData.instagram_url}\n`;
+  }
+
   userContext += '\n** Use this information to provide personalized and relevant suggestions! **\n';
   return userContext;
 };
@@ -347,7 +488,7 @@ const isPlanoraRelated = (message) => {
  * 
  * const response = await sendMessage('What events do you recommend?', [], 'en', userData);
  */
-export const sendMessage = async (message, conversationHistory = [], language = 'en', userData = null) => {
+export const sendMessage = async (message, conversationHistory = [], language = 'en', user = null) => {
   if (!model) {
     throw new Error("Gemini AI not initialized. Please provide an API key.");
   }
@@ -365,29 +506,52 @@ export const sendMessage = async (message, conversationHistory = [], language = 
       };
     }
 
-    const planoraContext = createPlanoraContext(language);
-    const userContext = createUserContext(userData, language);
-    
+    const planoraContext = await createPlanoraContext(language);
+    const userContext = createUserContext(user, language);
     // Build conversation history
     const conversationLabel = language === 'ar' ? "المحادثة" : "CONVERSATION";
-    const userLabel = language === 'ar' ? "المستخدم" : "User";
     const aiLabel = language === 'ar' ? "بلانورا AI" : "Planora AI";
     
     let conversationPrompt = planoraContext + userContext + `\n\n${conversationLabel}:\n`;
     
     conversationHistory.forEach(msg => {
-      conversationPrompt += `${msg.role === "user" ? userLabel : aiLabel}: ${msg.content}\n`;
+      conversationPrompt += `${aiLabel}: ${msg.content}\n`;
     });
     
-    conversationPrompt += `${userLabel}: ${message}\n${aiLabel}:`;
+    conversationPrompt += `User: ${message}\n${aiLabel}:`;
 
     const result = await model.generateContent(conversationPrompt);
     const response = await result.response;
-    const text = response.text();
+    let text = response.text();
+
+    // Extract EVENT_IDS tag if present (supports multiple events)
+    let linkedEvents = [];
+    const eventIdsRegex = /\[EVENT_IDS:([^\]]+)\]/;
+    const match = text.match(eventIdsRegex);
+    
+    if (match) {
+      const extractedIds = match[1].split(',').map(id => id.trim());
+      console.log('🎯 AI recommended events with IDs:', extractedIds);
+      
+      // Find all events in cached events
+      extractedIds.forEach(extractedId => {
+        const event = cachedEvents.find(e => e.id === extractedId);
+        if (event) {
+          linkedEvents.push(event);
+          console.log('✅ Found linked event:', event.name);
+        } else {
+          console.warn('⚠️ Event ID not found in cached events:', extractedId);
+        }
+      });
+      
+      // Remove the tag from the text so user doesn't see it
+      text = text.replace(match[0], '').trim();
+    }
 
     return {
       text: text.trim(),
-      isRestricted: false
+      isRestricted: false,
+      events: linkedEvents.length > 0 ? linkedEvents : null
     };
   } catch (error) {
     console.error("Error sending message to Gemini:", error);
@@ -395,29 +559,35 @@ export const sendMessage = async (message, conversationHistory = [], language = 
   }
 };
 
-// Search events by category or keyword
-export const searchEvents = (query) => {
+// Search events by category or keyword (now uses cached Supabase data)
+export const searchEvents = async (query) => {
+  await getPlanoraData(); // Ensure data is loaded
   const lowerQuery = query.toLowerCase();
-  return planoraEvents.filter(event => 
-    event.title.toLowerCase().includes(lowerQuery) ||
-    event.category.toLowerCase().includes(lowerQuery) ||
-    event.description.toLowerCase().includes(lowerQuery) ||
-    event.tags.some(tag => tag.toLowerCase().includes(lowerQuery))
-  );
+  return cachedEvents.filter(event => {
+    const categoryName = getCategoryName(event.category_id).toLowerCase();
+    return (
+      event.name.toLowerCase().includes(lowerQuery) ||
+      categoryName.includes(lowerQuery) ||
+      (event.description && event.description.toLowerCase().includes(lowerQuery))
+    );
+  });
 };
 
-// Get events by interest
-export const getEventsByInterest = (interest) => {
-  return planoraEvents.filter(event => 
-    event.category === interest
-  );
+// Get events by interest (now uses cached Supabase data)
+export const getEventsByInterest = async (interest) => {
+  await getPlanoraData(); // Ensure data is loaded
+  return cachedEvents.filter(event => {
+    const categoryName = getCategoryName(event.category_id);
+    return categoryName.toLowerCase() === interest.toLowerCase();
+  });
 };
 
-// Get upcoming events
-export const getUpcomingEvents = () => {
+// Get upcoming events (now uses cached Supabase data)
+export const getUpcomingEvents = async () => {
+  await getPlanoraData(); // Ensure data is loaded
   const today = new Date();
-  return planoraEvents
-    .filter(event => new Date(event.date) >= today)
+  return cachedEvents
+    .filter(event => event.date && new Date(event.date) >= today)
     .sort((a, b) => new Date(a.date) - new Date(b.date))
     .slice(0, 5);
 };

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Star, Sparkle, Sparkles } from "lucide-react";
+import { X } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import VoiceChat from "./VoiceChat";
@@ -8,18 +8,11 @@ import { initializeGemini, sendMessage } from "@/services/geminiService";
 import { MissingApiKeyScreen } from "@/pages/PlanoraAi";
 import AiPlanoraWidget from "./AiPlanoraWidget";
 import { useDirection } from "@/hooks/useDirection";
-
-const userData = {
-   name: "Mahmoud",
-   userType: "client",
-   interests: ["Music Concerts", "Tech Conferences"],
-   eventPreferences:
-      "I'm a frontend developer and I love tech events and music concerts",
-   phone: "+20123456789",
-};
+import { useSelector } from "react-redux";
 
 const ChatWidget = () => {
    const { t, i18n } = useTranslation();
+   const { user } = useSelector((state) => state.auth);
    const currentLang = i18n.language;
    const { lang } = useDirection();
    const [open, setOpen] = useState(false);
@@ -50,7 +43,7 @@ const ChatWidget = () => {
             userMessage,
             messages,
             currentLang,
-            userData
+            user
          );
 
          // Add AI response to chat
@@ -58,6 +51,7 @@ const ChatWidget = () => {
             role: "assistant",
             content: response.text,
             isRestricted: response.isRestricted,
+            events: response.events || null,
          };
 
          setMessages((prev) => [...prev, newAIMessage]);
@@ -114,7 +108,6 @@ const ChatWidget = () => {
       const success = initializeGemini(envApiKey, currentLang);
       if (success) {
          setIsInitialized(true);
-         // toast.success(t('planoraAi.toast.ready'));
 
          // Send welcome message
          setMessages([
@@ -131,18 +124,7 @@ const ChatWidget = () => {
 
    return (
       <>
-         {/* <motion.button
-            onClick={() => setOpen(!open)}
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", stiffness: 200 }}
-            className="fixed bottom-6 bg-gradient-amber right-6 z-50 size-14  text-white rounded-full p-4 shadow-xl flex items-center justify-center"
-         >
-            <Sparkles className="text-violet" />
-         </motion.button> */}
-
-            <AiPlanoraWidget open={open} setOpen={setOpen} />
-
+         <AiPlanoraWidget open={open} setOpen={setOpen} />
 
          <AnimatePresence>
             {open && (
@@ -151,10 +133,14 @@ const ChatWidget = () => {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 30, scale: 0.9 }}
                   transition={{ type: "spring", stiffness: 250, damping: 20 }}
-                  className={`fixed bottom-20 ${lang === "ar" ? "left-4" : "right-4"} sm:bottom-20 sm:${lang === "ar" ? "left-6" : "right-6"} z-50 
-  w-[90%] max-w-[480px] h-[80vh] sm:h-[520px] 
-  bg-background/50 backdrop-blur-md border border-border shadow-2xl 
-  rounded-2xl overflow-hidden flex flex-col`}
+                  className={`fixed bottom-20 ${
+                     lang === "ar" ? "left-4" : "right-4"
+                  } sm:bottom-20 sm:${
+                     lang === "ar" ? "left-6" : "right-6"
+                  } z-50 
+                  w-[90%] max-w-[480px] h-[75vh] max-h-[700px]
+                  bg-background/50 backdrop-blur-md border border-border shadow-2xl 
+                  rounded-2xl overflow-hidden flex flex-col`}
                >
                   <div className="flex items-center py-2 justify-between px-4 bg-amber/50 text-white">
                      <h3 className="text-sm font-semibold text-foreground">
