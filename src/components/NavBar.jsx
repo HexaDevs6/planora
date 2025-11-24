@@ -11,9 +11,11 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { Button } from "./ui/button";
 import { useTranslation } from "react-i18next";
 import { handleSignOut } from "@/components/auth/handleSignOut";
+import { useDirection } from "@/hooks/useDirection";
 
 export default function NavBar() {
    const [open, setOpen] = useState(false);
+   const { lang, direction } = useDirection();
    const toggleMenu = useCallback(() => setOpen((prev) => !prev), []);
    const { pathname } = useLocation();
    const { user } = useSelector((state) => state.auth);
@@ -98,7 +100,7 @@ export default function NavBar() {
                      </Button>
                   </Link>
                ) : (
-                  <DropdownMenu>
+                  <DropdownMenu dir={direction}>
                      <DropdownMenuTrigger asChild>
                         <Avatar className="cursor-pointer">
                            <AvatarImage
@@ -114,13 +116,13 @@ export default function NavBar() {
                      <DropdownMenuContent align="end">
                         <DropdownMenuItem asChild>
                            <Link to={user.role === "host" ? "/host/overview" : "/user/overview"}>
-                              Dashboard
+                              {lang === "ar" ? "لوحة التحكم" : "Dashboard"}
                            </Link>
                         </DropdownMenuItem>
 
                         <DropdownMenuItem asChild>
                            <Link to={user.role === "host" ? "/host/settings" : "/user/settings"}>
-                              Settings
+                              {lang === "ar" ? "الإعدادات" : "Settings"}
                            </Link>
                         </DropdownMenuItem>
 

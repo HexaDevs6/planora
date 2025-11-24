@@ -125,7 +125,7 @@ const EventDetails = () => {
                {/* RIGHT SECTION */}
                <div className="lg:col-span-1 space-y-8">
                   {/* Countdown */}
-                  <EventCountdown details={event} eventId={event?.id} user={user} lang={lang} />
+                  <EventCountdown details={event} eventId={event?.id} hostId={event?.host_id} user={user} lang={lang} />
 
                   <div className="gradient-card rounded-xl p-6 text-center">
                      <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-4">

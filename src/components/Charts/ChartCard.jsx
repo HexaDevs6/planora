@@ -10,16 +10,12 @@ export default function ChartCard({ title, subtitle, children }) {
         w-full 
         rounded-sm
         p-3 
-        bg-card 
-        text-card-foreground 
-        shadow-[0_4px_20px_rgba(0,0,0,0.05)]
-        dark:shadow-[0_4px_25px_rgba(0,0,0,0.25)]
+        bg-background 
+        text-foreground 
+        shadow-md
         border border-border 
         transition-all 
         duration-300 
-        hover:shadow-[0_6px_25px_rgba(0,0,0,0.08)]
-        dark:hover:shadow-[0_6px_25px_rgba(0,0,0,0.35)]
-        hover:border-amber/60
         animate-fadeIn
       '
             style={{

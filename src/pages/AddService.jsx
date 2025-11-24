@@ -24,6 +24,8 @@ import { uploadFile, deleteFile } from "@/lib/storage";
 import { useTranslation } from "react-i18next";
 import { Loader2 } from "lucide-react";
 import { ServiceSchema } from "@/validators";
+import { getPublicUrl } from "@/lib/storage";
+import loremImg from "@/assets/lorem.jfif";
 
 
 export default function AddService() {
@@ -52,6 +54,15 @@ export default function AddService() {
       thumbnail: null,
       images: [],
    });
+
+   const handleImages = (el) => {
+      if (!el) return loremImg;
+      console.log(typeof el);
+      if (typeof el === "string" && el.startsWith("http")) return el;
+      if (typeof el === "string") return getPublicUrl("services", el);
+      if (typeof el === "object") return el.map((img) => getPublicUrl("services", img.path));
+      return loremImg;
+   };
 
    useEffect(() => {
       if (serviceId) {
@@ -509,7 +520,7 @@ export default function AddService() {
                </div>
 
                {/* Thumbnail */}
-               <div className="md:col-span-2 lg:col-span-1">
+               <div className="md:col-span-2">
                   <Label
                      htmlFor="thumbnail"
                      className="block text-sm font-semibold mb-2"
@@ -519,7 +530,7 @@ export default function AddService() {
                   <DragZone
                      onChange={handleChangeThumbnail}
                      acceptMultiple={false}
-                     files={serviceId ? [formData.thumbnail] : null}
+                     files={serviceId && formData.thumbnail ? handleImages(formData.thumbnail) : null}
                   />
                   {errors?.thumbnail && (
                      <p className="text-red-500 text-xs mt-1">{errors.thumbnail[0]}</p>
@@ -528,7 +539,7 @@ export default function AddService() {
                </div>
 
                {/* Images */}
-               <div className="md:col-span-2 lg:col-span-1">
+               <div className="md:col-span-2">
                   <Label
                      htmlFor="images"
                      className="block text-sm font-semibold mb-2"
@@ -538,7 +549,7 @@ export default function AddService() {
                   <DragZone
                      onChange={handleChangeImages}
                      acceptMultiple={true}
-                     files={serviceId ? formData.images : null}
+                     files={serviceId && formData.images ? handleImages(formData.images) : null}
                      maxFiles={5}
                   />
                   {errors?.images && (
@@ -556,7 +567,16 @@ export default function AddService() {
                         variant="amber"
                         size="lg"
                      >
-                        {loading ? "Updating..." : "Update Service"}
+                        {loading ? (
+                           <>
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                              <span>{t("common.loading")}</span>
+                           </>
+                        ) : lang === "ar" ? (
+                           "تحديث الخدمة"
+                        ) : (
+                           "Update Service"
+                        )}
                      </Button>
                   ) : (
                      <Button

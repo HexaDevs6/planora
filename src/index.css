@@ -62,6 +62,9 @@
   --color-sidebar-content: var(--sidebar-content);
   --animate-shine: shine var(--duration) infinite linear;
   --color-swith : var(--swith);
+
+  --swal2-background: var(--background);
+  --swal2-color: var(--foreground);
 }
 
 @keyframes shine {
