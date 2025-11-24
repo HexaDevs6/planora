@@ -2,59 +2,56 @@
 import { supabase } from "@/lib/supabaseClient";
 import { setUser, clearUser } from "./authSlice";
 
-export const startAuthListener = async (store) => {
-  // -----------------------
-  // 1) GET EXISTING SESSION
-  // -----------------------
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+export const startAuthListener = (store) => {
+    // -------------------------
+    // 1) Initial session load
+    // -------------------------
+    supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session?.user) {
+            store.dispatch(setUser(session.user));
+        } else {
+            store.dispatch(clearUser());
+        }
+    });
 
-  if (session?.user) {
-    await fetchAndStoreUser(session.user.id, store);
-  } else {
-    store.dispatch(clearUser());
-  }
+    // -----------------------------------
+    // 2) Lightweight Auth Event Listener
+    // -----------------------------------
+    supabase.auth.onAuthStateChange((event, session) => {
+        console.log("AUTH EVENT:", event);
 
-  // -----------------------
-  // 2) LISTEN FOR CHANGES
-  // -----------------------
-  supabase.auth.onAuthStateChange(async (event, session) => {
-    console.log("Auth event:", event);
+        if (event === "SIGNED_IN" || event === "INITIAL_SESSION") {
+            if (session?.user) store.dispatch(setUser(session.user));
+        }
 
-    if (event === "SIGNED_OUT") {
-      store.dispatch(clearUser());
-      return;
-    }
+        if (event === "TOKEN_REFRESHED") {
+            if (session?.user) store.dispatch(setUser(session.user));
+        }
 
-    if (session?.user) {
-      await fetchAndStoreUser(session.user.id, store);
-    }
-  });
+        if (event === "SIGNED_OUT") {
+            store.dispatch(clearUser());
+        }
+    });
 
-  // ❗ VERY IMPORTANT:
-  // Don't return unsubscribe and DON'T REMOVE the listener.
-  // Supabase listens internally and manages refresh tokens.
+    // -----------------------------------------------------
+    // 3) OPTIONAL — Load DB Profile AFTER the callback finishes
+    // -----------------------------------------------------
+    supabase.auth.onAuthStateChange((event, session) => {
+        if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+            if (!session?.user) return;
+
+            // run AFTER Supabase event: allowed
+            setTimeout(async () => {
+                const { data: profile } = await supabase
+                    .from("users")
+                    .select("*")
+                    .eq("id", session.user.id)
+                    .maybeSingle();
+
+                if (profile) {
+                    store.dispatch(setUser({ ...session.user, ...profile }));
+                }
+            }, 0);
+        }
+    });
 };
-
-// ------------------------------------------
-// Helper to fetch user from Database
-// ------------------------------------------
-async function fetchAndStoreUser(userId, store) {
-  try {
-    const { data: userData } = await supabase
-      .from("users")
-      .select("*")
-      .eq("id", userId)
-      .maybeSingle();
-
-    if (userData) {
-      store.dispatch(setUser(userData));
-    } else {
-      store.dispatch(clearUser());
-    }
-  } catch (err) {
-    console.error("Fetch user error:", err.message);
-    store.dispatch(clearUser());
-  }
-}
