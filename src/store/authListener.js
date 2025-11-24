@@ -1,63 +1,57 @@
+// src/store/auth/startAuthListener.js
 import { supabase } from "@/lib/supabaseClient";
 import { setUser, clearUser } from "./authSlice";
 
-export const startAuthListener = async (store) => {
-
-  // ✅ Check existing session on app start
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  if (session?.user) {
-    try {
-      const { data: userData } = await supabase
-        .from("users")
-        .select("*")
-        .eq("id", session.user.id)
-        .maybeSingle();
-
-      if (userData) {
-        store.dispatch(setUser(userData)); // ✅ ONLY DB data
-      } else {
-        store.dispatch(clearUser());
-      }
-    } catch (err) {
-      console.error("Initial session fetch error:", err.message);
-      store.dispatch(clearUser());
-    }
-  } else {
-    store.dispatch(clearUser());
-  }
-
-  // ✅ Listen for auth state changes normally
-  const { data: listener } = supabase.auth.onAuthStateChange(
-    async (event, session) => {
-      console.log("Auth event:", event);
-
-      if (event === "SIGNED_OUT") {
-        store.dispatch(clearUser());
-        return;
-      }
-
-      if (session?.user) {
-        try {
-          const { data: userData } = await supabase
-            .from("users")
-            .select("*")
-            .eq("id", session.user.id)
-            .maybeSingle();
-
-          if (userData) {
-            store.dispatch(setUser(userData));
-          } else {
+export const startAuthListener = (store) => {
+    // -------------------------
+    // 1) Initial session load
+    // -------------------------
+    supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session?.user) {
+            store.dispatch(setUser(session.user));
+        } else {
             store.dispatch(clearUser());
-          }
-        } catch (err) {
-          console.error("Listener fetch error:", err.message);
         }
-      }
-    }
-  );
+    });
 
-  return () => listener?.subscription?.unsubscribe?.();
+    // -----------------------------------
+    // 2) Lightweight Auth Event Listener
+    // -----------------------------------
+    supabase.auth.onAuthStateChange((event, session) => {
+        console.log("AUTH EVENT:", event);
+
+        if (event === "SIGNED_IN" || event === "INITIAL_SESSION") {
+            if (session?.user) store.dispatch(setUser(session.user));
+        }
+
+        if (event === "TOKEN_REFRESHED") {
+            if (session?.user) store.dispatch(setUser(session.user));
+        }
+
+        if (event === "SIGNED_OUT") {
+            store.dispatch(clearUser());
+        }
+    });
+
+    // -----------------------------------------------------
+    // 3) OPTIONAL — Load DB Profile AFTER the callback finishes
+    // -----------------------------------------------------
+    supabase.auth.onAuthStateChange((event, session) => {
+        if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+            if (!session?.user) return;
+
+            // run AFTER Supabase event: allowed
+            setTimeout(async () => {
+                const { data: profile } = await supabase
+                    .from("users")
+                    .select("*")
+                    .eq("id", session.user.id)
+                    .maybeSingle();
+
+                if (profile) {
+                    store.dispatch(setUser({ ...session.user, ...profile }));
+                }
+            }, 0);
+        }
+    });
 };

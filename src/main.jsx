@@ -5,10 +5,11 @@ import "./index.css";
 import App from "./App";
 import "./i18n"; // Initialize i18n before rendering App
 import { store } from "@/store/store";
+import { startAuthListener } from "./store/authListener";
 
-
+startAuthListener(store);
 createRoot(document.getElementById("root")).render(
-        <Provider store={store}>
-            <App />
-        </Provider>
-)
+    <Provider store={store}>
+        <App />
+    </Provider>
+);
