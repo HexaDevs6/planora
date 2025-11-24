@@ -22,6 +22,8 @@ import { uploadFile, deleteFile } from "@/lib/storage";
 import { Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { EventSchema } from "@/validators"; 
+import { getPublicUrl } from "@/lib/storage";
+// import { loremImg } from "@/lib/loremImg";
 
 
 
@@ -50,8 +52,8 @@ export default function PublishEvent() {
       date: "",
       end_date: "",
       category: "",
-      capacity: "",
-      price: "",
+      capacity: 0,
+      price: 0,
       status: "upcoming",
       thumbnail: null,
       images: [],
@@ -59,20 +61,35 @@ export default function PublishEvent() {
 
    const [originalData, setOriginalData] = useState(null);
 
+   const handleThumbnail = (el) => {
+      if (!el) return loremImg;
+      if (typeof el === "string" && el.startsWith("http")) return el;
+      if (typeof el === "string") return getPublicUrl("events", el);
+      return loremImg;
+   };
+
    useEffect(() => {
       if (eventId) {
          setLoading(true);
-         const fetchService = async () => {
+         const fetchEvents = async () => {
             const { data, error } = await supabase
                .from("events")
                .select("*")
-               .eq("id", eventId);
+               .eq("id", eventId)
+               .single();
             if (error) {
                console.error(error);
                return;
             } else {
                console.log(data);
-               const event = data[0];
+               const event = data;
+               
+               // Convert ISO dates to YYYY-MM-DD format for date inputs
+               const formatDateForInput = (isoDate) => {
+                  if (!isoDate) return "";
+                  return new Date(isoDate).toISOString().split('T')[0];
+               };
+               
                const eventData = {
                   name: event.name,
                   name_ar: event.name_ar,
@@ -80,13 +97,13 @@ export default function PublishEvent() {
                   description: event.description,
                   description_ar: event.description_ar,
                   category: event.category_id,
-                  price: event.price,
+                  price: Number(event.price),
                   thumbnail: event.thumbnail,
                   images: event.images,
                   location: event.location,
-                  date: event.date,
-                  end_date: event.end_date,
-                  capacity: event.capacity,
+                  date: formatDateForInput(event.date),
+                  end_date: formatDateForInput(event.end_date),
+                  capacity: Number(event.capacity),
                   status: event.status,
                };
                setFormData(eventData);
@@ -94,7 +111,7 @@ export default function PublishEvent() {
                setLoading(false);
             }
          };
-         fetchService();
+         fetchEvents();
       }
    }, [eventId]);
 
@@ -178,6 +195,7 @@ export default function PublishEvent() {
 
          if (!parsed.success) {
             setErrors(parsed.error.flatten().fieldErrors);
+            console.log(parsed.error.flatten().fieldErrors);
 
             const firstKey = Object.keys(parsed.error.flatten().fieldErrors)[0];
             const el = document.getElementById(firstKey);
@@ -343,11 +361,6 @@ export default function PublishEvent() {
       } finally {
          setLoading(false);
       }
-   };
-
-
-   const handleChangeImages = (files) => {
-      setFormData({ ...formData, images: files });
    };
 
    //fix add thumbnail to form
@@ -529,8 +542,9 @@ export default function PublishEvent() {
                            }
                            dir={lang === "ar" ? "rtl" : "ltr"}
                         >
-                           <SelectTrigger className="w-full">
+                           <SelectTrigger className="w-full bg-background shadow-none">
                               <SelectValue
+                                 defaultValue={formData.category}
                                  placeholder={
                                     lang === "ar" ? "اختر فئة الحدث" : "Select category"
                                  }
@@ -570,6 +584,7 @@ export default function PublishEvent() {
                      type="date"
                      value={formData.date}
                      onChange={handleChange}
+                     min={new Date(Date.now() + 86400000).toISOString().split('T')[0]}
                      className="bg-background shadow-none"
                   />
                   {errors?.date && (
@@ -589,6 +604,7 @@ export default function PublishEvent() {
                      type="date"
                      value={formData.end_date}
                      onChange={handleChange}
+                     min={formData.date || new Date(Date.now() + 86400000).toISOString().split('T')[0]}
                      className="bg-background shadow-none"
                   />
                   {errors?.end_date && (
@@ -654,7 +670,7 @@ export default function PublishEvent() {
                   <DragZone
                      onChange={handleChangeThumbnail}
                      acceptMultiple={false}
-                     files={eventId ? [formData.thumbnail] : null}
+                     files={eventId && formData.thumbnail ? handleThumbnail(formData.thumbnail) : null}
                   />
                   {errors?.thumbnail && (
                      <p className="text-red-500 text-xs mt-1">{errors.thumbnail[0]}</p>

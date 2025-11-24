@@ -5,18 +5,19 @@ import { Calendar, MapPin } from "lucide-react";
 import { useDirection } from "@/hooks/useDirection";
 import { getPublicUrl } from "@/lib/storage";
 import loremImg from "@/assets/lorem.jfif";
-import { supabase } from "@/lib/supabaseClient";
-import hostPlaceHolder from "@/assets/user_placeholder1.png";
+// import { supabase } from "@/lib/supabaseClient";
+// import hostPlaceHolder from "@/assets/user_placeholder1.png";
 
 export default function BoardCard({
     image,
     title,
+    title_ar,
     location,
     date,
     eventId,
-    hostId,
+    // hostId,
 }) {
-    const [hostName, setHostName] = useState(null);
+    // const [hostName, setHostName] = useState(null);
     const { lang } = useDirection();
     const handleThumbnail = (el, bucket = "events") => {
         if (!el) return loremImg;
@@ -39,7 +40,7 @@ export default function BoardCard({
                         <Calendar size={16} /> {date.split("T")[0]}
                     </p>
                     <h3 className='text-xl font-bold text-foreground mt-2 truncate'>
-                        {title}
+                        {lang === "ar" ? title_ar : title}
                     </h3>
                     <p className='text-gray-500 truncate'>
                         <MapPin size={16} className=" inline mr-2 my-auto "  />

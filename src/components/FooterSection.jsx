@@ -1,14 +1,13 @@
 import React from "react";
 import { LucideUsers2, Mail } from "lucide-react";
-import { Phone } from "lucide-react";
 import { t } from "i18next";
 import { Link } from "react-router-dom";
 
 export default function FooterSection() {
   return (
-    <footer className="py-16 overflow-hidden bg-background dark:bg-[var(--color-violet-dark)] text-content dark:text-foreground transition-colors duration-500">
+    <footer className="py-16 mt-10 overflow-hidden bg-background dark:bg-[var(--color-violet-dark)] text-content dark:text-foreground transition-colors duration-500">
       <div className="container">
-        <div className="footer__content py-16 grid grid-cols-2 md:grid-cols-5 md:gap-0 gap-10">
+        <div className="footer__content py-16 grid grid-cols-2 lg:grid-cols-5 lg:gap-0 gap-10">
           <div className="col-span-2 flex flex-col gap-7">
             <div className="relative w-48 h-auto">
               <img

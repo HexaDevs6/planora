@@ -9,10 +9,8 @@ export const handleSignOut = async (dispatch, navigate, t) => {
 
       confirmButton: `
         px-5 py-2.5 rounded-lg font-semibold
-        bg-transparent border border-violet-400
-        text-violet-700 dark:text-violet-200
-        hover:bg-violet-100/60 dark:hover:bg-violet-900/40
-        transition-all duration-300 shadow-sm
+        bg-red-500/10 border border-red-600/40 hover:bg-red-600/20
+        text-red-600 dark:text-red-400
       `,
 
       cancelButton: `
@@ -24,7 +22,7 @@ export const handleSignOut = async (dispatch, navigate, t) => {
       `,
 
       popup: `
-        rounded-2xl shadow-xl border border-violet-100 dark:border-violet-800
+        !rounded-xl shadow-xl !border !border-violet-100 dark:!border-violet-light
         bg-[linear-gradient(to_bottom_right,rgba(255,255,255,0.8),rgba(247,233,255,0.9))]
         dark:bg-[linear-gradient(to_bottom_right,rgba(31,7,28,0.95),rgba(51,12,47,0.9))]
         backdrop-blur-md
@@ -39,12 +37,17 @@ export const handleSignOut = async (dispatch, navigate, t) => {
       actions: `
         flex justify-center gap-5 mt-6
       `,
+      container: `
+        backdrop-blur-sm
+      `,
     },
     buttonsStyling: false,
   });
 
   swalWithCustomStyles
     .fire({
+      background: "var(--background)",
+      color: "var(--foreground)",
       title: t("auth.signout.alert.title"),
       text: t("auth.signout.alert.text"),
       icon: "warning",

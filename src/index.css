@@ -61,6 +61,10 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-content: var(--sidebar-content);
   --animate-shine: shine var(--duration) infinite linear;
+  --color-swith : var(--swith);
+
+  --swal2-background: var(--background);
+  --swal2-color: var(--foreground);
 }
 
 @keyframes shine {
@@ -257,7 +261,6 @@
 button {
   cursor: pointer;
 }
-
 /* ---------------- Scrollbar ---------------- */
 .upcoming-events__cards::-webkit-scrollbar {
   height: 8px;

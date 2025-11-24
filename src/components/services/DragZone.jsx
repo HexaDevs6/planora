@@ -3,15 +3,40 @@ import {
    DropzoneContent,
    DropzoneEmptyState,
 } from "@/components/ui/shadcn-io/dropzone";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import i18next from "i18next";
 
-const DragZone = ({ onChange, acceptMultiple = false, files = null, maxFiles = 5 }) => {
+const DragZone = ({ onChange, acceptMultiple = false, files = null, maxFiles = 1 }) => {
    const [file, setFile] = useState(files);
-   const [filePreview, setFilePreview] = useState(acceptMultiple ? files : null);
+   const [filePreview, setFilePreview] = useState(() => {
+      // Initialize preview based on files prop
+      if (!files) return null;
+      
+      if (acceptMultiple) {
+         // For multiple files mode
+         return Array.isArray(files) ? files : [];
+      } else {
+         // For single file mode - if it's a string URL, use it directly
+         return typeof files === 'string' ? files : null;
+      }
+   });
    const lang = i18next.language;
+
+   // Update preview when files prop changes (for edit mode)
+   useEffect(() => {
+      if (files) {
+         setFile(files);
+         if (!acceptMultiple && typeof files === 'string') {
+            // For single file mode with URL string
+            setFilePreview(files);
+         } else if (acceptMultiple && Array.isArray(files)) {
+            // For multiple files mode
+            setFilePreview(files);
+         }
+      }
+   }, [files, acceptMultiple]);
 
    const handleDrop = (acceptedFiles) => {
       console.log(acceptedFiles);   
@@ -117,8 +142,8 @@ const DragZone = ({ onChange, acceptMultiple = false, files = null, maxFiles = 5
             onError={console.error}
             src={file}
          >
-            <DropzoneEmptyState />
-            <DropzoneContent>
+            <DropzoneEmptyState lang={lang} maxFiles={maxFiles} />
+            <DropzoneContent lang={lang} maxFiles={maxFiles}>
                {!acceptMultiple && filePreview && (
                <div className="aspect-[5/2] w-full relative group">
                   <img

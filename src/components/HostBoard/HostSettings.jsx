@@ -12,6 +12,7 @@ import Spinner from "../SpinnerLoader";
 import { toast } from "sonner";
 import { PasswordChangeModal } from "../PasswordChangeModal";
 import { ProfileSettingsSchema } from "@/validators";
+import { Textarea } from "../ui/textarea";
 
 
 export default function ProfileSettings() {
@@ -456,7 +457,7 @@ export default function ProfileSettings() {
                                 >
                                     {lang === "ar" ? "نبذة عنك" : "Bio"}
                                 </Label>
-                                <textarea
+                                <Textarea
                                     id='bio'
                                     value={formData.bio}
                                     onChange={handleChange}
@@ -466,8 +467,6 @@ export default function ProfileSettings() {
                                             ? "اكتب نبذة قصيرة..."
                                             : "Write a short bio…"
                                     }
-                                    class
-                                    Name='w-full rounded-md bg-muted border border-border px-3 py-2 text-sm focus:ring-primary focus:ring-2 focus:outline-none'
                                 />
                                 {errors?.bio && (
                                     <p className="text-red-500 text-xs mt-1">{errors.bio[0]}</p>

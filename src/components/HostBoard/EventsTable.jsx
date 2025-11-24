@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchCategories } from "@/store/fetchCategoriesThunk";
-import { deleteFile } from "@/lib/storage"; 
+import { deleteFile } from "@/lib/storage";
 
 const EventsTable = () => {
    const { data: categories } = useSelector((state) => state.categories);
@@ -27,7 +27,6 @@ const EventsTable = () => {
          day: "numeric",
       });
    };
-
 
    const handleDelete = async (eventId) => {
       Swal.fire({
@@ -56,6 +55,7 @@ const EventsTable = () => {
 
             // 2️⃣ Collect all image paths
             const allPaths = [];
+            console.log(eventData);
 
             if (eventData?.thumbnail) {
                allPaths.push(eventData.thumbnail);
@@ -223,10 +223,21 @@ const EventsTable = () => {
                                  >
                                     <td className="py-4 px-4">
                                        <div>
-                                          <Link className="font-medium" to={{
-    pathname: "/host/attendees",
-    search: `?id=${event.id}&title=${ lang === "ar" ? event.name_ar : event.name}&date=${event.date }&location=${event.location }`,
-  }}>
+                                          <Link
+                                             className="font-medium"
+                                             to={{
+                                                pathname: "/host/attendees",
+                                                search: `?id=${
+                                                   event.id
+                                                }&title=${
+                                                   lang === "ar"
+                                                      ? event.name_ar
+                                                      : event.name
+                                                }&date=${event.date}&location=${
+                                                   event.location
+                                                }`,
+                                             }}
+                                          >
                                              {lang === "ar"
                                                 ? event.name_ar
                                                 : event.name}

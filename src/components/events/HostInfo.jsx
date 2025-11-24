@@ -21,7 +21,6 @@ const HostInfo = ({ lang = "en", hostId }) => {
             .select("*")
             .eq("id", hostId)
             .single();
-         console.log(data);
          if (error) {
             console.error(error);
          }

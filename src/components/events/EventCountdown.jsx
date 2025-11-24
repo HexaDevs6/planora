@@ -10,8 +10,9 @@ import StyledQR from "../qrcode";
 import TicketFrame from "../TicketFrame";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-const EventCountdown = ({ details, eventId, user, lang = "en" }) => {
+const EventCountdown = ({ details, eventId, hostId, user, lang = "en" }) => {
    const dispatch = useDispatch();
    // Function to calculate time left and event status
 
@@ -40,26 +41,31 @@ const EventCountdown = ({ details, eventId, user, lang = "en" }) => {
    }, [eventId, user]);
 
    const handleCreateTicket = async () => {
-
       if (!user) {
          Swal.fire({
-            title: lang === "ar" ? "يرجى تسجيل الدخول لتتمكن من الحجز" : "Please login to book a ticket",
+            title:
+               lang === "ar"
+                  ? "يرجى تسجيل الدخول لتتمكن من الحجز"
+                  : "Please login to book a ticket",
             icon: "warning",
             showCancelButton: true,
-            confirmButtonColor: 'var(--primary)',
+            confirmButtonColor: "var(--primary)",
             cancelButtonColor: "var(--secondary)",
             confirmButtonText: lang === "ar" ? "تسجيل الدخول" : "Login",
          }).then((result) => {
             if (result.isConfirmed) {
-               navigate('/signin');
+               navigate("/signin");
             }
-         })
+         });
       }
 
       if (user.role === "host") {
-         toast.error(lang === "ar" ? "لا يمكنك حجز التذاكر للمستضيفين" : "You can't book tickets for hosts");
+         toast.error(
+            lang === "ar"
+               ? "لا يمكنك حجز التذاكر للمستضيفين"
+               : "You can't book tickets for hosts"
+         );
          return;
-         
       }
 
       try {
@@ -201,7 +207,29 @@ const EventCountdown = ({ details, eventId, user, lang = "en" }) => {
             </div>
          )}
 
-         {isTicketBooked && ticket ? (
+         {hostId === user.id && (
+            <Button
+               className="mt-6 w-full"
+               variant="default"
+               size="CTA"
+               // onClick={handleGoToEvent}
+               disabled={countdown.status === "ended"}
+               asChild
+            >
+               <Link
+                  to={{
+                     pathname: "/host/attendees",
+                     search: `?id=${eventId}&title=${
+                        lang === "ar" ? details.name_ar : details.name
+                     }&date=${details.date}&location=${details.location}`,
+                  }}
+               >
+                  {lang === "ar" ? "التحكم في الحدث" : "Manage Event"}
+               </Link>
+            </Button>
+         )}
+
+         {isTicketBooked && ticket && hostId === user.id ? (
             <TicketFrame>
                <h3 className="text-center text-lg font-semibold mb-4">
                   {lang === "ar" ? "تذكرة الدخول" : "Your Event Ticket"}
@@ -223,7 +251,7 @@ const EventCountdown = ({ details, eventId, user, lang = "en" }) => {
                onClick={handleCreateTicket}
                disabled={countdown.status === "ended"}
             >
-            	<Ticket className="size-4" />
+               <Ticket className="size-4" />
                {lang === "ar" ? "أحجز الان" : "Book Now"}
             </Button>
          )}

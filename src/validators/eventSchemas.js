@@ -15,11 +15,11 @@ export const EventSchema = z.object({
   date: z.string().min(1, "Event date is required"),
   end_date: z.string().min(1, "End date is required"),
   capacity: z
-    .string()
-    .regex(/^[0-9]+$/, "Capacity must be a number")
+    .number()
+    // .regex(/^[0-9]+$/, "Capacity must be a number")
     .optional(),
   price: z
-    .string()
-    .regex(/^[0-9]+$/, "Price must be a valid number")
+    .number()
+    // .regex(/^[0-9]+$/, "Price must be a valid number")
     .optional(),
 });
