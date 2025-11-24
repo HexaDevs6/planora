@@ -6,8 +6,7 @@ import About from "./pages/About";
 import Signin from "./pages/Signin";
 import Register from "./pages/Register";
 import { Navigate } from "react-router-dom";
-import UserLayout from "./layout/UserLayout";
-import UserMessages from "./components/UserBoard/UserMessages";
+import SidebarLayout from "./layout/SidebarLayout";
 import UserOverview from "./components/UserBoard/UserOverview";
 import UserSettings from "./components/UserBoard/UserSettings";
 import UserTickets from "./components/UserBoard/UserTickets";
@@ -20,36 +19,53 @@ import PublicRoute from "@/components/guards/PublicRoute";
 import Events from "./pages/Events";
 import Services from "./pages/Services";
 import EventDetails from "./pages/EventDetails";
-import HostLayout from "./layout/HostLayout";
 import HostOverview from "./components/HostBoard/HostOverview";
 import HostEvents from "./components/HostBoard/EventsTable";
-import HostMessages from "./components/HostBoard/HostMessages";
 import HostSettings from "./components/HostBoard/HostSettings";
 import ServiceDetails from "./pages/ServiceDetails";
+import AddService from "./pages/AddService";
+import UserServices from "./pages/UserServices";
 import PlanoraAi from "./pages/PlanoraAi";
 import ChatWidget from "./components/ChatWidget";
-
-
+import MessagesPage from "./pages/MessagesPage";
+import EventAttendeeDetails from "./components/HostBoard/EventAttendeeDetails";
+import NotFoundPage from "./components/NotFoundPage";
+import { useEffect } from "react";
+import { startAuthListener } from "./store/authListener";
+import { useStore } from "react-redux";
 function App() {
     useDirection();
-    // useTranslation hook provides access to the translation function 't'
+    console.log("APP MOUNTED");
+
+    const store = useStore();
+
+    useEffect(() => {
+        const stop = startAuthListener(store);
+        return () => stop && stop();
+    }, []);
+
     return (
         <main>
             <BrowserRouter>
-                <Toaster richColors position='top-right' />
-                 <ChatWidget />
-
+                <Toaster richColors position='bottom-right' />
+                <ChatWidget />
 
                 <Routes>
                     <Route element={<MainLayout />}>
                         <Route path='/' element={<Home />} />
                         <Route path='/about' element={<About />} />
                         <Route path='/contact' element={<Contact />} />
-                        <Route path="/events/:eventId" element={<EventDetails />} />
-                        <Route path="/events" element={<Events/>}/>
-                        <Route path="/services" element={<Services/>}/>
-                        <Route path="/services/:serviceId" element={<ServiceDetails />}/>
-                        <Route path="/planora-ai" element={<PlanoraAi />}/>
+                        <Route
+                            path='/events/:eventId'
+                            element={<EventDetails />}
+                        />
+                        <Route path='/events' element={<Events />} />
+                        <Route path='/services' element={<Services />} />
+                        <Route
+                            path='/services/:serviceId'
+                            element={<ServiceDetails />}
+                        />
+                        <Route path='/planora-ai' element={<PlanoraAi />} />
                     </Route>
                     <Route
                         element={
@@ -66,7 +82,7 @@ function App() {
                         path='/user'
                         element={
                             <ProtectedRoute>
-                                <UserLayout />
+                                <SidebarLayout />
                             </ProtectedRoute>
                         }
                     >
@@ -77,15 +93,16 @@ function App() {
                         <Route path='overview' element={<UserOverview />} />
                         <Route path='settings' element={<UserSettings />} />
                         <Route path='tickets' element={<UserTickets />} />
-                        <Route path='messages' element={<UserMessages />} />
-                        <Route path='create-event' element={<CreateEvent />} />
+                        <Route path='messages' element={<MessagesPage />} />
+                        <Route path='services' element={<UserServices />} />
+                        <Route path='create-service' element={<AddService />} />
                     </Route>
 
                     <Route
                         path='/host'
                         element={
                             <ProtectedRoute>
-                                <HostLayout />
+                                <SidebarLayout />
                             </ProtectedRoute>
                         }
                     >
@@ -94,11 +111,16 @@ function App() {
                             element={<Navigate to='overview' replace />}
                         />
                         <Route path='overview' element={<HostOverview />} />
+                        <Route
+                            path='attendees'
+                            element={<EventAttendeeDetails />}
+                        />
                         <Route path='settings' element={<HostSettings />} />
                         <Route path='events' element={<HostEvents />} />
-                        <Route path='messages' element={<HostMessages />} />
+                        <Route path='messages' element={<MessagesPage />} />
                         <Route path='create-event' element={<CreateEvent />} />
                     </Route>
+                    <Route path='*' element={<NotFoundPage />} />
                 </Routes>
             </BrowserRouter>
         </main>

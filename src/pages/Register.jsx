@@ -1,79 +1,39 @@
-
-import { doc, serverTimestamp, setDoc } from "firebase/firestore";
-import { db } from "@/lib/firebaseConfig";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Building2, Users, BriefcaseBusiness } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
-import VendorInfoForm from "@/components/auth/VendorInfoForm";
+import HostInfoForm from "@/components/auth/HostInfoForm";
 import { useTranslation } from "react-i18next";
 import ClientInfoFrom from "@/components/auth/ClientInfoFrom";
 import CreateUserFrom from "@/components/auth/CreateUserFrom";
+import { RegisterSchema } from "@/validators";
 
-export const saveUserToFirestore = async (uid, formData, userType) => {
-   let data = {};
-   switch (userType) {
-      case "client":
-         data = {
-            fullName: formData.fullName,
-            email: formData.email,
-            phone: formData.phone || "",
-            interests: formData.interests,
-            eventPreferences: formData.eventPreferences || "",
-            userType: userType,
-            createdAt: serverTimestamp(),
-         };
-         break;
-      case "vendor":
-         data = {
-            businessName: formData.businessName, //
-            category: formData.category, //
-            businessDescription: formData.businessDescription,
-            facebook: formData.facebook,
-            instagram: formData.instagram,
-            userType: userType,
-            createdAt: serverTimestamp(),
-         };
-         break;
-   }
-   try {
-      await setDoc(doc(db, "users", uid), {
-         ...data,
-      });
-   } catch (error) {
-      console.error("Firestore Error:", error);
-      toast.error("Error saving data: " + error.message);
-   }
-};
+
 
 const Register = () => {
    const [step, setStep] = useState(1);
-   const [userType, setUserType] = useState(""); // "client", "vendor", or
-   
+   const [userType, setUserType] = useState(""); // "client", "host", or
    const { t } = useTranslation();
-   // Common fields
+   const [errors, setErrors] = useState({});
+
+
    const [formData, setFormData] = useState({
-      fullName: "",
       email: "",
       password: "",
+      role: "",
+      full_name: "",
       confirmPassword: "",
       phone: "",
-      // Client-specific
-      interests: [],
-      eventPreferences: "",
-      // Vendor-specific
-      businessName: "",
-      serviceCategory: "",
-      businessDescription: "",
-      category: "",
+      avatar: "",
+      bio: "", // client bio
+      categories: [], // host
       facebook: "",
       instagram: "",
-      bio: "",
-      service: "",
+      location: "",
    });
-
+   
    const usersTypes = [
       {
          type: "client",
@@ -85,11 +45,11 @@ const Register = () => {
          }),
       },
       {
-         type: "vendor",
-         title: t("auth.register.step1.vendor.title"),
-         description: t("auth.register.step1.vendor.description"),
+         type: "host",
+         title: t("auth.register.step1.host.title"),
+         description: t("auth.register.step1.host.description"),
          icon: <Building2 className="h-10 w-10" />,
-         features: t("auth.register.step1.vendor.features", {
+         features: t("auth.register.step1.host.features", {
             returnObjects: true,
          }),
       },
@@ -102,9 +62,9 @@ const Register = () => {
    const toggleInterest = (interest) => {
       setFormData((prev) => ({
          ...prev,
-         interests: prev.interests.includes(interest)
-            ? prev.interests.filter((i) => i !== interest)
-            : [...prev.interests, interest],
+         categories: prev.categories.includes(interest)
+            ? prev.categories.filter((i) => i !== interest)
+            : [...prev.categories, interest],
       }));
    };
 
@@ -117,16 +77,15 @@ const Register = () => {
    };
 
    const validateStep2 = () => {
-      if (userType === "client" && (formData.interests.length === 0 || !formData.fullName)) {
+      if (userType === "client" && (formData.categories.length === 0 || !formData.full_name)) {
          toast.warning(t("auth.register.toast.validation.selectInterestsAndFullName"));
          return false;
       }
 
       if (
-         userType === "vendor" &&
-         (!formData.businessName ||
-            !formData.serviceCategory ||
-            !formData.businessDescription)
+         userType === "host" &&
+         (!formData.full_name ||
+            formData.categories.length === 0)
       ) {
          toast.warning(t("auth.register.toast.validation.fillBusinessInfo"));
          return false;
@@ -137,7 +96,7 @@ const Register = () => {
 
    const handleNext = () => {
       console.log(userType);
-      
+
       if (step === 1 && validateStep1()) {
          setStep(2);
       } else if (step === 2 && validateStep2()) {
@@ -166,8 +125,8 @@ const Register = () => {
                            userType === "client" &&
                            t("auth.register.step2.client.subtitle")}
                         {step === 2 &&
-                           userType === "vendor" &&
-                           t("auth.register.step2.vendor.subtitle")}
+                           userType === "host" &&
+                           t("auth.register.step2.host.subtitle")}
                         {step === 3 && t("auth.register.step3.subtitle")}
                      </p>
                   </div>
@@ -175,19 +134,16 @@ const Register = () => {
                   {/* Progress Indicator */}
                   <div className="flex justify-center gap-2 mb-8">
                      <div
-                        className={`h-2 w-20 rounded-full transition-all ${
-                           step >= 1 ? "bg-primary" : "bg-muted"
-                        }`}
+                        className={`h-2 w-20 rounded-full transition-all ${step >= 1 ? "bg-primary" : "bg-muted"
+                           }`}
                      />
                      <div
-                        className={`h-2 w-20 rounded-full transition-all ${
-                           step >= 2 ? "bg-primary" : "bg-muted"
-                        }`}
+                        className={`h-2 w-20 rounded-full transition-all ${step >= 2 ? "bg-primary" : "bg-muted"
+                           }`}
                      />
                      <div
-                        className={`h-2 w-20 rounded-full transition-all ${
-                           step >= 3 ? "bg-primary" : "bg-muted"
-                        }`}
+                        className={`h-2 w-20 rounded-full transition-all ${step >= 3 ? "bg-primary" : "bg-muted"
+                           }`}
                      />
                   </div>
 
@@ -198,11 +154,10 @@ const Register = () => {
                            {usersTypes.map((type, i) => (
                               <Card
                                  key={i}
-                                 className={`cursor-pointer transition-all duration-300 ${
-                                    userType === type.type
+                                 className={`cursor-pointer transition-all duration-300 ${userType === type.type
                                        ? "border-primary shadow-accent bg-primary/5"
                                        : "border-border hover:border-primary/50 hover:shadow-card"
-                                 }`}
+                                    }`}
                                  onClick={() => setUserType(type.type)}
                               >
                                  <CardContent className="px-4 py-6 text-center space-y-4">
@@ -248,7 +203,7 @@ const Register = () => {
                      </div>
                   )}
 
-                  {/* Step 2: Client-Specific or Vendor-Specific */}
+                  {/* Step 2: Client-Specific or host-Specific */}
                   {step === 2 && (
                      <div className="space-y-6 animate-fade-in">
                         {userType === "client" && (
@@ -259,10 +214,11 @@ const Register = () => {
                            />
                         )}
 
-                        {userType === "vendor" && (
-                           <VendorInfoForm
+                        {userType === "host" && (
+                           <HostInfoForm
                               formData={formData}
                               handleInputChange={handleInputChange}
+                              toggleInterest={toggleInterest}
                            />
                         )}
 
@@ -289,18 +245,18 @@ const Register = () => {
                   {/* Step 3: Basic Information */}
                   {step === 3 && (
                      <CreateUserFrom
-                        data={formData}
-                        setFormData={setFormData}
+                        formData={formData}
                         setStep={setStep}
                         step={step}
-                        userType={userType}                        
+                        userType={userType}
+                        handleInputChange={handleInputChange}
                      />
                   )}
                </CardContent>
             </Card>
          </div>
+
       </div>
    );
 };
-
 export default Register;

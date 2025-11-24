@@ -1,10 +1,47 @@
 import { useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
+import Spinner from "../SpinnerLoader";
+import { useEffect, useState } from "react";
 
 export default function ProtectedRoute({ children }) {
-  const { user, loading } = useSelector((state) => state.auth);
+    const { user, initialized, isAuthenticated } = useSelector(
+        (state) => state.auth
+    );
+    const location = useLocation();
+    const [isChecking, setIsChecking] = useState(true);
 
-  if (loading) return <div className="p-4 text-center">Loading...</div>;
+    useEffect(() => {
+        // Add any additional authentication checks here
+        setIsChecking(false);
+    }, [user, isAuthenticated]);
 
-  return user ? children : <Navigate to="/signin" replace />;
+    if (!initialized || isChecking) return <Spinner />;
+
+    // Not logged in at all
+    if (!isAuthenticated || !user) {
+        return <Navigate to='/signin' state={{ from: location }} replace />;
+    }
+
+    // Logged in but no role yet
+    if (!user.role && location.pathname !== "/register") {
+        return <Navigate to='/register' state={{ from: location }} replace />;
+    }
+
+    // Host trying to access user routes
+    if (user.role === "host" && location.pathname?.startsWith("/user")) {
+        return <Navigate to='/host/overview' replace />;
+    }
+
+    // Client trying to access host routes
+    if (user.role === "client" && location.pathname?.startsWith("/host")) {
+        return <Navigate to='/user/overview' replace />;
+    }
+
+    // Additional validation
+    if (!location.pathname) {
+        return <Navigate to='/' replace />;
+    }
+
+    return children;
 }
+

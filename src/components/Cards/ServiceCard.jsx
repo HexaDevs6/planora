@@ -1,25 +1,52 @@
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Star, MapPin, CheckCircle } from "lucide-react";
+import { Star,  CheckCircle } from "lucide-react";
+import { motion } from "framer-motion";
+import loremService  from '@/assets/loremService.jfif';
 
 const ServiceCard = ({
   id,
-  title,
-  provider,
+  title = "Service Title",
   image,
-  category,
-  location,
-  rating,
-  reviews,
-  priceRange,
-  verified,
+  category = "General",
+  rating = 0,
+  reviews = 0,
+  priceRange = "Contact for price",
+  verified = false,
+  provider_id = null,
 }) => {
+  // Fetch provider data from supabase by provider_id
+
+  const [provider, setProvider] = useState("Unknown Provider");
+
+    const fetchProvider = async () => {
+      if (!provider_id) return;
+      const { data, error } = await supabase
+        .from("users").select("full_name").eq("id", provider_id).single();
+        
+        if (error) {
+          console.error(error);
+          setProvider("Unknown Provider");
+          return;
+        } else {
+          setProvider(data.full_name || "Unknown Provider");
+        }
+    };
+    useEffect(() => {
+      fetchProvider();
+    }, [provider_id]);
+
   return (
-    <Card className="group overflow-hidden border-0 shadow-card hover:shadow-hover transition-all duration-300 hover:scale-[1.02]">
-      <div className="overflow-hidden aspect-square">
-        <img
+    <Card className="group overflow-hidden border-0 gap-4 shadow-card hover:shadow-hover transition-all duration-300 hover:scale-[1.02]">
+      <div className="overflow-hidden aspect-square h-75 ">
+        <motion.img
+          onError={(e) => {
+            e.target.src = loremService;
+          }}
           src={image}
           alt={title}
           className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500"
@@ -43,11 +70,6 @@ const ServiceCard = ({
             <span className="text-sm text-muted-foreground">
               ({reviews} reviews)
             </span>
-          </div>
-
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <MapPin className="h-4 w-4 text-primary" />
-            <span className="line-clamp-1">{location}</span>
           </div>
         </div>
 

@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Button } from "./ui/button";
+import { Globe } from "lucide-react";
 
 /**
  * LanguageSwitcher Component
@@ -33,13 +34,13 @@ const LanguageSwitcher = () => {
             variant='glass'
             size='sm'
             onClick={handleLanguageSwitch}
-            className='font-bold text-foreground'
+            className='text-foreground w-fit'
             role='switch'
             aria-checked={i18n.language === "ar"}
             aria-label={t("language.switch")}
             dir='rtl'
         >
-            {i18n.language === "ar" ? "EN" : "ع"}
+            <Globe />
         </Button>
     );
 };

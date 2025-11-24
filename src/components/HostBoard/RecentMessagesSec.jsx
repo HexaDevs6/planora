@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 export default function RecentMessages({ messages = [] }) {
     return (
-        <section className='rounded-sm p-6 bg-card shadow-sm border border-gray-100 dark:border-neutral-800'>
+        <section className='rounded-xl p-6 bg-background border'>
             {/* Header */}
             <div className='flex justify-between items-center mb-4'>
                 <h3 className='text-base font-semibold text-gray-900 dark:text-gray-100'>

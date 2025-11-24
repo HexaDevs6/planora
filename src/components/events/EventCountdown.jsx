@@ -1,11 +1,85 @@
 import { Ticket } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { Button } from "../ui/button";
+import { useDispatch } from "react-redux";
+import { createTicket } from "@/store/tickets/clientTicketsSlice";
+import { toast } from "sonner";
+import { supabase } from "@/lib/supabaseClient";
+import QRCode from "react-qr-code";
+import StyledQR from "../qrcode";
+import TicketFrame from "../TicketFrame";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
-const EventCountdown = ({ details, lang = "en" }) => {
+const EventCountdown = ({ details, eventId, user, lang = "en" }) => {
+   const dispatch = useDispatch();
    // Function to calculate time left and event status
+
+   const [isTicketBooked, setIsTicketBooked] = useState(false);
+   const [ticket, setTicket] = useState(null);
+   const navigate = useNavigate();
+
+   useEffect(() => {
+      const checkExistingTicket = async () => {
+         const client = await user;
+
+         const { data: existingTicket } = await supabase
+            .from("tickets")
+            .select("*")
+            .eq("event_id", eventId)
+            .eq("client_id", client.id)
+            .single();
+
+         if (existingTicket) {
+            setIsTicketBooked(true);
+            setTicket(existingTicket);
+         }
+      };
+
+      checkExistingTicket();
+   }, [eventId, user]);
+
+   const handleCreateTicket = async () => {
+
+      if (!user) {
+         Swal.fire({
+            title: lang === "ar" ? "يرجى تسجيل الدخول لتتمكن من الحجز" : "Please login to book a ticket",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: 'var(--primary)',
+            cancelButtonColor: "var(--secondary)",
+            confirmButtonText: lang === "ar" ? "تسجيل الدخول" : "Login",
+         }).then((result) => {
+            if (result.isConfirmed) {
+               navigate('/signin');
+            }
+         })
+      }
+
+      if (user.role === "host") {
+         toast.error(lang === "ar" ? "لا يمكنك حجز التذاكر للمستضيفين" : "You can't book tickets for hosts");
+         return;
+         
+      }
+
+      try {
+         const client = await user;
+         const tic = await dispatch(
+            createTicket({ eventId, clientId: client.id })
+         ).unwrap();
+         if (tic) {
+            toast.success("Ticket booked successfully");
+            setIsTicketBooked(true);
+            setTicket(tic);
+            console.log(tic);
+         }
+      } catch (error) {
+         console.error(error);
+      }
+   };
    const calculateTimeLeft = () => {
       const now = new Date().getTime();
-      const start = new Date(details.start_date).getTime();
+      const start = new Date(details.date).getTime();
       const end = new Date(details.end_date).getTime();
 
       const diff = start - now;
@@ -37,7 +111,7 @@ const EventCountdown = ({ details, lang = "en" }) => {
       }, 1000);
 
       return () => clearInterval(timer);
-   }, [details.start_date, details.end_date]);
+   }, [details.date, details.end_date]);
 
    const formatNumber = (num) => num.toString().padStart(2, "0");
 
@@ -70,7 +144,7 @@ const EventCountdown = ({ details, lang = "en" }) => {
 
    return (
       <div
-         className={`gradient-card rounded-xl p-6 ${
+         className={`gradient-card rounded-xl p-4 xl:p-6 ${
             lang === "ar" ? "text-right font-[Cairo]" : "text-left"
          }`}
       >
@@ -83,7 +157,7 @@ const EventCountdown = ({ details, lang = "en" }) => {
          {countdown.status === "upcoming" ? (
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
                <div className="p-3 bg-primary/5 dark:bg-primary/10 rounded-lg">
-                  <p className="text-4xl font-bold text-gradient-amber ">
+                  <p className="text-2xl xl:text-4xl font-bold text-gradient-amber ">
                      {formatNumber(countdown.days)}
                   </p>
                   <p className="text-xs uppercase tracking-wider text-foreground mt-1">
@@ -91,7 +165,7 @@ const EventCountdown = ({ details, lang = "en" }) => {
                   </p>
                </div>
                <div className="p-3 bg-primary/5 dark:bg-primary/10 rounded-lg">
-                  <p className="text-4xl font-bold text-gradient-amber ">
+                  <p className="text-2xl xl:text-4xl font-bold text-gradient-amber ">
                      {formatNumber(countdown.hours)}
                   </p>
                   <p className="text-xs uppercase tracking-wider text-foreground mt-1">
@@ -99,7 +173,7 @@ const EventCountdown = ({ details, lang = "en" }) => {
                   </p>
                </div>
                <div className="p-3 bg-primary/5 dark:bg-primary/10 rounded-lg">
-                  <p className="text-4xl font-bold text-gradient-amber ">
+                  <p className="text-2xl xl:text-4xl font-bold text-gradient-amber ">
                      {formatNumber(countdown.minutes)}
                   </p>
                   <p className="text-xs uppercase tracking-wider text-foreground mt-1">
@@ -107,7 +181,7 @@ const EventCountdown = ({ details, lang = "en" }) => {
                   </p>
                </div>
                <div className="p-3 bg-primary/5 dark:bg-primary/10 rounded-lg">
-                  <p className="text-4xl font-bold text-gradient-amber ">
+                  <p className="text-2xl xl:text-4xl font-bold text-gradient-amber ">
                      {formatNumber(countdown.seconds)}
                   </p>
                   <p className="text-xs uppercase tracking-wider text-foreground mt-1">
@@ -127,24 +201,32 @@ const EventCountdown = ({ details, lang = "en" }) => {
             </div>
          )}
 
-         <button
-            disabled={countdown.status === "ended"}
-            className={`mt-6 w-full px-6 py-3 rounded-lg font-bold shadow-lg flex items-center justify-center gap-2 transition-all transform
-        ${
-           countdown.status === "ended"
-              ? "bg-gray-400 cursor-not-allowed text-white"
-              : "bg-violet text-white hover:bg-violet/80"
-        }`}
-         >
-            <Ticket />
-            {countdown.status === "ended"
-               ? lang === "ar"
-                  ? "انتهى الحدث"
-                  : "Event Ended"
-               : lang === "ar"
-               ? "احجز تذكرتك الآن"
-               : "Get Tickets Now"}
-         </button>
+         {isTicketBooked && ticket ? (
+            <TicketFrame>
+               <h3 className="text-center text-lg font-semibold mb-4">
+                  {lang === "ar" ? "تذكرة الدخول" : "Your Event Ticket"}
+               </h3>
+
+               <div className="flex justify-center mb-4">
+                  <StyledQR value={ticket.qr_code} size={260} />
+               </div>
+
+               <div className="text-center text-sm text-muted-foreground mt-4">
+                  Ticket ID: {ticket.id}
+               </div>
+            </TicketFrame>
+         ) : (
+            <Button
+               className="mt-6 w-full"
+               variant="default"
+               size="CTA"
+               onClick={handleCreateTicket}
+               disabled={countdown.status === "ended"}
+            >
+            	<Ticket className="size-4" />
+               {lang === "ar" ? "أحجز الان" : "Book Now"}
+            </Button>
+         )}
       </div>
    );
 };

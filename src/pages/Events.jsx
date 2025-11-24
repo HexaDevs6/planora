@@ -1,205 +1,126 @@
 import CategoryCard from "@/components/Cards/CategoryCard";
 import PagesHeader from "@/components/PagesHeader";
-import { t } from "i18next";
+import i18next, { t } from "i18next";
 import {
+  BookOpen,
   Briefcase,
+  Building2,
+  Clapperboard,
+  Cpu,
   Dumbbell,
+  Gift,
   GraduationCap,
   Grid3x3,
+  Hammer,
+  HeartPulse,
+  Medal,
   Music,
   Palette,
-  Users,
+  Presentation,
+  Sparkles,
+  Store,
+  Utensils,
 } from "lucide-react";
-import React, { useState } from "react";
-
-import conferenceImage from "@/assets/event-conference.jpg";
-import concertImage from "@/assets/event-concert.jpg";
-import workshopImage from "@/assets/event-workshop.jpg";
-import sportsImage from "@/assets/event-sports.jpg";
-import exhibitionImage from "@/assets/event-exhibition.jpg";
-import networkingImage from "@/assets/event-networking.jpg";
-
+import React, { useEffect } from "react";
 import EventCard from "@/components/Cards/EventCard";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@/components/ui/button";
-import { setVisibleCount } from "@/store/searchSlice";
+import { setVisibleCount } from "@/store/searchAndFilterEventsSlice";
+import { fetchCategories } from "@/store/fetchCategoriesThunk";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay } from "swiper/modules";
+import "swiper/css";
+import { fetchEvents } from "@/store/fetchEventsThunk";
+import { supabase } from "@/lib/supabaseClient";
+import loremImg from "@/assets/lorem.jfif";
+import { motion } from "framer-motion";
+import { getPublicUrl } from "@/lib/storage";
 
 export default function Events() {
-  const query = useSelector((state) => state.search.query.toLowerCase().trim());
+  const query = useSelector((state) =>
+    state.eventsSearchAndFilter.query.toLowerCase().trim()
+  );
   const dispatch = useDispatch();
-  const allEvents = [
-    {
-      id: "1",
-      title: t("eventsPage.category.cards.1.title"),
-      image: conferenceImage,
-      date: t("eventsPage.category.cards.1.data"),
-      location: t("eventsPage.category.cards.1.category"),
-      category: "Conferences",
-      price: "$299",
-      attendees: 850,
-    },
-    {
-      id: "2",
-      title: t("eventsPage.category.cards.2.title"),
-      image: concertImage,
-      date: t("eventsPage.category.cards.2.data"),
-      location: t("eventsPage.category.cards.2.category"),
-      category: "Concerts",
-      price: "$149",
-      attendees: 2400,
-    },
-    {
-      id: "3",
-      title: t("eventsPage.category.cards.3.title"),
-      image: workshopImage,
-      date: t("eventsPage.category.cards.3.data"),
-      location: t("eventsPage.category.cards.3.location"),
-      category: t("eventsPage.category.cards.3.category"),
-      price: "Free",
-      attendees: 456,
-    },
-    {
-      id: "4",
-      title: t("eventsPage.category.cards.4.title"),
-      image: sportsImage,
-      date: t("eventsPage.category.cards.4.data"),
-      location: t("eventsPage.category.cards.4.location"),
-      category: t("eventsPage.category.cards.4.category"),
-      price: "$45",
-      attendees: 1200,
-    },
-    {
-      id: "5",
-      title: t("eventsPage.category.cards.5.title"),
-      image: exhibitionImage,
-      date: t("eventsPage.category.cards.5.data"),
-      location: t("eventsPage.category.cards.5.location"),
-      category: t("eventsPage.category.cards.5.category"),
-      price: "$25",
-      attendees: 680,
-    },
-    {
-      id: "6",
-      title: t("eventsPage.category.cards.6.title"),
-      image: networkingImage,
-      date: t("eventsPage.category.cards.6.data"),
-      location: t("eventsPage.category.cards.6.location"),
-      category: t("eventsPage.category.cards.6.category"),
-      price: "Free",
-      attendees: 320,
-    },
-    {
-      id: "7",
-      title: t("eventsPage.category.cards.7.title"),
-      image: workshopImage,
-      date: t("eventsPage.category.cards.7.data"),
-      location: t("eventsPage.category.cards.7.location"),
-      category: t("eventsPage.category.cards.7.category"),
-      price: "$499",
-      attendees: 180,
-    },
-    {
-      id: "8",
-      title: t("eventsPage.category.cards.8.title"),
-      image: concertImage,
-      date: t("eventsPage.category.cards.8.data"),
-      location: t("eventsPage.category.cards.8.location"),
-      category: t("eventsPage.category.cards.8.category"),
-      price: "$75",
-      attendees: 650,
-    },
-    {
-      id: "9",
-      title: t("eventsPage.category.cards.9.title"),
-      image: conferenceImage,
-      date: t("eventsPage.category.cards.9.data"),
-      location: t("eventsPage.category.cards.9.location"),
-      category: t("eventsPage.category.cards.9.category"),
-      price: "$399",
-      attendees: 920,
-    },
-    {
-      id: "10",
-      title: t("eventsPage.category.cards.10.title"),
-      image: conferenceImage,
-      date: t("eventsPage.category.cards.10.data"),
-      location: t("eventsPage.category.cards.10.location"),
-      category: t("eventsPage.category.cards.10.category"),
-      price: "$299",
-      attendees: 850,
-    },
-    {
-      id: "11",
-      title: t("eventsPage.category.cards.11.title"),
-      image: concertImage,
-      date: t("eventsPage.category.cards.11.data"),
-      location: t("eventsPage.category.cards.11.location"),
-      category: t("eventsPage.category.cards.11.category"),
-      price: "$149",
-      attendees: 2400,
-    },
-    {
-      id: "12",
-      title: t("eventsPage.category.cards.12.title"),
-      image: workshopImage,
-      date: t("eventsPage.category.cards.12.data"),
-      location: t("eventsPage.category.cards.12.location"),
-      category: t("eventsPage.category.cards.12.category"),
-      price: "Free",
-      attendees: 456,
-    },
+  const currentLang = i18next.language;
+
+  // get categories from supabase
+  const { data, loading } = useSelector((state) => state.categories);
+  console.log(data.map(category => category.name));
+
+  const icons = [
+    Palette,
+    Gift,
+    Briefcase,
+    Presentation,
+    Building2,
+    GraduationCap,
+    Clapperboard,
+    Store,
+    Utensils,
+    Medal,
+    HeartPulse,
+    Music,
+    BookOpen,
+    Dumbbell,
+    Cpu,
+    Sparkles,
+    Hammer,
   ];
 
-  const filterQuery = useSelector((state) => state.search.filter.toLowerCase());
-  console.log(filterQuery);
+  const interestOptions = data
+    .filter((category) => category.type === "event")
+    .map((category) => ({
+      ...category,
+      displayName: currentLang === "ar" ? category.name_ar : category.name,
+    }));
 
+  // get events from supabase
+  const {
+    items: eventsData,
+    loading: eventsLoading,
+    error,
+  } = useSelector((state) => state.events);
+
+  useEffect(() => {
+    // Fetch only if data not loaded before
+    if (!eventsData.length) dispatch(fetchEvents());
+    if (!data.length) dispatch(fetchCategories());
+  }, [dispatch, eventsData.length, data.length]);
+
+  // filter category
+  const filterQuery = useSelector((state) =>
+    state.eventsSearchAndFilter.filter.toLowerCase()
+  );
+
+  // apply search
   const filterSearch =
     filterQuery == "all" || filterQuery == "الجميع"
-      ? allEvents.filter((el) => el.title.toLowerCase().trim().includes(query))
-      : allEvents
-          .filter((el) => el.title.toLowerCase().trim().includes(query))
-          .filter((el) => el.category.toLowerCase() === filterQuery);
-  const visibleEvents = useSelector((state) => state.search.visibleCount);
+      ? eventsData.filter((el) => el.name.toLowerCase().trim().includes(query))
+      : eventsData
+          .filter((el) => el.name.toLowerCase().trim().includes(query))
+          .filter(
+            (el) =>
+              interestOptions
+                .filter((item) => item.id === el.category_id)[0]
+                ?.displayName.toLowerCase() === filterQuery
+          );
 
-  const categories = [
-    {
-      name: t("eventsPage.category.cateCards.title0"),
-      icon: Grid3x3,
-      count: 300,
-    },
-    {
-      name: t("eventsPage.category.cateCards.title1"),
-      icon: Music,
-      count: 245,
-    },
-    {
-      name: t("eventsPage.category.cateCards.title2"),
-      icon: Briefcase,
-      count: 189,
-    },
-    {
-      name: t("eventsPage.category.cateCards.title3"),
-      icon: Dumbbell,
-      count: 156,
-    },
-    {
-      name: t("eventsPage.category.cateCards.title4"),
-      icon: Palette,
-      count: 132,
-    },
-    {
-      name: t("eventsPage.category.cateCards.title5"),
-      icon: GraduationCap,
-      count: 298,
-    },
-    {
-      name: t("eventsPage.category.cateCards.title6"),
-      icon: Users,
-      count: 167,
-    },
-  ];
+  const visibleEvents = useSelector(
+    (state) => state.eventsSearchAndFilter.visibleCount
+  );
 
+  // get visible events from redux store
   const viewEvents = filterSearch.slice(0, visibleEvents);
+
+  const handleThumbnail = function (el) {
+    if (el) {
+      if (el.startsWith("http")) {
+        return el;
+      } else {
+        return getPublicUrl("events", el);
+      }
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -207,46 +128,106 @@ export default function Events() {
         search={`${t("eventsPage.header.search")}`}
         title={`${t("eventsPage.header.title")}`}
         subtitle={`${t("eventsPage.header.subTitle")}`}
+        type="event"
       />
       <main className="flex-1">
-        <section className="py-16 md:py-20 bg-muted/30">
+        <section className="py-16 md:py-10 bg-muted/30">
           <div className="container px-4 md:px-6">
-            <div className="text-center space-y-4 mb-12">
-              <h2 className="text-3xl text-primary md:text-4xl font-bold">
-                {t("eventsPage.category.title")}
-              </h2>
-              <p className="text-lg text-text max-w-2xl mx-auto">
-                {t("eventsPage.category.subTitle")}
+            {loading ? (
+              <p className="text-primary text-4xl md:text-3xl font-bold drop-shadow-2xl py-30 text-center">
+                {t("eventsPage.loading.category")}
               </p>
-            </div>
-
-            <div className="grid grid-cols-2 mb-10 md:grid-cols-3 lg:grid-cols-7 gap-4 md:gap-6">
-              {categories.map((category, index) => (
-                <div
-                  key={category.name}
-                  className="animate-scale-in"
-                  style={{ animationDelay: `${index * 100}ms` }}
+            ) : (
+              <div
+                className="w-full px-4 py-6"
+                dir={currentLang === "ar" ? "rtl" : "ltr"}
+              >
+                <Swiper
+                  key={currentLang === "ar" ? "rtl" : "ltr"} // ✅ يعيد تهيئة السلايدر عند تغيير اللغة
+                  dir={currentLang === "ar" ? "rtl" : "ltr"} // ✅ يضبط الاتجاه
+                  modules={[Autoplay]}
+                  spaceBetween={20}
+                  slidesPerView={2}
+                  autoplay={{ delay: 4000, disableOnInteraction: false }}
+                  breakpoints={{
+                    640: { slidesPerView: 3 },
+                    768: { slidesPerView: 4 },
+                    1024: { slidesPerView: 5 },
+                  }}
+                  className="w-full"
+                  style={{ padding: "8px" }}
                 >
-                  <CategoryCard {...category} />
-                </div>
-              ))}
-            </div>
+                  {/* العنصر الأول (All) */}
+                  <SwiperSlide>
+                    <div className="animate-scale-in">
+                      <CategoryCard
+                        name={t("eventsPage.category.cateCards.title0")}
+                        icon={Grid3x3}
+                        type="event"
+                      />
+                    </div>
+                  </SwiperSlide>
 
-            <div className="py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {viewEvents.map((el) => (
-                <EventCard
-                  key={el.id}
-                  id={el.id}
-                  title={el.title}
-                  image={el.image}
-                  date={el.date}
-                  location={el.location}
-                  category={el.category}
-                  price={el.price}
-                  attendees={el.attendees}
-                />
-              ))}
-            </div>
+                  {/* باقي الكاتيجوريز */}
+                  {interestOptions.map((category, index) => (
+                    <SwiperSlide key={category.name}>
+                      <div
+                        className="animate-scale-in"
+                        style={{ animationDelay: `${index * 100}ms` }}
+                      >
+                        <CategoryCard
+                          name={
+                            currentLang === "ar"
+                              ? category.name_ar
+                              : category.name
+                          }
+                          icon={icons[index]}
+                          type="event"
+                        />
+                      </div>
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </div>
+            )}
+
+            {eventsLoading ? (
+              <p className="text-primary text-4xl md:text-3xl font-bold drop-shadow-2xl py-30 text-center">
+                {t("eventsPage.loading.cards")}
+              </p>
+            ) : (
+              <div className="py-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {viewEvents.map((el, i) => (
+                  <motion.div
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: i * 0.1 }}
+                    key={el.id}
+                  >
+                    <EventCard
+                      key={el.id}
+                      id={el.id}
+                      title={currentLang === "ar" ? el.name_ar : el.name}
+                      // getPublicUrl("events", el.thumbnail)
+                      image={handleThumbnail(el.thumbnail) || loremImg}
+                      date={
+                        el.date
+                          ? new Date(el.date).toLocaleDateString(currentLang)
+                          : "N/A"
+                      }
+                      location={el.location || "Unspecified"}
+                      category={
+                        interestOptions.filter(
+                          (item) => item.id === el.category_id
+                        )[0]?.displayName
+                      }
+                      price={el.is_free ? t("eventsPage.free") : `$${el.price}`}
+                      attendees={el.capacity}
+                    />
+                  </motion.div>
+                ))}
+              </div>
+            )}
 
             {visibleEvents < filterSearch.length && (
               <div className="w-fit mx-auto">

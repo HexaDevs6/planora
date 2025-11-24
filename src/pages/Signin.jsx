@@ -1,79 +1,162 @@
-import { useState } from "react";
-import img from "@/assets/sign-img.png";
+import { useEffect, useState } from "react";
+import img from "@/assets/3d-render-secure-login-password-illustration.png";
 import img1 from "@/assets/logosiginin.png";
 import logoLight from "/LogoBasicLight.png";
 import { Link, useNavigate } from "react-router-dom";
-import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
-import { auth, provider } from "@/lib/firebaseConfig";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
-import { Eye, EyeOff } from "lucide-react";
+import { Building2, Chrome, Eye, EyeOff, User2, Users } from "lucide-react";
+// Redux + Thunks (Supabase)
+import { useDispatch } from "react-redux";
+import { signInWithEmail } from "@/store/authThunks";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/lib/supabaseClient";
+import { setUser } from "@/store/authSlice";
+import { SigninSchema } from "@/validators";
 
 function Signin() {
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    const [errors, setErrors] = useState({});
+
 
     const navigate = useNavigate();
+
     const { t } = useTranslation();
+    const dispatch = useDispatch();
+
+    // ✅ Handle email/password sign-in
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
+
+        // ⭐ 1) Validate before submitting
+        const result = SigninSchema.safeParse({ email, password });
+
+        if (!result.success) {
+            setErrors(result.error.flatten().fieldErrors); // <-- display errors
+            setLoading(false);
+            return; // stop the submit
+        }
+        setErrors({}); // clear errors
 
         try {
-            setLoading(true);
+            const response = await dispatch(
+                signInWithEmail({ email, password })
+            ).unwrap();
 
-            await signInWithEmailAndPassword(auth, email, password);
             toast.success(t("auth.signin.toast.success.title"), {
                 description: t("auth.signin.toast.success.description"),
             });
-            setLoading(false);
 
-            setTimeout(() => {
-                navigate("/user/overview");
-            }, 1500);
         } catch (error) {
-            console.log("login failed with email:", error.message);
+            console.error("Sign in failed:", error);
             toast.error(t("auth.signin.toast.error.title"), {
-                description: t("auth.signin.toast.error.description"),
+                description: error,
             });
+
         } finally {
             setLoading(false);
         }
     };
+
+
     const handleGoogleSignIn = async () => {
         try {
-            await signInWithPopup(auth, provider);
-            toast.success(t("auth.signin.toast.googleSuccess.title"), {
-                description: t("auth.signin.toast.googleSuccess.description"),
+            const { data, error } = await supabase.auth.signInWithOAuth({
+                provider: "google",
+                options: {
+                    skipBrowserRedirect: true,
+                },
             });
 
-            setTimeout(() => {
-                navigate("/user/overview");
-            }, 1500);
-        } catch (error) {
-            console.log("Sign-in failed with Google:", error.message);
+            if (error) throw error;
 
-            toast.error(t("auth.signin.toast.googleError.title"), {
-                description: t("auth.signin.toast.googleError.description"),
-            });
+            // Open popup window
+            const popup = window.open(
+                data.url,
+                "googlePopup",
+                "width=500,height=600"
+            );
+
+            // Listen for auth completion
+            const unsub = supabase.auth.onAuthStateChange(
+                async (event, session) => {
+                    if (event === "SIGNED_IN") {
+                        unsub?.data?.subscription.unsubscribe();
+                        popup?.close();
+
+                        const user = session?.user;
+                        if (!user) return toast.error("Login failed");
+
+                        // Check if exists in our DB
+                        const { data: dbUser } = await supabase
+                            .from("users")
+                            .select("*")
+                            .eq("id", user.id)
+                            .maybeSingle();
+
+                        if (!dbUser) {
+                            const newUser = {
+                                id: user.id,
+                                email: user.email,
+                                full_name: user.user_metadata.full_name,
+                                avatar:
+                                    user.user_metadata.avatar_url ||
+                                    user.user_metadata.picture ||
+                                    null,
+                                role: "client",
+                            };
+
+                            await supabase.from("users").insert(newUser);
+                            dispatch(setUser(newUser));
+                            navigate("/user");
+                            toast.success(
+                                t("auth.register.toast.success.title")
+                            );
+                        } else {
+                            dispatch(setUser(dbUser));
+                            navigate(
+                                dbUser.role === "host" ? "/host" : "/user"
+                            );
+                            toast.success(t("auth.signin.toast.success.title"));
+                        }
+                    }
+                }
+            );
+        } catch (err) {
+            console.error(err);
+            toast.error("Google sign-in failed");
         }
     };
 
+    //stop service worker in browser so redirect works
+    useEffect(() => {
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.getRegistrations().then((registrations) => {
+                registrations.forEach((registration) => {
+                    registration.unregister();
+                });
+            });
+        }
+    }, []);
+
     return (
-        <div className='flex flex-col font-poppins md:flex-row min-h-screen bg-background pt-16'>
+        <div className='flex items-center flex-col md:flex-row min-h-screen bg-background '>
             {/* Left column - form */}
-            <div className='w-full md:w-1/2 flex items-start justify-center px-8 md:px-20 py-12 md:py-16'>
+            <div className='w-full md:w-1/2 flex items-start justify-center px-8 py-8'>
                 <div className='w-full max-w-lg'>
                     <header className='mb-10'>
-                        <div className='flex items-center mb-6'>
+                        <Link to='/' className='flex items-center mb-6'>
                             <div className='w-[fit] dark:hidden'>
                                 <img src={img1} alt='Logo' width={200} />
                             </div>
                             <div className='w-[fit] hidden dark:block'>
                                 <img src={logoLight} alt='Logo' width={200} />
                             </div>
-                        </div>
+                        </Link>
 
                         <h1 className='text-[31.25px] font-extrabold text-primary leading-tight'>
                             {t("auth.signin.title")}
@@ -81,28 +164,52 @@ function Signin() {
                     </header>
 
                     <main>
-                        {/* Google Sign-In Button */}
-                        <div className='mb-6 flex items-center justify-center'>
-                            <button
+                        {/* ✅ Google Sign-In Buttons (Client & Host) */}
+                        <div className='space-y-2 mb-4'>
+                            <Button
                                 onClick={handleGoogleSignIn}
                                 disabled={loading}
-                                className={`w-full flex items-center justify-center gap-3 bg-[#D6CED5] rounded-sm py-4 px-6 text-[#424242] hover:bg-gray-100 ${
-                                    loading
-                                        ? "opacity-70 cursor-not-allowed"
-                                        : ""
-                                }`}
+                                variant='outline'
+                                className={`w-full flex items-center justify-center gap-2 border border-amber/40 bg-white dark:bg-background hover:bg-amber/10 transition rounded-sm py-3 shadow-sm font-medium ${loading
+                                    ? "opacity-60 cursor-not-allowed"
+                                    : ""
+                                    }`}
                             >
-                                <div className='w-[24px] h-[24px] flex items-center justify-center rounded-full bg-[white]'>
-                                    <img
-                                        src='https://www.svgrepo.com/show/355037/google.svg'
-                                        alt='Google'
-                                        className='w-[15px] h-[15px] bg-[white]'
-                                    />
-                                </div>
-                                <span className='text-sm text-[#424242] leading-[25.6px] font-[400]'>
-                                    {t("auth.signin.googleSignIn")}
-                                </span>
-                            </button>
+                                {!loading ? (
+                                    <>
+                                        <Chrome
+                                            size={18}
+                                            className='text-amber'
+                                        />
+                                        <span>
+                                            {t("auth.signin.googleSignIn")}
+                                        </span>
+                                    </>
+                                ) : (
+                                    <div className='flex items-center gap-2'>
+                                        <div className='w-4 h-4 border-2 border-amber border-t-transparent rounded-full animate-spin'></div>
+                                        <span className='text-primary text-sm'>
+                                            {t("common.loading") ??
+                                                "Loading..."}
+                                        </span>
+                                    </div>
+                                )}
+                            </Button>
+
+                            {/* Note */}
+                            <div className=' text-xs text-center text-primary font-medium bg-card border border-violet/20 rounded-sm py-2 leading-tight'>
+                                {t("auth.signin.googleNote")}
+                                {/* Host CTA */}
+                                <p className='mt-1'>
+                                    {t("auth.signin.wantHost")}{" "}
+                                    <Link
+                                        to='/register'
+                                        className='text-amber font-semibold underline hover:text-amber/80'
+                                    >
+                                        {t("auth.signin.createHost")}
+                                    </Link>
+                                </p>
+                            </div>
                         </div>
 
                         <div className='flex items-center my-6'>
@@ -115,6 +222,8 @@ function Signin() {
 
                         {/* Email & Password form */}
                         <form onSubmit={handleSubmit} className='space-y-6'>
+
+                            {/* EMAIL FIELD */}
                             <div className='relative w-full'>
                                 <input
                                     type='email'
@@ -122,7 +231,7 @@ function Signin() {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder=' '
-                                    required
+                                    dir='ltr'
                                     className='peer w-full border rounded-sm px-4 pt-5 pb-2 text-primary placeholder-transparent focus:outline-none focus:ring-2 focus:ring-amber focus:border-transparent'
                                 />
                                 <label
@@ -131,18 +240,24 @@ function Signin() {
                                 >
                                     {t("common.form.email")}
                                 </label>
+
+                                {/* ⭐ EMAIL ERROR MESSAGE */}
+                                {errors.email && (
+                                    <p className='text-red-500 text-xs mt-1'>
+                                        {errors.email[0]}
+                                    </p>
+                                )}
                             </div>
 
+                            {/* PASSWORD FIELD */}
                             <div className='relative w-full'>
                                 <input
                                     type={showPassword ? "text" : "password"}
                                     id='password'
                                     value={password}
-                                    onChange={(e) =>
-                                        setPassword(e.target.value)
-                                    }
+                                    onChange={(e) => setPassword(e.target.value)}
                                     placeholder=' '
-                                    required
+                                    dir='ltr'
                                     className='peer w-full border rounded-sm px-4 pt-5 pb-2 pr-12 text-primary placeholder-transparent focus:outline-none focus:ring-2 focus:ring-amber focus:border-transparent'
                                 />
                                 <label
@@ -154,31 +269,35 @@ function Signin() {
 
                                 <button
                                     type='button'
-                                    onClick={() =>
-                                        setShowPassword(!showPassword)
-                                    }
+                                    onClick={() => setShowPassword(!showPassword)}
                                     className='absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 peer-focus:text-amber'
                                 >
                                     {showPassword ? <EyeOff /> : <Eye />}
                                 </button>
+
+                                {/* ⭐ PASSWORD ERROR MESSAGE */}
+                                {errors.password && (
+                                    <p className='text-red-500 text-xs mt-1'>
+                                        {errors.password[0]}
+                                    </p>
+                                )}
                             </div>
 
                             <div>
                                 <button
                                     type='submit'
                                     disabled={loading}
-                                    className={`w-full bg-violet hover:brightness-110 text-white font-semibold py-4 rounded-md shadow-inner flex items-center justify-center gap-2 ${
-                                        loading
-                                            ? "opacity-70 cursor-not-allowed"
-                                            : ""
-                                    }`}
+                                    className={`w-full bg-violet hover:brightness-110 text-white font-semibold py-4 rounded-md shadow-inner flex items-center justify-center gap-2 ${loading ? "opacity-70 cursor-not-allowed" : ""
+                                        }`}
                                 >
                                     {loading
                                         ? t("common.buttons.signingIn")
                                         : t("common.buttons.letsGetStarted")}
                                 </button>
                             </div>
+
                         </form>
+
 
                         <div className='mt-6 text-center font-[12.8px] text-text'>
                             <h5>
@@ -196,8 +315,8 @@ function Signin() {
             </div>
 
             {/* Right column - image */}
-            <div className='w-full md:w-1/2 flex items-center justify-center px-8'>
-                <div className='w-[420px] h-[600px]'>
+            <div className='hidden md:w-1/2 md:flex items-center justify-center'>
+                <div className=''>
                     <img
                         src={img}
                         alt='Register'

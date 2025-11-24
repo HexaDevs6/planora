@@ -48,7 +48,7 @@ const ReviewsSection = ({ reviews = [] }) => {
     };
 
     return (
-        <div className='p-4 bg-card  rounded-sm shadow-sm border border-border-light dark:border-border-dark'>
+        <div className='p-4 bg-background rounded-xl border'>
             {/* Header */}
             <div className='flex justify-between items-center mb-4'>
                 <h3 className='text-primary font-semibold '>Recent Reviews</h3>

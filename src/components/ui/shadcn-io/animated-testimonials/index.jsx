@@ -1,4 +1,3 @@
-"use client";;
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -7,7 +6,8 @@ import { cn } from "@/lib/utils"
 export const AnimatedTestimonials = ({
   testimonials,
   autoplay = false,
-  className
+  className,
+  lang = "en"
 }) => {
   const [active, setActive] = useState(0);
 
@@ -37,7 +37,7 @@ export const AnimatedTestimonials = ({
   return (
     <div
       className={cn(
-        "mx-auto max-w-sm px-4 py-20 font-sans antialiased md:max-w-6xl md:px-8 lg:px-12",
+        "mx-auto max-w-sm px-4 py-20 antialiased md:max-w-6xl md:px-8 lg:px-12",
         className
       )}>
       <div className="relative grid grid-cols-1 gap-7 md:gap-20 md:grid-cols-2">
@@ -141,13 +141,13 @@ export const AnimatedTestimonials = ({
               onClick={handlePrev}
               className="group/button flex h-7 w-7 items-center justify-center rounded-full bg-gray-100 ">
               <ChevronLeft
-                className="h-5 w-5 text-black transition-transform duration-300 group-hover/button:rotate-12" />
+                className={`h-5 w-5 text-black transition-transform duration-300 ${lang === "ar" ? "rotate-0" : "rotate-180"}`} />
             </button>
             <button
               onClick={handleNext}
               className="group/button flex h-7 w-7 items-center justify-center rounded-full bg-gray-100 ">
               <ChevronRight
-                className="h-5 w-5 text-black transition-transform duration-300 group-hover/button:-rotate-12" />
+                className={`h-5 w-5 text-black transition-transform duration-300 ${lang === "ar" ? "rotate-0" : "rotate-180"}`} />
             </button>
           </div>
         </div>

@@ -1,260 +1,314 @@
-import React, { useState } from "react";
-import { Search, Filter, Eye, Edit3, Trash2 } from "lucide-react";
-
-const eventsData = [
-    {
-        id: "evt_001",
-        title: "Tech Innovators Summit 2025",
-        date: "2025-11-10",
-        time: "09:00 AM",
-        location: "Cairo International Convention Center",
-        category: "Technology",
-        status: "Upcoming",
-        attendees: 342,
-        host: {
-            name: "Planora Events",
-            avatar: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg",
-        },
-    },
-    {
-        id: "evt_002",
-        title: "Music Fest Alexandria",
-        date: "2025-09-15",
-        time: "06:30 PM",
-        location: "Alexandria Corniche Arena",
-        category: "Entertainment",
-        status: "Completed",
-        attendees: 980,
-        host: {
-            name: "SoundWave Egypt",
-            avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg",
-        },
-    },
-    {
-        id: "evt_003",
-        title: "Startup Pitch Night",
-        date: "2025-10-29",
-        time: "07:00 PM",
-        location: "Greek Campus, Cairo",
-        category: "Business",
-        status: "Ongoing",
-        attendees: 120,
-        host: {
-            name: "Cairo Startups",
-            avatar: "https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg",
-        },
-    },
-    {
-        id: "evt_004",
-        title: "Food & Art Festival",
-        date: "2025-12-05",
-        time: "12:00 PM",
-        location: "Giza Cultural Park",
-        category: "Culture",
-        status: "Upcoming",
-        attendees: 750,
-        host: {
-            name: "FlavorArt Egypt",
-            avatar: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg",
-        },
-    },
-];
+import React, { useState, useEffect } from "react";
+import { Eye, Edit, Trash2, Plus, Calendar, Loader2 } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
+import { toast } from "sonner";
+import Swal from "sweetalert2";
+import { useDirection } from "@/hooks/useDirection";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchCategories } from "@/store/fetchCategoriesThunk";
+import { deleteFile } from "@/lib/storage"; 
 
 const EventsTable = () => {
-    const [searchQuery, setSearchQuery] = useState("");
-    const [filterStatus, setFilterStatus] = useState("All");
+   const { data: categories } = useSelector((state) => state.categories);
+   const { lang } = useDirection();
+   const dispatch = useDispatch();
+   const [events, setEvents] = useState([]);
+   const user = useSelector((state) => state.auth.user);
+   const [loading, setLoading] = useState(true);
+   const [loadingDelete, setLoadingDelete] = useState(false);
 
-    // Filtering logic
-    const filteredEvents = eventsData.filter((event) => {
-        const matchesSearch =
-            event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            event.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            event.host.name.toLowerCase().includes(searchQuery.toLowerCase());
+   const formatDate = (dateString) => {
+      return new Date(dateString).toLocaleDateString("en-US", {
+         year: "numeric",
+         month: "short",
+         day: "numeric",
+      });
+   };
 
-        const matchesStatus =
-            filterStatus === "All" || event.status === filterStatus;
 
-        return matchesSearch && matchesStatus;
-    });
+   const handleDelete = async (eventId) => {
+      Swal.fire({
+         title: lang === "ar" ? "هل أنت متأكد؟" : "Are you sure?",
+         text:
+            lang === "ar"
+               ? "سيتم حذف الحدث وجميع الصور المرتبطة به!"
+               : "This event and all its images will be deleted!",
+         icon: "warning",
+         showCancelButton: true,
+         confirmButtonText: lang === "ar" ? "نعم" : "Yes",
+         cancelButtonText: lang === "ar" ? "لا" : "No",
+      }).then(async (result) => {
+         if (!result.isConfirmed) return;
+         setLoadingDelete(true);
 
-    return (
-        <div className='space-y-5'>
-            {/* Header */}
-            <div className='flex flex-col sm:flex-row justify-between gap-3 items-start sm:items-center'>
-                <h2 className='text-2xl font-bold text-primary'>
-                    Events Overview
-                </h2>
+         try {
+            // 1️⃣ Fetch event data (thumbnail + images)
+            const { data: eventData, error: fetchError } = await supabase
+               .from("events")
+               .select("thumbnail, images")
+               .eq("id", eventId)
+               .single();
 
-                <div className='flex flex-col sm:flex-row gap-3 w-full sm:w-auto'>
-                    {/* Search */}
-                    <div className='relative flex items-center w-full sm:w-64'>
-                        <Search
-                            className='absolute left-3 text-subtext-light dark:text-subtext-dark'
-                            size={16}
-                        />
-                        <input
-                            type='text'
-                            placeholder='Search events...'
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className='w-full rounded-sm bg-content-light dark:bg-content-dark border border-border-light dark:border-border-dark pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/60 transition'
-                        />
-                    </div>
+            if (fetchError) throw fetchError;
 
-                    {/* Filter */}
-                    <div className='relative flex items-center'>
-                        <Filter
-                            className='absolute left-3 text-subtext-light dark:text-subtext-dark'
-                            size={16}
-                        />
-                        <select
-                            value={filterStatus}
-                            onChange={(e) => setFilterStatus(e.target.value)}
-                            className='appearance-none w-full sm:w-44 rounded-sm bg-background border border-border-light dark:border-border-dark pl-9 pr-8 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/60 transition cursor-pointer'
-                        >
-                            <option value='All'>All Statuses</option>
-                            <option value='Upcoming'>Upcoming</option>
-                            <option value='Ongoing'>Ongoing</option>
-                            <option value='Completed'>Completed</option>
-                        </select>
-                    </div>
-                </div>
+            // 2️⃣ Collect all image paths
+            const allPaths = [];
+
+            if (eventData?.thumbnail) {
+               allPaths.push(eventData.thumbnail);
+            }
+
+            if (Array.isArray(eventData?.images)) {
+               eventData.images.forEach((img) => {
+                  if (img.path) allPaths.push(img.path);
+               });
+            }
+
+            // 3️⃣ Delete from Supabase Storage
+            if (allPaths.length > 0) {
+               await deleteFile("events", allPaths);
+            }
+
+            // 4️⃣ Delete event record from database
+            const { error: deleteError } = await supabase
+               .from("events")
+               .delete()
+               .eq("id", eventId);
+
+            if (deleteError) throw deleteError;
+
+            // 5️⃣ Show success message
+            toast.success(
+               lang === "ar"
+                  ? "تم حذف الحدث وجميع الصور الخاصة به بنجاح!"
+                  : "Event and its images deleted successfully!"
+            );
+
+            // 6️⃣ Refresh UI
+            setEvents((prev) => prev.filter((e) => e.id !== eventId));
+         } catch (error) {
+            console.error("Delete Event Error:", error.message);
+            toast.error(
+               lang === "ar"
+                  ? `حدث خطأ أثناء حذف الحدث: ${error.message}`
+                  : `Error deleting event: ${error.message}`
+            );
+         } finally {
+            setLoadingDelete(false);
+         }
+      });
+   };
+
+   const getCategoryName = (categoryId) => {
+      const category = categories.find((cat) => cat.id === categoryId);
+      if (category) {
+         return lang === "ar" ? category.name_ar : category.name;
+      } else {
+         return "Unknown Category";
+      }
+   };
+
+   useEffect(() => {
+      const fetchUserEvents = async () => {
+         const { data, error } = await supabase
+            .from("events")
+            .select("*")
+            .eq("host_id", user.id);
+         setLoading(false);
+         if (error) {
+            console.error(error);
+            return;
+         } else {
+            setEvents(data);
+         }
+      };
+      fetchUserEvents();
+   }, [loadingDelete]);
+
+   useEffect(() => {
+      if (!categories || categories.length === 0) {
+         dispatch(fetchCategories());
+      }
+   }, [dispatch, categories]);
+
+   // Empty state component
+   const EmptyState = () => (
+      <div className="flex flex-col items-center justify-center py-16 px-4">
+         <div className="rounded-full bg-primary/10 p-6 mb-4">
+            <Plus className="h-12 w-12 text-primary" />
+         </div>
+         <h3 className="text-xl font-semibold mb-2">
+            {lang === "ar" ? "لا يوجد فعاليات بعد" : "No Events Yet"}
+         </h3>
+         <p className="text-muted-foreground text-center mb-6 max-w-md">
+            {lang === "ar"
+               ? "لم تقم بإنشاء أي فعالية بعد. ابدأ بإنشاء فعاليتك الأولى لتشاركها مع الآخرين."
+               : "You haven't created any events yet. Start by creating your first event to share with others."}
+         </p>
+         <Link to="/host/create-event">
+            <Button variant="amber" size="lg">
+               <Plus className="mr-2 h-4 w-4" />
+               {lang === "ar" ? "إنشاء فعالية" : "Create Your First Event"}
+            </Button>
+         </Link>
+      </div>
+   );
+
+   return (
+      <div className="space-y-5 container">
+         {/* Header */}
+         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+            <div>
+               <h1 className="text-3xl font-bold text-primary mb-2">
+                  {lang === "ar" ? "الفعاليات" : "Events"}
+               </h1>
+               <p className="text-muted-foreground">
+                  {lang === "ar"
+                     ? "إدارة وتتبع جميع الفعاليات في مكان واحد"
+                     : "Manage and track all your events in one place"}
+               </p>
             </div>
+            <Link to="/host/create-event">
+               <Button size="lg" className="mt-4 md:mt-0 bg-gradient-amber">
+                  <Plus className="mr-2 h-4 w-4" />
+                  {lang === "ar" ? "إنشاء فعالية" : "Create Event"}
+               </Button>
+            </Link>
+         </div>
 
-            {/* Table */}
-            <div className='overflow-x-auto bg-content-light dark:bg-content-dark rounded-lg shadow-subtle'>
-                <table className='min-w-full divide-y divide-border-light dark:divide-border-dark'>
-                    <thead className='bg-gray-50 dark:bg-gray-800/40'>
-                        <tr>
-                            {[
-                                "Event",
-                                "Date & Time",
-                                "Location",
-                                "Category",
-                                "Attendees",
-                                "Status",
-                                "Actions",
-                            ].map((heading) => (
-                                <th
-                                    key={heading}
-                                    className='px-4 py-3 text-left text-xs font-semibold text-primary uppercase tracking-wider'
-                                >
-                                    {heading}
-                                </th>
-                            ))}
-                        </tr>
-                    </thead>
-
-                    <tbody className='divide-y divide-border-light dark:divide-border-dark'>
-                        {filteredEvents.length > 0 ? (
-                            filteredEvents.map((event) => (
-                                <tr
+         {/* Table */}
+         {events.length === 0 && !loading && !loadingDelete ? (
+            <Card>
+               <CardContent>
+                  <EmptyState />
+               </CardContent>
+            </Card>
+         ) : (
+            <Card className="bg-background border rounded-xl overflow-hidden">
+               <CardContent className={"p-0"}>
+                  {loading ? (
+                     <div className="flex-center py-16 px-4 min-h-[300px]">
+                        <Loader2 className="h-12 w-12 text-primary animate-spin" />
+                     </div>
+                  ) : (
+                     <div className="overflow-x-auto">
+                        <table className="w-full">
+                           <thead className="bg-muted">
+                              <tr className="border-b border-border">
+                                 <th className="text-start py-3 px-4 font-semibold text-sm">
+                                    {lang === "ar" ? "العنوان" : "Title"}
+                                 </th>
+                                 <th className="text-start py-3 px-4 font-semibold text-sm">
+                                    {lang === "ar" ? "الفئة" : "Category"}
+                                 </th>
+                                 <th className="text-start py-3 px-4 font-semibold text-sm">
+                                    {lang === "ar" ? "التاريخ" : "Date"}
+                                 </th>
+                                 <th className="text-start py-3 px-4 font-semibold text-sm">
+                                    {lang === "ar" ? "السعر" : "Price"}
+                                 </th>
+                                 <th className="text-start py-3 px-4 font-semibold text-sm">
+                                    {lang === "ar" ? "الإجراءات" : "Actions"}
+                                 </th>
+                              </tr>
+                           </thead>
+                           <tbody>
+                              {events.map((event) => (
+                                 <tr
                                     key={event.id}
-                                    className='hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors'
-                                >
-                                    {/* Event */}
-                                    <td className='px-4 py-4 whitespace-nowrap flex items-center gap-3'>
-                                        <img
-                                            src={event.host.avatar}
-                                            alt={event.title}
-                                            className='w-10 h-10 rounded-sm object-cover'
-                                        />
-                                        <div>
-                                            <p className='text-sm font-semibold text-primary'>
-                                                {event.title}
-                                            </p>
-                                            <p className='text-xs text-subtext-light dark:text-subtext-dark'>
-                                                by {event.host.name}
-                                            </p>
-                                        </div>
+                                    className="border-b border-border hover:bg-muted/50 transition-colors"
+                                 >
+                                    <td className="py-4 px-4">
+                                       <div>
+                                          <Link className="font-medium" to={{
+    pathname: "/host/attendees",
+    search: `?id=${event.id}&title=${ lang === "ar" ? event.name_ar : event.name}&date=${event.date }&location=${event.location }`,
+  }}>
+                                             {lang === "ar"
+                                                ? event.name_ar
+                                                : event.name}
+                                          </Link>
+                                       </div>
                                     </td>
-
-                                    {/* Date & Time */}
-                                    <td className='px-4 py-4 whitespace-nowrap text-sm'>
-                                        {event.date} <br />
-                                        <span className='text-xs text-subtext-light dark:text-subtext-dark'>
-                                            {event.time}
-                                        </span>
+                                    <td className="py-4 px-4">
+                                       <span className="text-sm">
+                                          {getCategoryName(event.category_id)}
+                                       </span>
                                     </td>
-
-                                    {/* Location */}
-                                    <td className='px-4 py-4 whitespace-nowrap text-sm text-subtext-light dark:text-subtext-dark'>
-                                        {event.location}
+                                    <td className="py-4 px-4">
+                                       <div className="flex items-center gap-1 text-sm text-nowrap">
+                                          <Calendar className="h-3 w-3 text-muted-foreground" />
+                                          {formatDate(event.date)}
+                                       </div>
                                     </td>
-
-                                    {/* Category */}
-                                    <td className='px-4 py-4 whitespace-nowrap text-sm'>
-                                        {event.category}
+                                    <td className="py-4 px-4">
+                                       <span className="font-semibold text-sm">
+                                          {event.price === 0
+                                             ? "Free"
+                                             : `$${event.price}`}
+                                       </span>
                                     </td>
-
-                                    {/* Attendees */}
-                                    <td className='px-4 py-4 whitespace-nowrap text-sm font-semibold'>
-                                        {event.attendees}
+                                    <td className="py-4 px-4">
+                                       <div className="flex items-center justify-end gap-2">
+                                          <Link to={`/events/${event.id}`}>
+                                             <Button
+                                                className="bg-transparent text-foreground hover:bg-foreground/10"
+                                                size="icon-sm"
+                                                onClick={() =>
+                                                   handleView(event.id)
+                                                }
+                                                title={
+                                                   lang === "ar"
+                                                      ? "عرض"
+                                                      : "View"
+                                                }
+                                             >
+                                                <Eye className="h-4 w-4" />
+                                             </Button>
+                                          </Link>
+                                          <Link
+                                             to={`/host/create-event?eventId=${event.id}`}
+                                          >
+                                             <Button
+                                                className="bg-transparent text-amber-dark hover:bg-amber-dark/10"
+                                                size="icon-sm"
+                                                title={
+                                                   lang === "ar"
+                                                      ? "تعديل"
+                                                      : "Edit"
+                                                }
+                                             >
+                                                <Edit className="h-4 w-4" />
+                                             </Button>
+                                          </Link>
+                                          <Button
+                                             size="icon-sm"
+                                             onClick={() =>
+                                                handleDelete(event.id)
+                                             }
+                                             title={
+                                                lang === "ar" ? "حذف" : "Delete"
+                                             }
+                                             className="text-destructive bg-transparent hover:bg-destructive/10"
+                                          >
+                                             <Trash2 className="h-4 w-4" />
+                                          </Button>
+                                       </div>
                                     </td>
-
-                                    {/* Status */}
-                                    <td className='px-4 py-4 whitespace-nowrap'>
-                                        <span
-                                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                                event.status === "Upcoming"
-                                                    ? "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300"
-                                                    : event.status === "Ongoing"
-                                                    ? "bg-violet-100 text-violet-800 dark:bg-violet-900/40 dark:text-violet-300"
-                                                    : "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300"
-                                            }`}
-                                        >
-                                            {event.status}
-                                        </span>
-                                    </td>
-
-                                    {/* Actions */}
-                                    <td className='px-4 py-4 whitespace-nowrap text-right text-sm'>
-                                        <div className='flex items-center gap-2 justify-end'>
-                                            <button
-                                                title='View Event'
-                                                className='p-2 text-primary hover:bg-primary/10 rounded-md transition'
-                                            >
-                                                <Eye size={16} />
-                                            </button>
-                                            <button
-                                                title='Edit'
-                                                className='p-2 text-amber-500 hover:bg-amber-100 dark:hover:bg-amber-900/40 rounded-md transition'
-                                            >
-                                                <Edit3 size={16} />
-                                            </button>
-                                            <button
-                                                title='Delete'
-                                                className='p-2 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/40 rounded-md transition'
-                                            >
-                                                <Trash2 size={16} />
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td
-                                    colSpan='7'
-                                    className='px-4 py-10 text-center'
-                                >
-                                    <div className='border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg py-12'>
-                                        <h3 className='text-lg font-semibold text-text-light-primary dark:text-text-dark-primary'>
-                                            No Events Found
-                                        </h3>
-                                        <p className='text-sm text-text-light-secondary dark:text-text-dark-secondary mt-1'>
-                                            Try adjusting your search or
-                                            filters.
-                                        </p>
-                                    </div>
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    );
+                                 </tr>
+                              ))}
+                           </tbody>
+                        </table>
+                     </div>
+                  )}
+               </CardContent>
+            </Card>
+         )}
+      </div>
+   );
 };
 
 export default EventsTable;

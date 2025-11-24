@@ -1,187 +1,113 @@
 import CategoryCard from "@/components/Cards/CategoryCard";
 import PagesHeader from "@/components/PagesHeader";
-import { t } from "i18next";
+import i18next, { t } from "i18next";
 import {
-  Briefcase,
-  Camera,
-  ChartGantt,
-  Disc3,
-  Dumbbell,
-  GraduationCap,
   Grid3x3,
-  Music,
-  Palette,
-  SprayCan,
-  Users,
-  Utensils,
-  VenetianMask,
+  UtensilsCrossed,
+  Flower2,
+  UserCheck,
+  Lightbulb,
+  Music2,
+  Camera,
+  CalendarCheck2,
+  ShieldCheck,
+  Bus,
+  Sparkles,
 } from "lucide-react";
-
-import React from "react";
-
-import photographerImage from "@/assets/service-photographer.jpg";
-import plannerImage from "@/assets/service-planner.jpg";
-import djImage from "@/assets/service-dj.jpg";
-import cateringImage from "@/assets/service-catering.jpg";
-
-import EventCard from "@/components/Cards/EventCard";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@/components/ui/button";
-import { setVisibleCount } from "@/store/searchSlice";
+import { setServiceVisibleCount } from "@/store/searchAndFilterServiceSlice";
 import ServiceCard from "@/components/Cards/ServiceCard";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay } from "swiper/modules";
+// import "swiper/css";
+import { fetchCategories } from "@/store/fetchCategoriesThunk";
+import { fetchServices } from "@/store/fetchServicesThunk";
+import loremService from "@/assets/loremService.jfif";
+import { motion } from "framer-motion";
+import { supabase } from "@/lib/supabaseClient";
+import { getPublicUrl } from "@/lib/storage";
 
 export default function Services() {
-  const query = useSelector((state) => state.search.query.toLowerCase().trim());
+  const query = useSelector((state) =>
+    state.servicesSearchAndFilter.queryService.toLowerCase().trim()
+  );
   const dispatch = useDispatch();
-  const services = [
-    {
-      id: "1",
-      title: t("servicesPage.cards.1.title"),
-      provider: "LensMaster Studios",
-      image: photographerImage,
-      category: t("servicesPage.cards.1.category"),
-      location: t("servicesPage.cards.1.location"),
-      rating: 4.9,
-      reviews: 128,
-      priceRange: "$800-$2,000",
-      verified: true,
-    },
-    {
-      id: "2",
-      title: t("servicesPage.cards.2.title"),
-      provider: "Elite Events Co.",
-      image: plannerImage,
-      category: t("servicesPage.cards.2.category"),
-      location: t("servicesPage.cards.2.location"),
-      rating: 4.8,
-      reviews: 95,
-      priceRange: "$1,500-$5,000",
-      verified: true,
-    },
-    {
-      id: "3",
-      title: t("servicesPage.cards.3.title"),
-      provider: "SoundWave Productions",
-      image: djImage,
-      category: t("servicesPage.cards.3.category"),
-      location: t("servicesPage.cards.3.location"),
-      rating: 4.9,
-      reviews: 156,
-      priceRange: "$500-$1,500",
-      verified: true,
-    },
-    {
-      id: "4",
-      title: t("servicesPage.cards.4.title"),
-      provider: "Culinary Delights",
-      image: cateringImage,
-      category: t("servicesPage.cards.4.category"),
-      location: t("servicesPage.cards.4.location"),
-      rating: 4.7,
-      reviews: 203,
-      priceRange: "$30-$80/person",
-      verified: true,
-    },
-    {
-      id: "5",
-      title: t("servicesPage.cards.5.title"),
-      provider: "Moment Capture Studio",
-      image: photographerImage,
-      category: t("servicesPage.cards.5.category"),
-      location: t("servicesPage.cards.5.location"),
-      rating: 4.8,
-      reviews: 87,
-      priceRange: "$1,200-$3,000",
-      verified: false,
-    },
-    {
-      id: "6",
-      title: t("servicesPage.cards.6.title"),
-      provider: "ProEvent Solutions",
-      image: plannerImage,
-      category: t("servicesPage.cards.6.category"),
-      location: t("servicesPage.cards.6.location"),
-      rating: 4.9,
-      reviews: 142,
-      priceRange: "$2,000-$10,000",
-      verified: true,
-    },
-    {
-      id: "7",
-      title: t("servicesPage.cards.7.title"),
-      provider: "Party Vibes Entertainment",
-      image: djImage,
-      category: t("servicesPage.cards.7.category"),
-      location: t("servicesPage.cards.7.location"),
-      rating: 4.6,
-      reviews: 73,
-      priceRange: "$800-$2,500",
-      verified: false,
-    },
-    {
-      id: "8",
-      title: t("servicesPage.cards.8.title"),
-      provider: "Gourmet Events",
-      image: cateringImage,
-      category: t("servicesPage.cards.8.category"),
-      location: t("servicesPage.cards.8.location"),
-      rating: 4.9,
-      reviews: 167,
-      priceRange: "$50-$150/person",
-      verified: true,
-    },
+  const currentLang = i18next.language;
+
+  // get categories from supabase
+  const { data, loading } = useSelector((state) => state.categories);
+
+  const filterData = data.filter((cat) => cat.type === "service");
+  console.log(filterData);
+
+  const icons = [
+    UtensilsCrossed,
+    Sparkles,
+    Flower2,
+    UserCheck,
+    Lightbulb,
+    Music2,
+    Camera,
+    CalendarCheck2,
+    ShieldCheck,
+    Bus,
   ];
 
-  const filterQuery = useSelector((state) => state.search.filter.toLowerCase());
-  console.log(filterQuery);
+  const interestOptions = data
+    .filter((category) => category.type === "service")
+    .map((category) => ({
+      ...category,
+      displayName: currentLang === "ar" ? category.name_ar : category.name,
+    }));
 
+  // get services from supabase
+  const { items: servicesData, loading:servicesLoading, error } = useSelector(
+    (state) => state.services
+  );
+
+  useEffect(() => {
+    if (!data.length) dispatch(fetchCategories());
+    if (!servicesData.length) dispatch(fetchServices());
+  }, [dispatch, servicesData.length, data.length]);
+
+  // filter category
+  const filterQuery = useSelector((state) =>
+    state.servicesSearchAndFilter.filterService.toLowerCase()
+  );
+
+  // apply search
   const filterSearch =
     filterQuery == "all" || filterQuery == "الجميع"
-      ? services.filter((el) => el.title.toLowerCase().trim().includes(query))
-      : services
-          .filter((el) => el.title.toLowerCase().trim().includes(query))
-          .filter((el) => el.category.toLowerCase() === filterQuery);
-  const visibleEvents = useSelector((state) => state.search.visibleCount);
+      ? servicesData.filter((el) =>
+          el.name.toLowerCase().trim().includes(query)
+        )
+      : servicesData
+          .filter((el) => el.name.toLowerCase().trim().includes(query))
+          .filter(
+            (el) =>
+              interestOptions
+                .filter((item) => item.id === el.category_id)[0]
+                ?.displayName.toLowerCase() === filterQuery
+          );
 
-  const categories = [
-    {
-      name: t("servicesPage.category.cateCards.title0"),
-      icon: Grid3x3,
-      count: 300,
-    },
-    {
-      name: t("servicesPage.category.cateCards.title1"),
-      icon: Camera,
-      count: 245,
-    },
-    {
-      name: t("servicesPage.category.cateCards.title2"),
-      icon: ChartGantt,
-      count: 189,
-    },
-    {
-      name: t("servicesPage.category.cateCards.title3"),
-      icon: Disc3,
-      count: 156,
-    },
-    {
-      name: t("servicesPage.category.cateCards.title4"),
-      icon: Utensils,
-      count: 132,
-    },
-    {
-      name: t("servicesPage.category.cateCards.title5"),
-      icon: SprayCan,
-      count: 298,
-    },
-    {
-      name: t("servicesPage.category.cateCards.title6"),
-      icon: VenetianMask,
-      count: 167,
-    },
-  ];
+  const visibleServices = useSelector(
+    (state) => state.servicesSearchAndFilter.visibleCountService
+  );
+  // get visible services from redux store
+  const viewService = filterSearch.slice(0, visibleServices);
 
-  const viewService = filterSearch.slice(0, visibleEvents);
+
+  const handleThumbnail = function (el) {
+    if (el) {
+      if (el.startsWith("http")) {
+        return el;
+      } else {
+        return getPublicUrl("services", el);
+      }
+    }
+  };  
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -189,32 +115,70 @@ export default function Services() {
         search={`${t("servicesPage.header.search")}`}
         title={`${t("servicesPage.header.title")}`}
         subtitle={`${t("servicesPage.header.subTitle")}`}
+        type="service"
       />
       <main className="flex-1">
-        <section className="py-16 md:pt-20 bg-muted/30">
+        <section className="py-16 md:pt-10 bg-muted/30">
           <div className="container px-4 md:px-6">
-            <div className="text-center space-y-4 mb-12">
-              <h2 className="text-3xl text-primary md:text-4xl font-bold">
-                {t("eventsPage.category.title")}
-              </h2>
-              <p className="text-lg text-text max-w-2xl mx-auto">
-                {t("eventsPage.category.subTitle")}
+            {loading ? (
+              <p className="text-primary text-4xl md:text-3xl font-bold drop-shadow-2xl py-30 text-center">
+                {t("servicesPage.loading.category")}
               </p>
-            </div>
-
-            <div className="grid grid-cols-2 mb-10 md:grid-cols-3 lg:grid-cols-7 gap-4 md:gap-6">
-              {categories.map((category, index) => (
-                <div
-                  key={category.name}
-                  className="animate-scale-in"
-                  style={{ animationDelay: `${index * 100}ms` }}
+            ) : (
+              <div
+                className="w-full h-full px-4 py-6"
+                dir={currentLang === "ar" ? "rtl" : "ltr"}
+              >
+                <Swiper
+                  key={currentLang === "ar" ? "rtl" : "ltr"} // ✅ يعيد تهيئة السلايدر عند تغيير اللغة
+                  dir={currentLang === "ar" ? "rtl" : "ltr"} // ✅ يضبط الاتجاه
+                  modules={[Autoplay]}
+                  spaceBetween={20}
+                  slidesPerView={2}
+                  autoplay={{ delay: 4000, disableOnInteraction: false }}
+                  breakpoints={{
+                    640: { slidesPerView: 3 },
+                    768: { slidesPerView: 4 },
+                    1024: { slidesPerView: 5 },
+                  }}
+                  className="w-full"
+                  style={{ padding: "8px" }}
                 >
-                  <CategoryCard {...category} />
-                </div>
-              ))}
-            </div>
+                  {/* العنصر الأول (All) */}
+                  <SwiperSlide>
+                    <div className="animate-scale-in">
+                      <CategoryCard
+                        name={t("servicesPage.category.cateCards.title0")}
+                        icon={Grid3x3}
+                        type="service"
+                      />
+                    </div>
+                  </SwiperSlide>
 
-            <div className="py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {/* باقي الكاتيجوريز */}
+                  {interestOptions.map((category, index) => (
+                    <SwiperSlide key={category.name}>
+                      <div
+                        className="animate-scale-in"
+                        style={{ animationDelay: `${index * 100}ms` }}
+                      >
+                        <CategoryCard
+                          name={
+                            currentLang === "ar"
+                              ? category.name_ar
+                              : category.name
+                          }
+                          icon={icons[index]}
+                          type="service"
+                        />
+                      </div>
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </div>
+            )}
+
+            {/* <div className="py-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {viewService.map((el) => (
                 <ServiceCard
                   key={el.id}
@@ -229,42 +193,84 @@ export default function Services() {
                   verified={el.verified}
                 />
               ))}
-            </div>
+            </div> */}
 
-            {visibleEvents < filterSearch.length && (
-              <div className="w-fit mx-auto">
-                <Button
-                  onClick={() => dispatch(setVisibleCount())}
-                  size="CTA"
-                  variant="amber"
-                >
-                  {t("eventsPage.category.viewMore")}
-                </Button>
+            {servicesLoading ? (
+              <p className="text-primary text-4xl md:text-3xl font-bold drop-shadow-2xl py-30 text-center">
+                {t("servicesPage.loading.cards")}
+              </p>
+            ) : (
+              <div className="py-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {viewService.map((el, i) => (
+                  <motion.div
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: i * 0.1 }}
+                    key={el.id}
+                  >
+                    <ServiceCard
+                      id={el.id}
+                      title={currentLang === "ar" ? el.name_ar : el.name}
+                      image={handleThumbnail(el.thumbnail) || loremService}
+                      description={
+                        currentLang === "ar"
+                          ? el.description_ar
+                          : el.description
+                      }
+                      category={
+                        interestOptions.filter(
+                          (item) => item.id === el.category_id
+                        )[0]?.displayName
+                      }
+                      priceRange={
+                        el.price ? `$${el.price}` : t("servicesPage.free")
+                      }
+                      available={el.available}
+                      date={
+                        el.created_at
+                          ? new Date(el.created_at).toLocaleDateString(
+                              currentLang
+                            )
+                          : "N/A"
+                      }
+                      provider_id={el.client_id}
+                    />
+                  </motion.div>
+                ))}
               </div>
             )}
 
-            
+            {visibleServices < filterSearch.length && (
+              <div className="w-fit mx-auto">
+                <Button
+                  onClick={() => dispatch(setServiceVisibleCount())}
+                  size="CTA"
+                  variant="amber"
+                >
+                  {t("servicesPage.cards.viewMore")}
+                </Button>
+              </div>
+            )}
           </div>
           <section className="py-16 mt-15 bg-amber">
-              <div className="container px-4 md:px-6">
-                <div className="max-w-3xl mx-auto text-center space-y-6 text-white">
-                  <h2 className="text-3xl md:text-4xl font-bold">
-                    Are You a Service Provider?
-                  </h2>
-                  <p className="text-lg text-white/90">
-                    Join our marketplace and connect with thousands of event
-                    organizers looking for professional services
-                  </p>
-                  <Button
-                    variant="primary"
-                    size="lg"
-                    className="text-white hover:scale-105 transition-transform"
-                  >
-                    Become a Provider
-                  </Button>
-                </div>
+            <div className="container px-4 md:px-6">
+              <div className="max-w-3xl mx-auto text-center space-y-6 text-white">
+                <h2 className="text-3xl md:text-4xl font-bold">
+                  {t("servicesPage.join.title")}
+                </h2>
+                <p className="text-lg text-white/90">
+                  {t("servicesPage.join.description")}
+                </p>
+                <Button
+                  variant="primary"
+                  size="lg"
+                  className="text-white bg-violet hover:scale-105 transition-transform"
+                >
+                  {t("servicesPage.join.button")}
+                </Button>
               </div>
-            </section>
+            </div>
+          </section>
         </section>
       </main>
     </div>

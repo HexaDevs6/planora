@@ -1,116 +1,563 @@
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useState, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Button } from "../ui/button";
+import { fetchCategories } from "@/store/fetchCategoriesThunk";
+import { useDirection } from "@/hooks/useDirection";
+import { supabase } from "@/lib/supabaseClient";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
+import avatarPlaceholderImg from "@/assets/user_placeholder3.png";
+import { getPublicUrl } from "@/lib/storage";
+import Spinner from "../SpinnerLoader";
+import { toast } from "sonner";
+import { PasswordChangeModal } from "../PasswordChangeModal";
+import { ProfileSettingsSchema } from "@/validators";
+
 
 export default function ProfileSettings() {
+    const { lang } = useDirection();
+    const dispatch = useDispatch();
     const { user } = useSelector((state) => state.auth);
+    const { data: categories, loading } = useSelector(
+        (state) => state.categories
+    );
+    const [saving, setSaving] = useState(false);
+    const originalRef = useRef(null); // Store original data
+    const [errors, setErrors] = useState({});
 
     const [formData, setFormData] = useState({
-        fullName: "",
+        full_name: "",
         email: "",
         phone: "",
         location: "",
-        emailNotifications: true,
-        pushNotifications: true,
-        smsNotifications: false,
+        bio: "",
+        facebook_url: "",
+        instagram_url: "",
+        avatarUrl: "",
+        avatarFile: null, //for new uploaded image
+        categories: [],
     });
 
     useEffect(() => {
-        if (user) {
-            setFormData({
-                fullName: user.displayName || "",
-                email: user.email || "",
-                phone: user.phoneNumber || "",
-                location:
-                    user.location?.city && user.location?.country
-                        ? `${user.location.city}, ${user.location.country}`
-                        : "",
-                emailNotifications: true,
-                pushNotifications: true,
-                smsNotifications: false,
-            });
+        if (categories.length === 0) {
+            dispatch(fetchCategories());
         }
+    }, [dispatch]);
+
+    // Filter event categories and add displayName based on current language
+    const viewCategories = categories
+        .filter((category) => category.type === "event")
+        .map((category) => ({
+            ...category,
+            displayName: lang === "ar" ? category.name_ar : category.name,
+        }));
+
+    //fetch user data and categories (user_categories)
+    useEffect(() => {
+        async function getUserData() {
+            if (!user) return;
+            // get user categories from supabase
+            const { data: userCats } = await supabase
+                .from("user_categories")
+                .select("*")
+                .eq("user_id", user.id);
+
+            const loadedData = {
+                full_name: user.full_name || "",
+                email: user.email,
+                phone: user.phone || "",
+                location: user.location || "",
+                bio: user.bio || "",
+                facebook_url: user.facebook_url || "",
+                instagram_url: user.instagram_url || "",
+                avatarUrl: user.avatar || "",
+                categories: userCats.map((cat) => cat.category_id),
+            };
+            // Set the UI form
+            setFormData(loadedData);
+
+            // Store original data in ref (won’t rerender)
+            originalRef.current = loadedData;
+        }
+        getUserData();
     }, [user]);
 
+    //handle change on inputs
     const handleChange = (e) => {
-        const { name, type, checked, value } = e.target;
+        const { id, type, checked, value } = e.target;
         setFormData((prev) => ({
             ...prev,
-            [name]: type === "checkbox" ? checked : value,
+            [id]: type === "checkbox" ? checked : value,
         }));
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log("Profile Updated:", formData);
-        // TODO: later => dispatch(updateUserProfile(formData))
+    //handle change on categories
+    const toggleInterest = (interest) => {
+        setFormData((prev) => ({
+            ...prev,
+            categories: prev.categories.includes(interest)
+                ? prev.categories.filter((i) => i !== interest)
+                : [...prev.categories, interest],
+        }));
     };
+
+    //view avatar
+    const handleAvatar = (el) => {
+        if (!el) return avatarPlaceholderImg;
+
+        // absolute URL
+        if (typeof el === "string" && el.startsWith("http")) return el;
+
+        // stored file path inside Supabase (avatars bucket)
+        if (typeof el === "string") return getPublicUrl("avatars", el);
+
+        return avatarPlaceholderImg;
+    };
+
+    //handle form submit to supabase
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        // ---------------------------
+        // 0) Validate using Zod
+        // ---------------------------
+        const result = ProfileSettingsSchema.safeParse({
+            ...formData,
+            role: user.role, // لازم client أو host
+        });
+
+        if (!result.success) {
+            setErrors(result.error.flatten().fieldErrors);
+            toast.error(lang === "ar" ? "برجاء تصحيح الأخطاء" : "Please fix the errors");
+            return;
+        }
+
+        setErrors({}); // clear old errors
+
+        // ---------------------------
+        // 1) التأكد من وجود المستخدم
+        // ---------------------------
+        if (!user?.id) {
+            toast.error(lang === "ar" ? "يجب تسجيل الدخول أولاً" : "You must be logged in");
+            return;
+        }
+
+        setSaving(true);
+
+        try {
+            let avatarUrl = formData.avatarUrl;
+            const original = originalRef.current;
+
+            // ---------------------------
+            // 2) Upload avatar if changed
+            // ---------------------------
+            if (formData.avatarFile) {
+                const file = formData.avatarFile;
+                const ext = file.name.split(".").pop();
+                const path = `avatars/${user.full_name}/${user.id}-${Date.now()}.${ext}`;
+
+                const { error: uploadErr } = await supabase.storage
+                    .from("avatars")
+                    .upload(path, file, { upsert: true });
+
+                if (uploadErr) throw uploadErr;
+
+                const { data: publicUrlData } = supabase.storage
+                    .from("avatars")
+                    .getPublicUrl(path);
+
+                avatarUrl = publicUrlData?.publicUrl;
+            }
+
+            // ---------------------------
+            // 3) Build only CHANGED FIELDS
+            // ---------------------------
+            const updatedFields = {};
+            const keysToCheck = [
+                "full_name",
+                "phone",
+                "location",
+                "bio",
+                "facebook_url",
+                "instagram_url",
+            ];
+
+            keysToCheck.forEach((key) => {
+                if (formData[key] !== original[key]) {
+                    updatedFields[key] = formData[key] || null;
+                }
+            });
+
+            // Avatar changed?
+            if (avatarUrl !== original.avatarUrl) {
+                updatedFields.avatar = avatarUrl || null;
+            }
+
+            // ---------------------------
+            // 4) Update USERS table
+            // ---------------------------
+            if (Object.keys(updatedFields).length > 0) {
+                const { error: userErr } = await supabase
+                    .from("users")
+                    .update(updatedFields)
+                    .eq("id", user.id);
+
+                if (userErr) throw userErr;
+            }
+
+            // ---------------------------
+            // 5) Update CATEGORIES if changed
+            // ---------------------------
+            const originalCat = original.categories || [];
+            const newCat = formData.categories || [];
+
+            const categoriesChanged =
+                originalCat.length !== newCat.length ||
+                originalCat.some((c) => !newCat.includes(c));
+
+            if (categoriesChanged) {
+                await supabase
+                    .from("user_categories")
+                    .delete()
+                    .eq("user_id", user.id);
+
+                if (newCat.length > 0) {
+                    const rows = newCat.map((id) => ({
+                        user_id: user.id,
+                        category_id: id,
+                    }));
+
+                    const { error: catErr } = await supabase
+                        .from("user_categories")
+                        .insert(rows);
+
+                    if (catErr) throw catErr;
+                }
+            }
+
+            // ---------------------------
+            // 6) Success message
+            // ---------------------------
+            toast.success(
+                lang === "ar" ? "تم حفظ التعديلات بنجاح" : "Changes saved successfully"
+            );
+
+            // ---------------------------
+            // 7) Update original data
+            // ---------------------------
+            originalRef.current = {
+                ...formData,
+                avatarUrl,
+            };
+
+            setFormData((prev) => ({
+                ...prev,
+                avatarUrl,
+                avatarFile: null,
+            }));
+        } catch (err) {
+            console.error(err);
+            toast.error(
+                lang === "ar" ? "حدث خطأ أثناء حفظ البيانات" : "Failed to save profile"
+            );
+        } finally {
+            setSaving(false);
+        }
+    };
+
+
+    if (loading) {
+        return <Spinner />;
+    }
 
     return (
         <main className='flex-1 overflow-y-auto'>
-            <div className='container py-10'>
+            <div className='container py-3'>
                 {/* Header */}
                 <header className='mb-10'>
                     <h1 className='text-3xl font-bold text-primary mb-2'>
-                        Profile & Settings
+                        {lang === "en" ? "Account Settings" : "اعدادات الحساب"}
                     </h1>
-                    <p className='text-base text-muted-foreground'>
-                        Manage your personal details, notification preferences,
-                        and payment methods.
-                    </p>
                 </header>
 
-                <form onSubmit={handleSubmit} className='space-y-12'>
-                    {/* Personal Details */}
+                <form onSubmit={handleSubmit}>
                     <section>
-                        <h2 className='text-2xl font-semibold text-primary border-b border-border pb-4 mb-6'>
-                            Personal Details
+                        {/* Personal Details */}
+                        <h2 className='text-xl font-semibold text-primary border-b border-border pb-4 mb-6'>
+                            {lang === "en"
+                                ? "Personal Information"
+                                : "المعلومات الشخصية"}
                         </h2>
-                        <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                            {[
-                                {
-                                    id: "fullName",
-                                    label: "Full Name",
-                                    type: "text",
-                                },
-                                {
-                                    id: "email",
-                                    label: "Email Address",
-                                    type: "email",
-                                },
-                                {
-                                    id: "phone",
-                                    label: "Phone Number",
-                                    type: "tel",
-                                },
-                                {
-                                    id: "location",
-                                    label: "Location",
-                                    type: "text",
-                                },
-                            ].map(({ id, label, type }) => (
-                                <div key={id} className='flex flex-col'>
-                                    <label
-                                        htmlFor={id}
-                                        className='mb-2 text-sm font-medium text-muted-foreground'
-                                    >
-                                        {label}
+
+                        <div className='grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6'>
+                            {/* Avatar Upload */}
+                            <div className='md:col-span-2 flex items-center gap-6'>
+                                <img
+                                    src={
+                                        formData.avatarFile
+                                            ? URL.createObjectURL(
+                                                formData.avatarFile
+                                            )
+                                            : handleAvatar(formData.avatarUrl)
+                                    }
+                                    alt='User Avatar'
+                                    className='w-20 h-20 rounded-full object-cover border border-border'
+                                />
+
+                                <div className='space-y-3'>
+                                    <Label className='font-medium text-sm '>
+                                        {lang === "ar"
+                                            ? "الصورة الشخصية"
+                                            : "Profile Picture"}
+                                    </Label>
+
+                                    <label className='cursor-pointer px-4 py-2 bg-primary text-white rounded-md text-sm'>
+                                        {lang === "ar"
+                                            ? "رفع صورة"
+                                            : "Upload Image"}
+                                        <input
+                                            type='file'
+                                            accept='image/*'
+                                            className='hidden'
+                                            onChange={(e) =>
+                                                setFormData((prev) => ({
+                                                    ...prev,
+                                                    avatarFile:
+                                                        e.target.files?.[0] ||
+                                                        null,
+                                                }))
+                                            }
+                                        />
                                     </label>
-                                    <input
-                                        id={id}
-                                        name={id}
-                                        type={type}
-                                        value={formData[id]}
-                                        onChange={handleChange}
-                                        className='w-full rounded-sm border border-border bg-surface px-4 py-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all'
-                                    />
+                                    <div className='text-sm text-muted-foreground pt-4'>
+                                        {lang === "ar"
+                                            ? "يمكنك تحميل صورة بحجم اقل من 2 ميغابايت (jpg, jpeg, png)"
+                                            : "You can upload an image with a maximum size of 2MB (jpg, jpeg, png)"}
+                                    </div>
+
+                                    {/* {formData.avatarUrl &&
+                                        !formData.avatarFile && (
+                                            <button
+                                                type='button'
+                                                onClick={() =>
+                                                    setFormData((prev) => ({
+                                                        ...prev,
+                                                        avatarUrl: "",
+                                                        avatarFile: null,
+                                                    }))
+                                                }
+                                                className='text-sm text-red-500 underline'
+                                            >
+                                                {lang === "ar"
+                                                    ? "حذف الصورة"
+                                                    : "Remove picture"}
+                                            </button>
+                                        )} */}
+                                </div>
+                            </div>
+
+                            {/* Full Name */}
+                            <div>
+                                <Label
+                                    htmlFor='full_name'
+                                    className='mb-2 block font-medium text-sm'
+                                >
+                                    {lang === "ar" ? "الاسم " : "Name"}
+                                </Label>
+                                <Input
+                                    id='full_name'
+                                    value={formData.full_name}
+                                    onChange={handleChange}
+                                    placeholder={
+                                        lang === "ar"
+                                            ? "اكتب اسمك"
+                                            : "Enter your name"
+                                    }
+                                    className='bg-background'
+                                />
+                                {errors?.full_name && (
+                                    <p className="text-red-500 text-xs mt-1">{errors.full_name[0]}</p>
+                                )}
+
+                            </div>
+
+                            {/* Email (Read-only) */}
+                            <div>
+                                <Label
+                                    htmlFor='email'
+                                    className='mb-2 block font-medium text-sm'
+                                >
+                                    {lang === "ar"
+                                        ? "البريد الإلكتروني"
+                                        : "Email"}
+                                </Label>
+                                <Input
+                                    id='email'
+                                    value={formData.email}
+                                    readOnly
+                                    className='bg-muted cursor-not-allowed'
+                                />
+                                <p className='text-xs text-muted-foreground mt-1'>
+                                    {lang === "ar"
+                                        ? "لا يمكن تعديل البريد لأنه مرتبط بحسابك."
+                                        : "Email cannot be changed because it's linked to your account."}
+                                </p>
+                            </div>
+
+                            {/* Phone Number */}
+                            <div>
+                                <Label
+                                    htmlFor='phone'
+                                    className='mb-2 block font-medium text-sm'
+                                >
+                                    {lang === "ar"
+                                        ? "رقم الهاتف"
+                                        : "Phone Number"}
+                                </Label>
+                                <Input
+                                    id='phone'
+                                    value={formData.phone}
+                                    onChange={handleChange}
+                                    placeholder={
+                                        lang === "ar"
+                                            ? "اكتب رقم الهاتف"
+                                            : "Enter phone number"
+                                    }
+                                    className='bg-background'
+                                />
+                            </div>
+
+                            {/* Location */}
+                            <div>
+                                <Label
+                                    htmlFor='location'
+                                    className='mb-2 block font-medium text-sm'
+                                >
+                                    {lang === "ar" ? "الموقع" : "Location"}
+                                </Label>
+                                <Input
+                                    id='location'
+                                    value={formData.location}
+                                    onChange={handleChange}
+                                    placeholder={
+                                        lang === "ar"
+                                            ? "مثال: القاهرة، مصر"
+                                            : "Example: Cairo, Egypt"
+                                    }
+                                    className='bg-background'
+                                />
+                            </div>
+
+                            {/* Bio */}
+                            <div className='md:col-span-2'>
+                                <Label
+                                    htmlFor='bio'
+                                    className='mb-2 block font-medium text-sm'
+                                >
+                                    {lang === "ar" ? "نبذة عنك" : "Bio"}
+                                </Label>
+                                <textarea
+                                    id='bio'
+                                    value={formData.bio}
+                                    onChange={handleChange}
+                                    rows={4}
+                                    placeholder={
+                                        lang === "ar"
+                                            ? "اكتب نبذة قصيرة..."
+                                            : "Write a short bio…"
+                                    }
+                                    class
+                                    Name='w-full rounded-md bg-muted border border-border px-3 py-2 text-sm focus:ring-primary focus:ring-2 focus:outline-none'
+                                />
+                                {errors?.bio && (
+                                    <p className="text-red-500 text-xs mt-1">{errors.bio[0]}</p>
+                                )}
+
+                            </div>
+
+                            {/* Social Links */}
+                            <div>
+                                <Label
+                                    htmlFor='facebook_url'
+                                    className='mb-2 block font-medium text-sm'
+                                >
+                                    {lang === "ar" ? "فيسبوك" : "Facebook URL"}
+                                </Label>
+                                <Input
+                                    id='facebook_url'
+                                    value={formData.facebook_url}
+                                    onChange={handleChange}
+                                    placeholder='https://facebook.com/username'
+                                    className='bg-background'
+                                />
+                                {errors?.facebook_url && (
+                                    <p className="text-red-500 text-xs mt-1">{errors.facebook_url[0]}</p>
+                                )}
+
+                            </div>
+
+                            <div>
+                                <Label
+                                    htmlFor='instagram_url'
+                                    className='mb-2 block font-medium text-sm'
+                                >
+                                    {lang === "ar"
+                                        ? "إنستغرام"
+                                        : "Instagram URL"}
+                                </Label>
+                                <Input
+                                    id='instagram_url'
+                                    value={formData.instagram_url}
+                                    onChange={handleChange}
+                                    placeholder='https://instagram.com/username'
+                                    className='bg-background'
+                                />
+                                {errors?.instagram_url && (
+                                    <p className="text-red-500 text-xs mt-1">{errors.instagram_url[0]}</p>
+                                )}
+
+                            </div>
+                        </div>
+                        {/* categories / interests */}
+                        <div className='grid grid-cols-2 md:grid-cols-3 gap-3 mt-7 border-y py-7'>
+                            <Label className='text-md font-semibold '>
+                                {lang === "ar"
+                                    ? " التصنيفات / الاهتمامات"
+                                    : "Categories / Interests"}
+                                :
+                            </Label>
+                            {viewCategories.map((interest) => (
+                                <div
+                                    key={interest.id}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        toggleInterest(interest.id); // store id instead of name
+                                    }}
+                                    className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${formData.categories.includes(
+                                        interest.id
+                                    )
+                                        ? "border-primary bg-primary/10"
+                                        : "border-border hover:border-primary/50"
+                                        }`}
+                                >
+                                    <div className='flex items-center gap-2'>
+                                        <span className='text-sm font-medium'>
+                                            {interest.displayName}
+                                        </span>
+                                    </div>
                                 </div>
                             ))}
                         </div>
+                        {errors?.categories && (
+                            <p className="text-red-500 text-xs mt-1 col-span-2 md:col-span-3">
+                                {errors.categories[0]}
+                            </p>
+                        )}
+
                     </section>
 
                     {/* Notification Preferences */}
-                    <section>
+                    {/* <section>
                         <h2 className='text-2xl font-semibold text-primary border-b border-border pb-4 mb-6'>
                             Notification Preferences
                         </h2>
@@ -144,10 +591,10 @@ export default function ProfileSettings() {
                                 </label>
                             ))}
                         </div>
-                    </section>
+                    </section> */}
 
                     {/* Payment Methods */}
-                    <section>
+                    {/* <section>
                         <h2 className='text-2xl font-semibold text-primary border-b border-border pb-4 mb-6'>
                             Payment Methods
                         </h2>
@@ -182,27 +629,32 @@ export default function ProfileSettings() {
                                 + Add Payment Method
                             </button>
                         </div>
-                    </section>
-
-                    {/* Security */}
-                    <section>
-                        <h2 className='text-2xl font-semibold text-primary border-b border-border pb-4 mb-6'>
-                            Security
-                        </h2>
-                        <div className='bg-surface p-6 rounded-sm'>
-                            <Button variant='outline' size='lg'>
-                                Change Password
-                            </Button>
-                        </div>
-                    </section>
-
+                    </section> */}
                     {/* Save Button */}
-                    <div className='flex justify-end pt-6 border-t border-border'>
-                        <Button variant='primary' size='lg' type='submit'>
-                            Save Changes
+                    <div className=' pt-6'>
+                        <Button
+                            variant='default'
+                            size='lg'
+                            type='submit'
+                            disabled={saving}
+                        >
+                            {saving ? (
+                                <div className='w-5 h-5 border-4 border-background border-t-transparent rounded-full animate-spin'></div>
+                            ) : lang === "en" ? (
+                                "Save Changes"
+                            ) : (
+                                "حفظ التغييرات"
+                            )}
                         </Button>
                     </div>
                 </form>
+                {/* Security */}
+                <section className="space-y-4 pt-8">
+                    <h2 className='text-xl font-semibold text-primary border-b border-border pb-4 '>
+                        {lang === "en" ? "Security" : "الأمان"}
+                    </h2>
+                    <PasswordChangeModal lang={lang} user={user} />
+                </section>
             </div>
         </main>
     );
