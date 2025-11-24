@@ -229,7 +229,7 @@ const EventCountdown = ({ details, eventId, hostId, user, lang = "en" }) => {
             </Button>
          )}
 
-         {isTicketBooked && ticket && hostId === user.id ? (
+         {isTicketBooked && ticket ? (
             <TicketFrame>
                <h3 className="text-center text-lg font-semibold mb-4">
                   {lang === "ar" ? "تذكرة الدخول" : "Your Event Ticket"}
