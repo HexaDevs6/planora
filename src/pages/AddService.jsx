@@ -57,7 +57,6 @@ export default function AddService() {
 
    const handleImages = (el) => {
       if (!el) return loremImg;
-      console.log(typeof el);
       if (typeof el === "string" && el.startsWith("http")) return el;
       if (typeof el === "string") return getPublicUrl("services", el);
       if (typeof el === "object") return el.map((img) => getPublicUrl("services", img.path));
@@ -230,7 +229,7 @@ export default function AddService() {
             }
 
             // Delete old gallery
-            const newImages = formData.images.filter((img) => img instanceof File);
+            const newImages = formData.images.filter((img) => img);
             if (newImages.length > 0 && originalData.images?.length > 0) {
                const oldPaths = originalData.images.map((img) =>
                   typeof img === "string" ? img : img.path
@@ -243,7 +242,7 @@ export default function AddService() {
           * 4. Upload thumbnail
           * ----------------------------- */
          let thumbnailPath = formData.thumbnail;
-         if (formData.thumbnail && formData.thumbnail instanceof File) {
+         if (formData.thumbnail && formData.thumbnail) {
             const thumbFile = formData.thumbnail;
             const path = `services/${user.id}/${folder}/thumbnail_${Date.now()}_${thumbFile.name}`;
             await uploadFile("services", path, thumbFile);

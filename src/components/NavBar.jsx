@@ -64,8 +64,8 @@ export default function NavBar() {
             </ul>
 
             {/* Logo */}
-             <a
-                  href="/"
+             <Link
+                  to="/"
                   className="navbar-logo w-55 md:bg-[linear-gradient(to_right,rgba(169,158,173,0.4)_0%,rgba(51,12,47,0.4)_100%)] px-3 md:px-8 py-5 md:supports-[backdrop-filter]:bg-background/25 md:[clip-path:polygon(0_1%,100%_0,85%_100%,16%_99%)]"
                >
                   <img
@@ -78,7 +78,7 @@ export default function NavBar() {
                      alt="Planora"
                      className="w-full h-full object-cover hidden dark:block"
                   />
-               </a>
+               </Link>
 
             {/* Right Links */}
             <ul className="hidden lg:flex gap-6 text-foreground font-medium">
