@@ -15,8 +15,8 @@
       "update": "Update",
       "save": "Save",
       "apply": "Apply",
-      "getStarted": "Get Started",
-      "contactUs": "Contact Us",
+      "getStarted": "Publish Your Event",
+      "contactUs": "Browse Events",
       "join": "Join",
       "follow": "Follow",
       "explore": "Explore More",
@@ -574,7 +574,7 @@
           "category": "Workshops"
         },
         "attendees": "attendees",
-        "viewDetails": "view Details"
+        "viewDetails": "View Details"
       },
       "viewMore": "Load More"
     },

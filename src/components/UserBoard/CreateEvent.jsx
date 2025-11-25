@@ -163,6 +163,7 @@ export default function PublishEvent() {
                : type === "checkbox"
                   ? checked
                   : value,
+         [id]: type === "number" ? (value === "" ? "" : Number(value)) : value,
       });
    };
 
@@ -332,7 +333,7 @@ export default function PublishEvent() {
                      location: formData.location,
                      date: formattedDate,
                      end_date: formattedEndDate,
-                     capacity: Number(formData.capacity) || null,
+                     capacity: Number(formData.capacity) || 0,
                      price: Number(formData.price) || 0,
                      status: formData.status,
                      thumbnail: thumbnailPath,
@@ -618,7 +619,7 @@ export default function PublishEvent() {
                      htmlFor="capacity"
                      className="block text-sm font-semibold mb-2"
                   >
-                     {lang === "ar" ? "السعة" : "Capacity"}
+                     {lang === "ar" ? "السعة - (0) لعدد غير محدود" : "Capacity - (0) for unlimited"}
                   </Label>
                   <Input
                      id="capacity"
@@ -631,6 +632,8 @@ export default function PublishEvent() {
                            : "Enter capacity (e.g., 100)"
                      }
                      className="bg-background shadow-none"
+                     min="0"
+                     step="1"
                   />
                   {errors?.capacity && (
                      <p className="text-red-500 text-xs mt-1">{errors.capacity[0]}</p>
@@ -642,7 +645,7 @@ export default function PublishEvent() {
                      htmlFor="price"
                      className="block text-sm font-semibold mb-2"
                   >
-                     {lang === "ar" ? "سعر التذكرة" : "Ticket Price"}
+                     {lang === "ar" ? "سعر التذكرة - (0) مجاني" : "Ticket Price - (0) for free"}
                   </Label>
                   <Input
                      id="price"
@@ -653,6 +656,8 @@ export default function PublishEvent() {
                         lang === "ar" ? "مثال: 100 أو 0" : "e.g., 100 or 0"
                      }
                      className="bg-background shadow-none"
+                     min="0"
+                     step="0.5"
                   />
                   {errors?.price && (
                      <p className="text-red-500 text-xs mt-1">{errors.price[0]}</p>
