@@ -45,7 +45,7 @@ const EventDetails = () => {
       };
       fetchEvent();
    
-   }, [eventId]);
+   }, [eventId,user?.id]);
 
    const handleThumbnail = (el) => {
       if (!el) return loremImg;

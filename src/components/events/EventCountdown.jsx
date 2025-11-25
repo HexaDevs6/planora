@@ -28,7 +28,7 @@ const EventCountdown = ({ details, eventId, hostId, user, lang = "en" }) => {
             .from("tickets")
             .select("*")
             .eq("event_id", eventId)
-            .eq("client_id", client.id)
+            .eq("client_id", client?.id)
             .single();
 
          if (existingTicket) {
@@ -38,7 +38,7 @@ const EventCountdown = ({ details, eventId, hostId, user, lang = "en" }) => {
       };
 
       checkExistingTicket();
-   }, [eventId, user]);
+   }, [eventId, user?.id]);
 
    const handleCreateTicket = async () => {
       if (!user) {
@@ -207,7 +207,7 @@ const EventCountdown = ({ details, eventId, hostId, user, lang = "en" }) => {
             </div>
          )}
 
-         {hostId === user.id && (
+         {user && hostId === user.id && (
             <Button
                className="mt-6 w-full"
                variant="default"
