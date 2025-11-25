@@ -66,7 +66,7 @@ function HeroSection() {
               {t("common.buttons.getStarted")}
             </Button>
           </Link>
-          <Link to={"/contact"}>
+          <Link to={"/events"}>
             <Button
               className={buttonVariants({
                 variant: "glass",
@@ -84,7 +84,7 @@ function HeroSection() {
         text={t("hero.rotating")}
         onHover="speedUp"
         spinDuration={15}
-        className="hidden md:block h-[400px] w-[400px] end-[-250px] bg-secondary/10 backdrop-blur-xs text-accent hover:text-amber-dark border border-secondary/30 hover:bg-primary/40 tracking-widest transition-colors duration-300"
+        className="hidden z-10 md:block h-[400px] w-[400px] end-[-250px] bg-secondary/10 backdrop-blur-xs text-accent hover:text-amber-dark border border-secondary/30 hover:bg-primary/40 tracking-widest transition-colors duration-300"
       />
     </section>
   );

@@ -12,6 +12,7 @@ const TicketFrame = ({ children }) => {
     shadow-lg 
     max-w-[280px] 
     mx-auto 
+    mt-10
     pb-6
     bg-[var(--card)]
     text-[var(--card-foreground)]
