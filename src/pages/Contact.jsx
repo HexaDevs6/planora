@@ -7,7 +7,9 @@ import { Mail, Phone, MapPin, Send, MessageSquare } from "lucide-react";
 import { ShineBorder } from "@/components/ui/shine-border";
 import { MagicCard } from "@/components/ui/magic-card";
 
+
 const Contact = () => {
+  
    const [formData, setFormData] = useState({
       name: "",
       email: "",
@@ -15,12 +17,41 @@ const Contact = () => {
       message: "",
    });
 
-   const handleSubmit = (e) => {
-      e.preventDefault();
-      // send data
-      alert("done");
-      setFormData({ name: "", email: "", subject: "", message: "" });
-   };
+   const [formStatus, setFormStatus] = useState(null);
+
+const handleSubmit = async (e) => {
+   e.preventDefault();
+   setFormStatus(null);
+
+   const form = e.target;
+   const formDataObj = new FormData(form);
+
+   const json = JSON.stringify(Object.fromEntries(formDataObj));
+
+   try {
+      const res = await fetch("https://api.web3forms.com/submit", {
+         method: "POST",
+         headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+         },
+         body: json,
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+         setFormStatus("success");
+         form.reset();
+         setFormData({ name: "", email: "", subject: "", message: "" });
+      } else {
+         setFormStatus("error");
+      }
+   } catch (err) {
+      setFormStatus("error");
+   }
+};
+
 
    const contactInfo = [
       {
@@ -135,64 +166,85 @@ const Contact = () => {
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6" autoComplete="off">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label htmlFor="name" className="text-sm font-medium">Full Name *</label>
-                      <Input
-                        id="name"
-                        placeholder="John Doe"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        required
-                      />
-                    </div>
+   <input type="hidden" name="access_key" value="e5f98c8e-5d78-463d-9428-e09579328c41" />
 
-                    <div className="space-y-2">
-                      <label htmlFor="email" className="text-sm font-medium">Email Address *</label>
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder="john@example.com"
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        required
-                      />
-                    </div>
-                  </div>
+   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="space-y-2">
+         <label htmlFor="name" className="text-sm font-medium">Full Name *</label>
+         <Input
+            id="name"
+            name="name"
+            placeholder="John Doe"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            required
+         />
+      </div>
 
-                  <div className="space-y-2">
-                    <label htmlFor="subject" className="text-sm font-medium">Subject *</label>
-                    <Input
-                      id="subject"
-                      placeholder="How can we help you?"
-                      value={formData.subject}
-                      onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                      required
-                    />
-                  </div>
+      <div className="space-y-2">
+         <label htmlFor="email" className="text-sm font-medium">Email Address *</label>
+         <Input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="john@example.com"
+            value={formData.email}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            required
+         />
+      </div>
+   </div>
 
-                  <div className="space-y-2">
-                    <label htmlFor="message" className="text-sm font-medium">Message *</label>
-                    <Textarea
-                      id="message"
-                      placeholder="Tell us more about your inquiry..."
-                      rows={6}
-                      value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      required
-                    />
-                  </div>
+   <div className="space-y-2">
+      <label htmlFor="subject" className="text-sm font-medium">Subject *</label>
+      <Input
+         id="subject"
+         name="subject"
+         placeholder="How can we help you?"
+         value={formData.subject}
+         onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+         required
+      />
+   </div>
 
-                  <Button
-                    type="submit"
-                    variant="hero"
-                    size="lg"
-                    className="w-full md:w-auto bg-[#FFA704] hover:bg-[#e19500] text-white font-semibold transition-all"
-                  >
-                    <Send className="mr-2 h-5 w-5" />
-                    Send Message
-                  </Button>
-                </form>
+   <div className="space-y-2">
+      <label htmlFor="message" className="text-sm font-medium">Message *</label>
+      <Textarea
+         id="message"
+         name="message"
+         placeholder="Tell us more about your inquiry..."
+         rows={6}
+         value={formData.message}
+         onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+         required
+      />
+   </div>
+
+   <Button
+      type="submit"
+      variant="hero"
+      size="lg"
+      className="w-full md:w-auto bg-[#FFA704] hover:bg-[#e19500] text-white font-semibold transition-all"
+   >
+      <Send className="mr-2 h-5 w-5" />
+      Send Message
+   </Button>
+
+   {/* Success Message */}
+   {formStatus === "success" && (
+      <p className="text-green-600 font-medium pt-2">
+         ✔️ Your message has been sent successfully!
+      </p>
+   )}
+
+   {/* Error Message */}
+   {formStatus === "error" && (
+      <p className="text-red-600 font-medium pt-2">
+         ❌ Something went wrong. Please try again later.
+      </p>
+   )}
+</form>
+
               </CardContent>
             </Card>
           </MagicCard>
