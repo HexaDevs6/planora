@@ -54,43 +54,43 @@ const About = () => {
         {
             name: t("aboutUs.team.mahmoud"),
             img: "/images/about/mahmoud.jpeg",
-            linkedin: "#",
-            insta: "#",
-            facebook: "#",
+            linkedin: "https://www.linkedin.com/in/mahmoud-abu-attiya-978496210/",
+            insta: " https://www.instagram.com/mahmoud_abu_attiya/",
+            facebook: "https://www.facebook.com/mahmoud.apoatya.7",
         },
         {
             name: t("aboutUs.team.mohamed"),
-            linkedin: "#",
-            insta: "#",
-            facebook: "#",
+            linkedin: "https://www.linkedin.com/in/mohamed-alkafrawy-58892529b?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app",
+            insta: "https://www.instagram.com/medo_ahmed54?igsh=bGlqemIzbnd2b2lz&utm_source=qr",
+            facebook: "https://www.facebook.com/share/17SCd7uwq9/?mibextid=wwXIfr",
             img: "/images/about/mohamed.jpeg",
         },
         {
             name: t("aboutUs.team.mariam"),
-            linkedin: "#",
-            insta: "#",
-            facebook: "#",
+            linkedin: "https://www.linkedin.com/in/mariamhamido/",
+            insta: "https://www.instagram.com/mariamhamido?igsh=MTA4Mnh2YnI3bnplcw%3D%3D&utm_source=qr",
+            facebook: "https://www.facebook.com/share/15sBeD66K2/?mibextid=wwXIfr",
             img: "/images/about/mariem.jpeg",
         },
         {
             name: t("aboutUs.team.islam"),
-            linkedin: "#",
-            insta: "#",
-            facebook: "#",
+            linkedin: "https://www.linkedin.com/in/islam-abozaid/",
+            insta: "https://www.instagram.com/islam_adel0?igsh=MWVkMDIyNTI0Njd5Yw==",
+            facebook: "https://www.facebook.com/share/1DfAyaEU9g/?mibextid=wwXIfr",
             img: "/images/about/islam.jpeg",
         },
         {
             name: t("aboutUs.team.mustafa"),
-            linkedin: "#",
-            insta: "#",
-            facebook: "#",
+            linkedin: "https://www.linkedin.com/in/moustafa-hawash-180107217/",
+            insta: null,
+            facebook: "https://www.facebook.com/hawash94",
             img: "/images/about/moustafa.jpeg",
         },
         {
             name: t("aboutUs.team.nadeen"),
-            linkedin: "#",
-            insta: "#",
-            facebook: "#",
+            linkedin: "https://www.linkedin.com/in/nadeen-ahmed-b9729021a/",
+            insta: "https://www.instagram.com/nadeenahmed1?igsh=dng5cnY5YnEwcG51",
+            facebook: "https://www.facebook.com/share/1D3Y9pWWXy/?mibextid=wwXIfr",
             img: "/images/about/nadeen.jpeg",
         },
     ];
@@ -216,55 +216,61 @@ const About = () => {
                         </div>
 
                         <div className='grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto'>
-                            {team.map((member, index) => (
-                                <div
-                                    key={member.name}
-                                    className='relative aspect-square rounded-xl overflow-hidden group hover:shadow-xl transition-all duration-300 hover:scale-105'
+            {team.map((member, index) => (
+                <div
+                    key={member.name}
+                    className='relative aspect-square rounded-xl overflow-hidden group hover:shadow-xl transition-all duration-300 hover:scale-105'
+                >
+                    <div className='absolute top-1/2 left-1/2 -translate-1/2 w-full h-full'>
+                        <img
+                            src={member.img}
+                            alt={member.name}
+                            className='w-full h-full object-cover'
+                        />
+                    </div>
+
+                    <div className='translate-y-18 group-hover:translate-0 transition duration-300 flex justify-end flex-col gap-4 h-full p-4 md:p-6 bg-gradient-to-t from-muted to-transparent relative z-10'>
+                        <h3 className='font-semibold text-lg text-foreground'>
+                            {member.name}
+                        </h3>
+
+                        <div className='flex gap-4'>
+                            <a
+                                href={member.linkedin}
+                                className='w-fit px-3 bg-muted/30 backdrop-blur-xs border rounded-full aspect-square flex-center shadow hover:scale-105 transition'
+                            >
+                                <Linkedin
+                                    size={15}
+                                    className='text-[#0a66c2]'
+                                />
+                            </a>
+
+                            {member.insta && (
+                                <a
+                                    href={member.insta}
+                                    className='w-fit px-3 bg-muted/30 backdrop-blur-xs border rounded-full aspect-square flex-center shadow hover:scale-105 transition'
                                 >
-                                    <div className='absolute top-1/2 left-1/2 -translate-1/2 w-full h-full'>
-                                        <img
-                                            src={member.img}
-                                            alt={member.name}
-                                            className='w-full h-full object-cover'
-                                        />
-                                    </div>
-                                    <div className='translate-y-18 group-hover:translate-0 transition duration-300 flex justify-end flex-col gap-4 h-full p-4 md:p-6 bg-gradient-to-t from-muted to-transparent relative z-10'>
-                                        <h3 className='font-semibold text-lg text-foreground'>
-                                            {member.name}
-                                        </h3>
-                                        <div className='flex gap-4'>
-                                            <a
-                                                href={member.linkedin}
-                                                className='w-fit px-3 bg-muted/30 backdrop-blur-xs border rounded-full aspect-square flex-center shadow hover:scale-105 transition'
-                                            >
-                                                <Linkedin
-                                                    size={15}
-                                                    className='text-[#0a66c2]'
-                                                />
-                                            </a>
-                                            <a
-                                                href={member.insta}
-                                                className='w-fit px-3 bg-muted/30 backdrop-blur-xs border rounded-full aspect-square flex-center shadow hover:scale-105 transition'
-                                            >
-                                                <Instagram
-                                                    size={15}
-                                                    className='text-[#e1306c]'
-                                                />
-                                            </a>
-                                            <a
-                                                href={member.facebook}
-                                                className='w-fit px-3 bg-muted/30 backdrop-blur-xs border rounded-full aspect-square flex-center shadow hover:scale-105 transition'
-                                            >
-                                                <Facebook
-                                                    size={15}
-                                                    className='text-[#1877F2]'
-                                                />
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
+                                    <Instagram
+                                        size={15}
+                                        className='text-[#e1306c]'
+                                    />
+                                </a>
+                            )}
+
+                            <a
+                                href={member.facebook}
+                                className='w-fit px-3 bg-muted/30 backdrop-blur-xs border rounded-full aspect-square flex-center shadow hover:scale-105 transition'
+                            >
+                                <Facebook
+                                    size={15}
+                                    className='text-[#1877F2]'
+                                />
+                            </a>
                         </div>
+                    </div>
+                </div>
+            ))}
+        </div>
                     </div>
                 </section>
 
