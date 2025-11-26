@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import img from "@/assets/3d-render-secure-login-password-illustration.png";
+import img from "@/assets/login.png";
 import img1 from "@/assets/logosiginin.png";
 import logoLight from "/LogoBasicLight.png";
 import { Link, useNavigate } from "react-router-dom";
