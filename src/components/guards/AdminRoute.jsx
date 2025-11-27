@@ -14,15 +14,14 @@ export default function AdminRoute({ children }) {
     }
 
     // 2) No authenticated session -> redirect to signin
-    if (!isAuthenticated || !user) {
+    if (!isAuthenticated) {
         return <Navigate to="/signin" state={{ from: location }} replace />;
     }
 
-    // 4) Role-based route protection
-    if (user.role === "admin" && location.pathname.startsWith("/admin")) {
+    if (user?.role === "admin") {
         return children;
+    } else {
+        // User is authenticated but not an admin -> redirect to home
+        return <Navigate to="/" replace />;
     }
-
-    // All good → allow rendering
-    return <Navigate to="/signin" state={{ from: location }} replace />;
 }

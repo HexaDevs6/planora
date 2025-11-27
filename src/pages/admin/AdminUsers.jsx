@@ -24,6 +24,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useDirection } from "@/hooks/useDirection";
+import Spinner from "@/components/SpinnerLoader";
 
 const AdminUsers = () => {
     const { lang } = useDirection();
@@ -46,11 +47,7 @@ const AdminUsers = () => {
         loadingUsersList;
 
     if (isLoading) {
-        return (
-            <div className="flex h-full items-center justify-center">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
-        );
+        return <Spinner />;
     }
 
     const userRolesData = [
@@ -88,6 +85,14 @@ const AdminUsers = () => {
             initial="hidden"
             animate="visible"
         >
+            <motion.div
+                variants={itemVariants}
+                className="sticky top-15 z-10 rounded-sm border border-yellow-400 bg-yellow-50/90 p-4 text-yellow-800 shadow-sm md:hidden"
+            >
+                <p className="text-sm font-medium">
+                    {lang === "ar" ? "للحصول على تجربة أفضل، يرجى استخدام لوحة التحكم على جهاز أكبر." : "For better experience, please use dashboard on a larger screen device."}
+                </p>
+            </motion.div>
             <motion.div
                 variants={containerVariants}
                 className="grid gap-4 grid-cols-2 md:grid-cols-5"
