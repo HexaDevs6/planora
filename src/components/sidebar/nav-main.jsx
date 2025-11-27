@@ -12,14 +12,20 @@ import { Link, useLocation } from "react-router-dom";
 
 export default function NavMain({ items, lang = "en", userRole }) {
    const { pathname } = useLocation();
+   const ctaBtnLabel = { host: { ar: "حدث جديد", en: "New Event" }, user: { ar: "إنشاء خدمة", en: "Create Service" }, admin: { ar: "لوحة التحكم", en: "Admin Dashboard" } };
+
    const addButtonLabel =
       userRole === "host"
          ? lang === "ar"
-            ? "حدث جديد"
-            : "New Event"
-         : lang === "ar"
-         ? "إنشاء خدمة"
-         : "Create Service";
+            ? ctaBtnLabel.host.ar
+            : ctaBtnLabel.host.en
+         : userRole === "user"
+            ? lang === "ar"
+               ? ctaBtnLabel.user.ar
+               : ctaBtnLabel.user.en
+            : lang === "ar"
+               ? ctaBtnLabel.admin.ar
+               : ctaBtnLabel.admin.en;
    return (
       <SidebarGroup>
          <SidebarGroupContent className="flex flex-col gap-2">
@@ -34,7 +40,9 @@ export default function NavMain({ items, lang = "en", userRole }) {
                         to={
                            userRole === "host"
                               ? "/host/create-event"
-                              : "/user/create-service"
+                              : userRole === "user"
+                                 ? "/user/create-service"
+                                 : "/admin/overview"
                         }
                      >
                         <CirclePlus />

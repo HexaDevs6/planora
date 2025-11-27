@@ -25,7 +25,7 @@ export default function LineChartComponent({
                         color: "var(--chart-2)",
                     },
                 }}
-                className='w-full h-[280px]'
+                className='w-full h-[300px]'
             >
                 <LineChart data={data}>
                     <CartesianGrid

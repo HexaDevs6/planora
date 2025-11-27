@@ -13,7 +13,7 @@ export default function DonutChartComponent({ title, subtitle, data }) {
 
     return (
         <ChartCard title={title} subtitle={subtitle}>
-            <div className='flex-center w-full h-[260px]'>
+            <div className='flex-center w-full  h-[300px]'>
                 <PieChart width={320} height={260}>
                     <Pie
                         data={data}
@@ -21,7 +21,9 @@ export default function DonutChartComponent({ title, subtitle, data }) {
                         nameKey='name'
                         innerRadius={55}
                         outerRadius={100}
-                        paddingAngle={4}
+                        paddingAngle={3}
+                        labelLine={false}
+                        label={true}
                     >
                         {data.map((_, index) => (
                             <Cell

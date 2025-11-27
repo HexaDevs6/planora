@@ -34,19 +34,12 @@ export default function BarChartComponent({
                     />
 
                     <XAxis
-                        className='hidden md:block'
+                        className='hidden'
                         dataKey={xKey}
                         tick={{ fill: "var(--content)" }}
                         tickLine={false}
                         axisLine={false}
                         interval={0}
-                        angle={-10}
-                        textAnchor='end'
-                        tickFormatter={(value) =>
-                            value.length > 15
-                                ? value.slice(0, 8) + "..."
-                                : value
-                        }
                     />
 
                     <YAxis
@@ -59,8 +52,8 @@ export default function BarChartComponent({
 
                     <Bar
                         dataKey={yKey}
-                        fill='var(--chart-3)'
-                        radius={[8, 8, 0, 0]}
+                        fill='var(--chart-5)'
+                        radius={[4, 4, 0, 0]}
                         className='transition-all duration-300 hover:opacity-90'
                     />
                 </BarChart>
