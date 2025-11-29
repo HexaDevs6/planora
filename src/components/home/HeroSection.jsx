@@ -73,7 +73,7 @@ function HeroSection() {
                 size: "CTA",
               })}
             >
-              {t("common.buttons.contactUs")}
+              {t("common.buttons.browseEvents")}
             </Button>
           </Link>
         </div>

@@ -25,7 +25,12 @@ export async function uploadFile(bucket, path, file, options = { upsert: true })
  * @returns {string|null} - The public URL or null
  */
 export function getPublicUrl(bucket, path) {
-    const { data } = supabase.storage.from(bucket).getPublicUrl(path);
+    const { data } = supabase.storage.from(bucket).getPublicUrl(path, {
+        transform: {
+            quality: 80,
+            format: "avif",
+        },
+    });
     return data?.publicUrl || null;
 }
 
