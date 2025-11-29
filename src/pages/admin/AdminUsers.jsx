@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     useGetTotalUsersQuery,
     useGetTotalHostsQuery,
@@ -25,9 +25,14 @@ import { Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useDirection } from "@/hooks/useDirection";
 import Spinner from "@/components/SpinnerLoader";
+import Pagination from "@/components/ui/pagination";
 
 const AdminUsers = () => {
     const { lang } = useDirection();
+    
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+
     const { data: totalUsers, isLoading: loadingTotalUsers } =
         useGetTotalUsersQuery();
     const { data: totalHosts, isLoading: loadingTotalHosts } =
@@ -36,8 +41,13 @@ const AdminUsers = () => {
         useGetCategoryUsageQuery();
     const { data: monthlyUserGrowth, isLoading: loadingUserGrowth } =
         useGetMonthlyUserGrowthQuery();
-    const { data: usersList, isLoading: loadingUsersList } =
-        useGetUsersListQuery();
+    const {
+        data: usersListResult,
+        isLoading: loadingUsersList,
+        isFetching: fetchingUsersList,
+        error: usersError,
+    } = useGetUsersListQuery({ page, pageSize });
+
 
     const isLoading =
         loadingTotalUsers ||
@@ -77,6 +87,11 @@ const AdminUsers = () => {
             },
         },
     };
+
+    const usersList = usersListResult?.data ?? [];
+    const usersTotal = usersListResult?.total ?? 0;
+    const totalPages = usersTotal ? Math.max(1, Math.ceil(usersTotal / pageSize)) : undefined;
+
 
     return (
         <motion.div
@@ -127,7 +142,6 @@ const AdminUsers = () => {
                     </CardHeader>
                     <CardContent>
                         <Table>
-                            <TableCaption>{lang === "ar" ? "قائمة جميع المستخدمين." : "A list of all registered users."}</TableCaption>
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>{lang === "ar" ? "مسلسل" : "No."}</TableHead>
@@ -140,7 +154,8 @@ const AdminUsers = () => {
                             <TableBody>
                                 {usersList?.map((user, index) => (
                                     <TableRow key={user.id}>
-                                        <TableCell>{index + 1}</TableCell>
+                                        <TableCell>{index + 1 + (page - 1) * pageSize}</TableCell>
+
                                         <TableCell>
                                             {user.full_name}
                                         </TableCell>
@@ -153,6 +168,23 @@ const AdminUsers = () => {
                                 ))}
                             </TableBody>
                         </Table>
+                        <div className="my-4">
+                            <Pagination
+                                page={page}
+                                pageSize={pageSize}
+                                total={usersTotal}
+                                onPageChange={(p) => setPage(p)}
+                                onPageSizeChange={(s) => { setPageSize(s); setPage(1); }}
+                                dir={lang === "ar" ? "rtl" : "ltr"}
+                                labels={{
+                                previous: lang === "ar" ? "السابق" : "Previous",
+                                next: lang === "ar" ? "التالي" : "Next",
+                                perPage: lang === "ar" ? "لكل صفحة" : "Per page",
+                                morePages: lang === "ar" ? "المزيد" : "More pages",
+                                }}
+                                isLoading={fetchingUsersList}
+                            />
+                        </div>
                     </CardContent>
                 </Card>
             </motion.div>

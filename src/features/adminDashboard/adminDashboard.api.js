@@ -27,17 +27,53 @@ export const adminDashboardApi = createApi({
             },
         }),
 
-        // Returns list of all users.
+        // Returns list of users with pagination support.
+        // args: { page?: number, pageSize?: number, q?: string, order?: { column, ascending } }
         getUsersList: builder.query({
-            async queryFn() {
-                const { data, error } = await supabase
-                    .from("users")
-                    .select("*")
-                    .order("created_at", { ascending: false });
-                if (error) return { error };
-                return { data };
-            },
-        }),
+          async queryFn(arg = {}) {
+           try {
+            const { page = 1, pageSize = 10, q, order } = arg;
+            const from = (page - 1) * pageSize;
+            const to = page * pageSize - 1;
+
+            // build base query
+            let query = supabase
+            .from("users")
+            // include full count
+            .select("*", { count: "exact" });
+
+            // optional: simple search by full_name or email if q provided
+            if (q) {
+            // use ilike for case-insensitive partial match
+            // adjust the columns you want to search
+            query = query.or(`full_name.ilike.%${q}%,email.ilike.%${q}%`);
+          }
+
+          // optional ordering
+          if (order && order.column) {
+            query = query.order(order.column, { ascending: !!order.ascending });
+          } else {
+            // default order: newest first
+            query = query.order("created_at", { ascending: false });
+          }
+
+          // apply range for pagination
+          const { data: rows, error, count } = await query.range(from, to);
+
+          if (error) return { error };
+
+          // normalize response shape to { data: [...], total: number }
+          return { 
+            data: { 
+              data: rows || [],
+              total: typeof count === "number" ? count : (rows ? rows.length : 0) 
+            } 
+          };
+        } catch (err) {
+          return { error: err };
+        }
+      },
+    }),
 
         // ====================================================================
         // EVENTS & BOOKINGS KPIs
