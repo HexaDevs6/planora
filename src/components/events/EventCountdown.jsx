@@ -48,26 +48,15 @@ const EventCountdown = ({ details, eventId, hostId, user, lang = "en" }) => {
             return;
          }
 
-         const { data: tic, error } = await supabase
-            .from("tickets")
-            .insert({
-               event_id: eventId,
-               client_id: user.id,
-               payment_status: "paid",
-               qr_code: crypto.randomUUID(),
-            })
-            .select()
-            .single();
-
-         if (error) {
-            console.error("SUPABASE ERROR:", error);
-            throw error;
+         const tic = await dispatch(
+            createTicket({ eventId, clientId: user.id, payStatus: "paid" })
+         ).unwrap();
+         if (tic) {
+            toast.success("Ticket booked successfully");
+            setIsTicketBooked(true);
+            setTicket(tic);
+            console.log(tic);
          }
-
-         setIsTicketBooked(true);
-         setTicket(tic);
-
-         toast.success("Ticket saved successfully 🎉");
 
       } catch (err) {
          console.error("SUPABASE ERROR:", err);
@@ -110,7 +99,7 @@ const EventCountdown = ({ details, eventId, hostId, user, lang = "en" }) => {
       try {
          const client = await user;
          const tic = await dispatch(
-            createTicket({ eventId, clientId: client.id })
+            createTicket({ eventId, clientId: client.id, payStatus: "paid" })
          ).unwrap();
          if (tic) {
             toast.success("Ticket booked successfully");
