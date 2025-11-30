@@ -16,6 +16,8 @@ import {
    Calendar,
    MessageSquareTextIcon,
    BriefcaseBusiness,
+   Users,
+   Briefcase,
 } from "lucide-react";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -76,6 +78,31 @@ const userNavMain = [
    },
 ];
 
+const adminNavMain = [
+   {
+      label: { en: "Overview", ar: "الملخص" },
+      url: "/admin/overview",
+      icon: LayoutDashboard,
+   },
+   {
+      label: { en: "Users", ar: "المستخدمين" },
+      url: "/admin/users",
+      icon: Users,
+   },
+   {
+      label: { en: "Events", ar: "الفعاليات" },
+      url: "/admin/events",
+      icon: Calendar,
+   },
+   {
+      label: { en: "Services", ar: "الخدمات" },
+      url: "/admin/services",
+      icon: Briefcase,
+   },
+];
+
+
+
 export default function Aside({ ...props }) {
    const { user } = useSelector((state) => state.auth);
    const { lang } = useDirection();
@@ -87,7 +114,7 @@ export default function Aside({ ...props }) {
          email: user?.email,
          avatar: user?.avatar || avatarPlaceholderImg,
       },
-      navMain: user.role === "host" ? hostNavMain : userNavMain,
+      navMain: user?.role === "host" ? hostNavMain : user?.role === "client" ? userNavMain : adminNavMain,
    };
    useEffect(() => {
       setOpenMobile(false);
@@ -124,7 +151,7 @@ export default function Aside({ ...props }) {
             </SidebarMenu>
          </SidebarHeader>
          <SidebarContent>
-            <NavMain items={data.navMain} lang={lang} userRole={user.role} />
+            <NavMain items={data.navMain} lang={lang} userRole={user?.role} />
             <div className={`flex gap-4 flex-col px-2`}>
                <ThemeToggle />
                <LanguageSwitcher />

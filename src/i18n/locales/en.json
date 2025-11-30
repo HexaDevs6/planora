@@ -73,7 +73,8 @@
       "noConversations": "No conversations yet",
       "selectConversation": "Select a conversation...",
       "typeMessage": "Type a message...",
-      "searchConversation": "Search conversations..."
+      "searchConversation": "Search conversations...",
+      "newMessage": "You have a new message!"
     },
     "loading": "Loading..."
   },

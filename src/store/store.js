@@ -8,24 +8,25 @@ import servicesReducer from "@/store/servicesSlice";
 import clientTicketsReducer from "@/store/tickets/clientTicketsSlice";
 import hostEventTicketsReducer from "@/store/tickets/hostEventTicketsSlice";
 import { hostDashboardApi } from "@/features/hostDashboard/hostDashboard.api";
+import { adminDashboardApi } from "@/features/adminDashboard/adminDashboard.api";
 
 export const store = configureStore({
-  
-  reducer: {
-    auth: authReducer,
-    categories: categoriesReducer,
-    servicesSearchAndFilter: searchAndFilterServiceReducer,
-    eventsSearchAndFilter: searchAndFilterEventsReducer,
-    events: eventsReducer,
-    services: servicesReducer,
-    clientTickets: clientTicketsReducer,
-    hostTickets: hostEventTicketsReducer,
-    [hostDashboardApi.reducerPath]: hostDashboardApi.reducer,
-  },
-  
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(hostDashboardApi.middleware),
-  
+    reducer: {
+        auth: authReducer,
+        categories: categoriesReducer,
+        servicesSearchAndFilter: searchAndFilterServiceReducer,
+        eventsSearchAndFilter: searchAndFilterEventsReducer,
+        events: eventsReducer,
+        services: servicesReducer,
+        clientTickets: clientTicketsReducer,
+        hostTickets: hostEventTicketsReducer,
+        [hostDashboardApi.reducerPath]: hostDashboardApi.reducer,
+        [adminDashboardApi.reducerPath]: adminDashboardApi.reducer,
+    },
+
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware().concat(
+            hostDashboardApi.middleware,
+            adminDashboardApi.middleware
+        ),
 });
-
-
