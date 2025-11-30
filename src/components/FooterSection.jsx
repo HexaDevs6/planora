@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 export default function FooterSection() {
   return (
-    <footer className="py-16 mt-10 overflow-hidden bg-background dark:bg-[var(--color-violet-dark)] text-content dark:text-foreground transition-colors duration-500">
+    <footer className="py-16 overflow-hidden bg-background dark:bg-[var(--color-violet-dark)] text-content dark:text-foreground transition-colors duration-500">
       <div className="container">
         <div className="footer__content py-16 grid grid-cols-2 lg:grid-cols-5 lg:gap-0 gap-10">
           <div className="col-span-2 flex flex-col gap-7">

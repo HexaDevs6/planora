@@ -10,6 +10,15 @@ import { useDirection } from "@/hooks/useDirection";
 
 
 const Contact = () => {
+import { t } from "i18next";
+
+const Contact = () => {
+   const [formData, setFormData] = useState({
+      name: "",
+      email: "",
+      subject: "",
+      message: "",
+   });
 
   const { lang } = useDirection();
 

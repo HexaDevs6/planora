@@ -118,7 +118,7 @@ export default function Services() {
         type="service"
       />
       <main className="flex-1">
-        <section className="py-16 md:pt-10 bg-muted/30">
+        <section className="pt-16 md:pt-10 bg-muted/30">
           <div className="container px-4 md:px-6">
             {loading ? (
               <p className="text-primary text-4xl md:text-3xl font-bold drop-shadow-2xl py-30 text-center">
