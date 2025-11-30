@@ -11,6 +11,8 @@ import TicketFrame from "../TicketFrame";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import PaymentModal from "../modelpayment.jsx";
+
 
 const EventCountdown = ({ details, eventId, hostId, user, lang = "en" }) => {
    const dispatch = useDispatch();
@@ -39,6 +41,43 @@ const EventCountdown = ({ details, eventId, hostId, user, lang = "en" }) => {
 
       checkExistingTicket();
    }, [eventId, user?.id]);
+   const handlePaidTicket = async () => {
+      try {
+         if (!user?.id) {
+            toast.error("User not logged in");
+            return;
+         }
+
+         const { data: tic, error } = await supabase
+            .from("tickets")
+            .insert({
+               event_id: eventId,
+               client_id: user.id,
+               payment_status: "paid",
+               qr_code: crypto.randomUUID(),
+            })
+            .select()
+            .single();
+
+         if (error) {
+            console.error("SUPABASE ERROR:", error);
+            throw error;
+         }
+
+         setIsTicketBooked(true);
+         setTicket(tic);
+
+         toast.success("Ticket saved successfully 🎉");
+
+      } catch (err) {
+         console.error("SUPABASE ERROR:", err);
+         toast.error("Payment done but ticket failed to save.");
+      }
+   };
+
+
+
+
 
    const handleCreateTicket = async () => {
       if (!user) {
@@ -99,11 +138,11 @@ const EventCountdown = ({ details, eventId, hostId, user, lang = "en" }) => {
       const timeLeft =
          diff > 0
             ? {
-                 days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-                 hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-                 minutes: Math.floor((diff / (1000 * 60)) % 60),
-                 seconds: Math.floor((diff / 1000) % 60),
-              }
+               days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+               hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+               minutes: Math.floor((diff / (1000 * 60)) % 60),
+               seconds: Math.floor((diff / 1000) % 60),
+            }
             : { days: 0, hours: 0, minutes: 0, seconds: 0 };
 
       return { ...timeLeft, status };
@@ -150,9 +189,8 @@ const EventCountdown = ({ details, eventId, hostId, user, lang = "en" }) => {
 
    return (
       <div
-         className={`gradient-card rounded-xl p-4 xl:p-6 ${
-            lang === "ar" ? "text-right font-[Cairo]" : "text-left"
-         }`}
+         className={`gradient-card rounded-xl p-4 xl:p-6 ${lang === "ar" ? "text-right font-[Cairo]" : "text-left"
+            }`}
       >
          <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-2 text-center">
             {lang === "ar" ? "العد التنازلي للحدث" : "Event Countdown"}
@@ -202,31 +240,9 @@ const EventCountdown = ({ details, eventId, hostId, user, lang = "en" }) => {
                      ? "الحدث جاري حالياً."
                      : "The event is live now."
                   : lang === "ar"
-                  ? "تابعنا لمزيد من الأحداث القادمة."
-                  : "Stay tuned for upcoming events."}
+                     ? "تابعنا لمزيد من الأحداث القادمة."
+                     : "Stay tuned for upcoming events."}
             </div>
-         )}
-
-         {user && hostId === user.id && (
-            <Button
-               className="mt-6 w-full"
-               variant="default"
-               size="CTA"
-               // onClick={handleGoToEvent}
-               disabled={countdown.status === "ended"}
-               asChild
-            >
-               <Link
-                  to={{
-                     pathname: "/host/attendees",
-                     search: `?id=${eventId}&title=${
-                        lang === "ar" ? details.name_ar : details.name
-                     }&date=${details.date}&location=${details.location}`,
-                  }}
-               >
-                  {lang === "ar" ? "التحكم في الحدث" : "Manage Event"}
-               </Link>
-            </Button>
          )}
 
          {isTicketBooked && ticket ? (
@@ -243,6 +259,12 @@ const EventCountdown = ({ details, eventId, hostId, user, lang = "en" }) => {
                   Ticket ID: {ticket.id}
                </div>
             </TicketFrame>
+         ) : details.price > 0 ? (
+            <PaymentModal
+               event={details}
+               user={user}
+               onPaymentSuccess={handlePaidTicket}
+            />
          ) : (
             <Button
                className="mt-6 w-full"
