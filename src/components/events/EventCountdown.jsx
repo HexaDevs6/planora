@@ -259,7 +259,7 @@ const EventCountdown = ({ details, eventId, hostId, user, lang = "en" }) => {
                   Ticket ID: {ticket.id}
                </div>
             </TicketFrame>
-         ) : details.price > 0 ? (
+         ) : (countdown.status !== "ended" && details.price > 0) ? (
             <PaymentModal
                event={details}
                user={user}
