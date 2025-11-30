@@ -1,4 +1,4 @@
-import React from "react";
+import React,  { useState, useEffect, useRef } from "react";
 import {
     useGetTotalEventsQuery,
     useGetTotalTicketsQuery,
@@ -15,7 +15,6 @@ import {
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
     TableHead,
     TableHeader,
@@ -25,10 +24,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { useDirection } from "@/hooks/useDirection";
 import Spinner from "@/components/SpinnerLoader";
+import Pagination from "@/components/ui/pagination";
+import { Input } from "@/components/ui/input";
 
 const AdminEvents = () => {
     const { lang } = useDirection();
-    const { data: totalEvents, isLoading: loadingTotalEvents } =
+
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [searchInput, setSearchInput] = useState("");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
+    const debounceMs = 400;
+    const debounceRef = useRef(null);
+
+    const { data: totalEvents, isLoading: loadingTotalEvents} =
         useGetTotalEventsQuery();
     const { data: totalTickets, isLoading: loadingTotalTickets } =
         useGetTotalTicketsQuery();
@@ -36,10 +45,15 @@ const AdminEvents = () => {
         useGetTotalAttendeesQuery();
     const { data: popularEvents, isLoading: loadingPopularEvents } =
         useGetPopularEventsQuery();
-    const { data: eventPerformance, isLoading: loadingEventPerformance } =
-        useGetEventPerformanceQuery();
+    const { data: eventPerformance, isLoading: loadingEventPerformance, isFetching: fetchingEventPerformance } =
+        useGetEventPerformanceQuery({ page, pageSize, q: debouncedSearch});  
     const { data: monthlyBookings, isLoading: loadingMonthlyBookings } =
         useGetMonthlyBookingsQuery();
+
+        
+    const eventsList = eventPerformance?.data ?? [];
+    const eventsTotal = eventPerformance?.total ?? 0;
+    const totalPages = eventsTotal ? Math.max(1, Math.ceil(eventsTotal / pageSize)) : undefined;
 
     const isLoading =
         loadingTotalEvents ||
@@ -49,32 +63,64 @@ const AdminEvents = () => {
         loadingEventPerformance ||
         loadingMonthlyBookings;
 
-    if (isLoading) {
-        return <Spinner />;
+     // debounce effect for searchInput -> debouncedSearch
+  // -----------------------
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      setDebouncedSearch(searchInput.trim());
+      setPage(1);
+    }, debounceMs);
+
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchInput]);
+
+  // -----------------------
+  // clamp page when totalPages changes
+  // -----------------------
+  useEffect(() => {
+    if (totalPages && page > totalPages) {
+      setPage(totalPages);
     }
+  }, [totalPages, page]);
 
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.1,
-            },
-        },
-    };
+  const flushSearchNow = () => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    setDebouncedSearch(searchInput.trim());
+    setPage(1);
+  };
 
-    const itemVariants = {
-        hidden: { y: 20, opacity: 0 },
-        visible: {
-            y: 0,
-            opacity: 1,
-            transition: {
-                type: "spring",
-                stiffness: 100,
-                damping: 15,
-            },
-        },
-    };
+  // -----------------------
+  // animation variants
+  // -----------------------
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 15,
+      },
+    },
+  };
+
+  // initial full-screen loading
+  if (isLoading) return <Spinner />;
 
     return (
         <motion.div
@@ -124,7 +170,7 @@ const AdminEvents = () => {
                 </motion.div>
             </motion.div>
 
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-4 grid-cols-1 md:grid-cols-2 ">
                 <motion.div variants={itemVariants}>
                     <BarChartComponent
                         title={lang === "ar" ? "الفعاليات الشائعة" : "Popular Events"}
@@ -145,13 +191,23 @@ const AdminEvents = () => {
             </div>
 
             <motion.div variants={itemVariants}>
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="pt-3" >{lang === "ar" ? "أداء الفعاليات" : "Events Performance"}</CardTitle>
+                <Card className='py-5'>
+                    <CardHeader className={'flex justify-between items-center'}>
+                        <CardTitle >{lang === "ar" ? "أداء الفعاليات" : "Events Performance"}</CardTitle>
+                        <Input 
+                            className='w-1/2'
+                            type="search" 
+                            value={searchInput}
+                            onChange={(e) => setSearchInput(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") flushSearchNow();
+                            }}
+                            placeholder={lang === "ar" ? "ابحث باسم الفعالية أو اسم المضيف..." : "Search by event or host name..."}
+                            aria-label={lang === "ar" ? "بحث" : "Search"}
+                        />
                     </CardHeader>
                     <CardContent>
                         <Table>
-                            <TableCaption>{lang === "ar" ? "مقاييس الأداء للفعاليات." : "Performance metrics for events."}</TableCaption>
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>{lang === "ar" ? "مسلسل" : "No."}</TableHead>
@@ -163,9 +219,15 @@ const AdminEvents = () => {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {eventPerformance?.map((event, index) => (
+                                {eventsList.length === 0 ? (
+                                <TableRow>
+                                    <TableCell colSpan={6} className="text-center py-6">
+                                    لا توجد نتائج لـ "الكلمة"
+                                    </TableCell>
+                                </TableRow>
+                                ) : (eventsList?.map((event, index) => (
                                     <TableRow key={index}>
-                                        <TableCell>{index + 1}</TableCell>
+                                        <TableCell>{(page - 1) * pageSize + index + 1}</TableCell>
                                         <TableCell className="font-medium">
                                             {event.event_name}
                                         </TableCell>
@@ -174,9 +236,20 @@ const AdminEvents = () => {
                                         <TableCell>{event.attendees}</TableCell>
                                         <TableCell>${event.revenue || 0}</TableCell>
                                     </TableRow>
-                                ))}
+                                )))}
                             </TableBody>
                         </Table>
+                        <div className="my-4">
+                            <Pagination
+                                page={page}
+                                pageSize={pageSize}
+                                total={eventsTotal}
+                                onPageChange={(p) => setPage(p)}
+                                onPageSizeChange={(s) => { setPageSize(s); setPage(1); }}
+                                dir={lang === "ar" ? "rtl" : "ltr"}
+                                isLoading={fetchingEventPerformance}
+                            />
+                        </div>
                     </CardContent>
                 </Card>
             </motion.div>

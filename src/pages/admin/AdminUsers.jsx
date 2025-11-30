@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
     useGetTotalUsersQuery,
     useGetTotalHostsQuery,
@@ -14,24 +14,27 @@ import {
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
     TableHead,
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useDirection } from "@/hooks/useDirection";
 import Spinner from "@/components/SpinnerLoader";
 import Pagination from "@/components/ui/pagination";
+import { Input } from "@/components/ui/input";
 
 const AdminUsers = () => {
     const { lang } = useDirection();
     
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
+    const [searchInput, setSearchInput] = useState("");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
+    const debounceMs = 400;
+    const debounceRef = useRef(null);
 
     const { data: totalUsers, isLoading: loadingTotalUsers } =
         useGetTotalUsersQuery();
@@ -45,9 +48,11 @@ const AdminUsers = () => {
         data: usersListResult,
         isLoading: loadingUsersList,
         isFetching: fetchingUsersList,
-        error: usersError,
-    } = useGetUsersListQuery({ page, pageSize });
+    } = useGetUsersListQuery({ page, pageSize,q: debouncedSearch});
 
+     const usersList = usersListResult?.data ?? [];
+    const usersTotal = usersListResult?.total ?? 0;
+    const totalPages = usersTotal ? Math.max(1, Math.ceil(usersTotal / pageSize)) : undefined;
 
     const isLoading =
         loadingTotalUsers ||
@@ -56,9 +61,29 @@ const AdminUsers = () => {
         loadingUserGrowth ||
         loadingUsersList;
 
-    if (isLoading) {
-        return <Spinner />;
-    }
+    useEffect(() => {
+        if (debounceRef.current) clearTimeout(debounceRef.current);
+        debounceRef.current = setTimeout(() => {
+            setDebouncedSearch(searchInput.trim());
+            setPage(1);
+        }, debounceMs);
+
+        return () => {
+        if (debounceRef.current) clearTimeout(debounceRef.current);
+        };
+    }, [searchInput]);
+
+    useEffect(() => {
+      if (totalPages && page > totalPages) {
+        setPage(totalPages);
+      }
+    }, [totalPages, page]);
+
+    const flushSearchNow = () => {
+        if (debounceRef.current) clearTimeout(debounceRef.current);
+        setDebouncedSearch(searchInput.trim());
+        setPage(1);
+    };
 
     const userRolesData = [
         { name: "Users", value: totalUsers - totalHosts },
@@ -88,9 +113,9 @@ const AdminUsers = () => {
         },
     };
 
-    const usersList = usersListResult?.data ?? [];
-    const usersTotal = usersListResult?.total ?? 0;
-    const totalPages = usersTotal ? Math.max(1, Math.ceil(usersTotal / pageSize)) : undefined;
+   if (isLoading) {
+        return <Spinner />;
+    }
 
 
     return (
@@ -136,9 +161,20 @@ const AdminUsers = () => {
             </motion.div>
 
             <motion.div variants={itemVariants} >
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="pt-3">{lang === "ar" ? "جميع المستخدمين" : "All Users"}</CardTitle>
+                <Card className='py-5'>
+                    <CardHeader className="flex justify-between items-center">
+                        <CardTitle >{lang === "ar" ? "جميع المستخدمين" : "All Users"}</CardTitle>
+                        <Input 
+                            className='w-1/2'
+                            type="search" 
+                            value={searchInput}
+                            onChange={(e) => setSearchInput(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") flushSearchNow();
+                            }}
+                            placeholder={lang === "ar" ? "ابحث باسم المستخدم أو البريد الإلكتروني..." : "Search by user name or email..."}
+                            aria-label={lang === "ar" ? "بحث" : "Search"}
+                        />
                     </CardHeader>
                     <CardContent>
                         <Table>

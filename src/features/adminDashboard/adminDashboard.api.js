@@ -314,15 +314,73 @@ export const adminDashboardApi = createApi({
         }),
 
         // Returns full event performance (tickets, attendees, revenue).
-        getEventPerformance: builder.query({
-            async queryFn() {
-                const { data, error } = await supabase.rpc(
-                    "admin_event_performance"
-                );
-                if (error) return { error };
-                return { data };
-            },
-        }),
+        // getEventPerformance: fallback using RPC then client-side filter + paginate
+getEventPerformance: builder.query({
+  async queryFn(arg = {}) {
+    try {
+      const {
+        page = 1,
+        pageSize = 10,
+        q,
+        order = { column: "revenue", ascending: false },
+      } = arg;
+
+      // call the RPC that returns the full performance array
+      const { data: allRows, error: rpcError } = await supabase.rpc("admin_event_performance");
+      if (rpcError) return { error: rpcError };
+
+      // ensure array
+      const rows = Array.isArray(allRows) ? allRows : [];
+
+      // client-side search (case-insensitive)
+      let filtered = rows;
+      if (q && q.trim() !== "") {
+        const clean = q.trim().toLowerCase();
+        filtered = filtered.filter((r) => {
+          const name = (r.event_name || "").toString().toLowerCase();
+          const host = (r.host_name || "").toString().toLowerCase();
+          return name.includes(clean) || host.includes(clean);
+        });
+      }
+
+      // client-side ordering (only allow known columns)
+      const allowed = ["revenue", "total_tickets", "attendees", "created_at", "event_name"];
+      if (order && order.column && allowed.includes(order.column)) {
+        filtered.sort((a, b) => {
+          const col = order.column;
+          const A = a[col] ?? 0;
+          const B = b[col] ?? 0;
+          if (A === B) return 0;
+          const asc = order.ascending ? 1 : -1;
+          // numeric vs string
+          if (typeof A === "number" && typeof B === "number") return (A - B) * asc;
+          return String(A).localeCompare(String(B)) * asc;
+        });
+      } else {
+        // default sort by revenue desc
+        filtered.sort((a, b) => (b.revenue ?? 0) - (a.revenue ?? 0));
+      }
+
+      // total count after filter
+      const total = filtered.length;
+
+      // pagination (slice)
+      const from = (page - 1) * pageSize;
+      const to = page * pageSize; // slice end-exclusive
+      const pageRows = filtered.slice(from, to);
+
+      return {
+        data: {
+          data: pageRows,
+          total,
+        },
+      };
+    } catch (err) {
+      return { error: err };
+    }
+  },
+}),
+
     }),
 });
 

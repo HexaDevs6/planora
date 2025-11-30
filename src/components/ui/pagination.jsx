@@ -7,7 +7,6 @@ import {
 
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 function PaginationRoot({ className, dir = "ltr", children, ...props }) {
   return (
@@ -37,10 +36,14 @@ function PaginationContent({ className, children, ...props }) {
 }
 
 function PaginationItem({ children, ...props }) {
-  return <li data-slot="pagination-item" {...props}>{children}</li>;
+  return (
+    <li data-slot="pagination-item" {...props}>
+      {children}
+    </li>
+  );
 }
 
-function PaginationEllipsis({ className, ...props }) {
+function PaginationEllipsis({ className, label = "More pages", ...props }) {
   return (
     <span
       aria-hidden
@@ -49,22 +52,28 @@ function PaginationEllipsis({ className, ...props }) {
       {...props}
     >
       <MoreHorizontalIcon className="h-4 w-4" />
-      <span className="sr-only">More pages</span>
+      <span className="sr-only">{label}</span>
     </span>
   );
 }
 
 export default function Pagination({
   page,
-  total, // total items (optional)
+  total, // total items
   pageSize = 10,
   onPageChange,
   className,
   sizeWindow = 2,
   dir = "ltr",
   isLoading = false,
+  labels = {
+    previous: "Previous",
+    next: "Next",
+    morePages: "More pages",
+  },
 }) {
-  const totalPages = typeof total === "number" ? Math.max(1, Math.ceil(total / pageSize)) : undefined;
+  const totalPages =
+    typeof total === "number" ? Math.max(1, Math.ceil(total / pageSize)) : undefined;
   const atFirst = page <= 1;
   const atLast = totalPages ? page >= totalPages : false;
 
@@ -104,7 +113,7 @@ export default function Pagination({
           <button
             onClick={() => go(page - 1)}
             disabled={atFirst || isLoading}
-            aria-label="Previous page"
+            aria-label={labels.previous}
             className={buttonVariants({ variant: "ghost", size: "default" })}
           >
             <ChevronLeftIcon />
@@ -116,7 +125,10 @@ export default function Pagination({
             <PaginationItem>
               <button
                 onClick={() => go(1)}
-                className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-9 w-9 flex items-center justify-center")}
+                className={cn(
+                  buttonVariants({ variant: "ghost", size: "icon" }),
+                  "h-9 w-9 flex items-center justify-center"
+                )}
                 disabled={isLoading}
               >
                 1
@@ -125,7 +137,7 @@ export default function Pagination({
 
             {pages[0] > 2 && (
               <PaginationItem>
-                <PaginationEllipsis aria-hidden>{labels.morePages}</PaginationEllipsis>
+                <PaginationEllipsis aria-hidden label={labels.morePages} />
               </PaginationItem>
             )}
           </>
@@ -137,7 +149,10 @@ export default function Pagination({
               onClick={() => go(p)}
               aria-current={p === page ? "page" : undefined}
               className={cn(
-                buttonVariants({ variant: p === page ? "outline" : "ghost", size: "icon" }),
+                buttonVariants({
+                  variant: p === page ? "outline" : "ghost",
+                  size: "icon",
+                }),
                 "h-9 w-9 flex items-center justify-center"
               )}
               disabled={isLoading}
@@ -151,13 +166,16 @@ export default function Pagination({
           <>
             {pages[pages.length - 1] < totalPages - 1 && (
               <PaginationItem>
-                <PaginationEllipsis aria-hidden>{labels.morePages}</PaginationEllipsis>
+                <PaginationEllipsis aria-hidden label={labels.morePages} />
               </PaginationItem>
             )}
             <PaginationItem>
               <button
                 onClick={() => go(totalPages)}
-                className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-9 w-9 flex items-center justify-center")}
+                className={cn(
+                  buttonVariants({ variant: "ghost", size: "icon" }),
+                  "h-9 w-9 flex items-center justify-center"
+                )}
                 disabled={isLoading}
               >
                 {totalPages}
@@ -170,7 +188,7 @@ export default function Pagination({
           <button
             onClick={() => go(page + 1)}
             disabled={atLast || isLoading}
-            aria-label="Next page"
+            aria-label={labels.next}
             className={buttonVariants({ variant: "ghost", size: "default" })}
           >
             <ChevronRightIcon />
