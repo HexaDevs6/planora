@@ -8,10 +8,6 @@ import { ShineBorder } from "@/components/ui/shine-border";
 import { MagicCard } from "@/components/ui/magic-card";
 import { useDirection } from "@/hooks/useDirection";
 
-
-const Contact = () => {
-import { t } from "i18next";
-
 const Contact = () => {
    const [formData, setFormData] = useState({
       name: "",
@@ -22,12 +18,6 @@ const Contact = () => {
 
   const { lang } = useDirection();
 
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  });
 
   const [formStatus, setFormStatus] = useState(null);
 
