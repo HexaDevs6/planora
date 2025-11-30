@@ -73,7 +73,7 @@ function HeroSection() {
                 size: "CTA",
               })}
             >
-              {t("common.buttons.contactUs")}
+              {t("common.buttons.browseEvents")}
             </Button>
           </Link>
         </div>
@@ -82,8 +82,8 @@ function HeroSection() {
       {/* الدائرة المتحركة */}
       <CircularText
         text={t("hero.rotating")}
-        onHover="speedUp"
-        spinDuration={15}
+        onHover="slowDown"
+        spinDuration={20}
         className="hidden z-10 md:block h-[400px] w-[400px] end-[-250px] bg-secondary/10 backdrop-blur-xs text-accent hover:text-amber-dark border border-secondary/30 hover:bg-primary/40 tracking-widest transition-colors duration-300"
       />
     </section>

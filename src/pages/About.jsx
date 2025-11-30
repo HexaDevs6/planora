@@ -208,7 +208,7 @@ const About = () => {
                     <div className='container px-4 md:px-6'>
                         <div className='text-center space-y-4 mb-12'>
                             <h2 className='text-3xl md:text-4xl font-bold'>
-                              {t("aboutUs.team.title")}
+                                {t("aboutUs.team.title")}
                             </h2>
                             <p className='text-lg text-muted-foreground max-w-2xl mx-auto'>
                                 {t("aboutUs.team.subTitle")}
@@ -216,61 +216,67 @@ const About = () => {
                         </div>
 
                         <div className='grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto'>
-            {team.map((member, index) => (
-                <div
-                    key={member.name}
-                    className='relative aspect-square rounded-xl overflow-hidden group hover:shadow-xl transition-all duration-300 hover:scale-105'
-                >
-                    <div className='absolute top-1/2 left-1/2 -translate-1/2 w-full h-full'>
-                        <img
-                            src={member.img}
-                            alt={member.name}
-                            className='w-full h-full object-cover'
-                        />
-                    </div>
+							{team.map((member) => (
+								<div
+									key={member.name}
+									className='relative aspect-square rounded-xl overflow-hidden group hover:shadow-xl transition-all duration-300 hover:scale-105'
+								>
+									<div className='absolute top-1/2 left-1/2 -translate-1/2 w-full h-full'>
+										<img
+											src={member.img}
+											alt={member.name}
+											className='w-full h-full object-cover'
+										/>
+									</div>
 
-                    <div className='translate-y-18 group-hover:translate-0 transition duration-300 flex justify-end flex-col gap-4 h-full p-4 md:p-6 bg-gradient-to-t from-muted to-transparent relative z-10'>
-                        <h3 className='font-semibold text-lg text-foreground'>
-                            {member.name}
-                        </h3>
+									<div className='translate-y-18 group-hover:translate-0 transition duration-300 flex justify-end flex-col gap-4 h-full p-4 md:p-6 bg-gradient-to-t from-muted to-transparent relative z-10'>
+										<h3 className='font-semibold text-lg text-foreground'>
+											{member.name}
+										</h3>
 
-                        <div className='flex gap-4'>
-                            <a
-                                href={member.linkedin}
-                                className='w-fit px-3 bg-muted/30 backdrop-blur-xs border rounded-full aspect-square flex-center shadow hover:scale-105 transition'
-                            >
-                                <Linkedin
-                                    size={15}
-                                    className='text-[#0a66c2]'
-                                />
-                            </a>
+										<div className='flex gap-4'>
+											<a
+												href={member.linkedin}
+												target="_blank"
+												rel="noopener noreferrer"
+												className='w-fit px-3 bg-muted/30 backdrop-blur-xs border rounded-full aspect-square flex-center shadow hover:scale-105 transition'
+											>
+												<Linkedin
+													size={15}
+													className='text-[#0a66c2]'
+												/>
+											</a>
 
-                            {member.insta && (
-                                <a
-                                    href={member.insta}
-                                    className='w-fit px-3 bg-muted/30 backdrop-blur-xs border rounded-full aspect-square flex-center shadow hover:scale-105 transition'
-                                >
-                                    <Instagram
-                                        size={15}
-                                        className='text-[#e1306c]'
-                                    />
-                                </a>
-                            )}
+											{member.insta && (
+												<a
+													href={member.insta}
+													target="_blank"
+													rel="noopener noreferrer"
+													className='w-fit px-3 bg-muted/30 backdrop-blur-xs border rounded-full aspect-square flex-center shadow hover:scale-105 transition'
+												>
+													<Instagram
+														size={15}
+														className='text-[#e1306c]'
+													/>
+												</a>
+											)}
 
-                            <a
-                                href={member.facebook}
-                                className='w-fit px-3 bg-muted/30 backdrop-blur-xs border rounded-full aspect-square flex-center shadow hover:scale-105 transition'
-                            >
-                                <Facebook
-                                    size={15}
-                                    className='text-[#1877F2]'
-                                />
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            ))}
-        </div>
+											<a
+												href={member.facebook}
+												target="_blank"
+												rel="noopener noreferrer"
+												className='w-fit px-3 bg-muted/30 backdrop-blur-xs border rounded-full aspect-square flex-center shadow hover:scale-105 transition'
+											>
+												<Facebook
+													size={15}
+													className='text-[#1877F2]'
+												/>
+											</a>
+										</div>
+									</div>
+								</div>
+							))}
+						</div>
                     </div>
                 </section>
 
@@ -292,7 +298,7 @@ const About = () => {
                                         size='lg'
                                         className='text-primary hover:scale-105 transition-transform'
                                     >
-                                        {t('button.explore')}
+                                        {t('common.buttons.explore')}
                                     </Button>
                                 </Link>
                                 <Link to='/contact'>
@@ -301,7 +307,7 @@ const About = () => {
                                         size='lg'
                                         className='bg-white/10 text-white border-white/30 hover:bg-white/20'
                                     >
-                                        {t('button.contactUs')}
+                                        {t('common.buttons.contactUs')}
                                     </Button>
                                 </Link>
                             </div>

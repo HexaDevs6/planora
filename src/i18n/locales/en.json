@@ -16,7 +16,7 @@
       "save": "Save",
       "apply": "Apply",
       "getStarted": "Publish Your Event",
-      "contactUs": "Browse Events",
+      "browseEvents": "Browse Events",
       "join": "Join",
       "follow": "Follow",
       "explore": "Explore More",
@@ -26,7 +26,8 @@
       "creating": "Creating Account...",
       "signingIn": "Signing in...",
       "letsGetStarted": "Let's Get Started",
-      "send": "Send"
+      "send": "Send",
+      "contactUs": "Contact Us"
     },
     "form": {
       "email": "Email",
@@ -72,7 +73,8 @@
       "noConversations": "No conversations yet",
       "selectConversation": "Select a conversation...",
       "typeMessage": "Type a message...",
-      "searchConversation": "Search conversations..."
+      "searchConversation": "Search conversations...",
+      "newMessage": "You have a new message!"
     },
     "loading": "Loading..."
   },
@@ -655,6 +657,50 @@
     "loading": {
       "category": "Loading Category...",
       "cards": "Loading Services..."
+    }
+  },
+  "contactPage": {
+    "head": {
+      "badge": "We're Here to Help",
+      "title": "Get in Touch",
+      "desc": "Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible."
+    },
+    "quickContacts": {
+      "title": "Quick Contacts",
+      "email": {
+        "title": "Email Us",
+        "details": "support@planora.com"
+      },
+      "phone": {
+        "title": "Call Us",
+        "details": "+1 (555) 123-4567"
+      },
+      "location": {
+        "title": "Visit Us",
+        "details": "123 Event Street, San Francisco, CA 94102"
+      }
+    },
+    "form": {
+      "title": "Send Us a Message",
+      "desc": "Fill out the form below and we'll get back to you shortly",
+      "fields": {
+        "nameLabel": "Full Name *",
+        "namePlaceholder": "John Doe",
+        "emailLabel": "Email Address *",
+        "emailPlaceholder": "john@example.com",
+        "subjectLabel": "Subject *",
+        "subjectPlaceholder": "How can we help you?",
+        "messageLabel": "Message *",
+        "messagePlaceholder": "Tell us more about your inquiry..."
+      },
+      "button": "Send Message",
+      "success": "✔️ Your message has been sent successfully!",
+      "error": "❌ Something went wrong. Please try again later."
+    },
+    "faqTeaser": {
+      "title": "Looking for Quick Answers?",
+      "desc": "Check out our FAQ section for instant answers to common questions",
+      "button": "Visit FAQ"
     }
   },
   "auth.signin.googleNote": "Google login creates a Client account by default.",

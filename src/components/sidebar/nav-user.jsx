@@ -41,9 +41,9 @@ export default function NavUser({ user }) {
                         <AvatarImage src={user.avatar} alt={user.name} />
                         <AvatarFallback className="rounded-lg">
                            {user.name
-                              .split(" ")
+                              ?.split(" ")
                               .map((n) => n[0])
-                              .join("")}
+                              .join("") || "U"}
                         </AvatarFallback>
                      </Avatar>
                      <div className="grid flex-1 text-left text-sm leading-tight">

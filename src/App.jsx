@@ -30,6 +30,13 @@ import ChatWidget from "./components/ChatWidget";
 import MessagesPage from "./pages/MessagesPage";
 import EventAttendeeDetails from "./components/HostBoard/EventAttendeeDetails";
 import NotFoundPage from "./components/NotFoundPage";
+import { lazy } from "react";
+import AdminRoute from "./components/guards/AdminRoute";
+
+const AdminOverview = lazy(() => import("./pages/admin/AdminOverview"));
+const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
+const AdminEvents = lazy(() => import("./pages/admin/AdminEvents"));
+const AdminServices = lazy(() => import("./pages/admin/AdminServices"));
 function App() {
     useDirection();
     console.log("APP MOUNTED");
@@ -93,23 +100,25 @@ function App() {
                         element={
                             <ProtectedRoute>
                                 <SidebarLayout />
-                            </ProtectedRoute>
-                        }
+                            </ProtectedRoute>}
                     >
-                        <Route
-                            index
-                            element={<Navigate to='overview' replace />}
-                        />
+                        <Route index element={<Navigate to='overview' replace />} />
                         <Route path='overview' element={<HostOverview />} />
-                        <Route
-                            path='attendees'
-                            element={<EventAttendeeDetails />}
-                        />
+                        <Route path='attendees' element={<EventAttendeeDetails />} />
                         <Route path='settings' element={<HostSettings />} />
                         <Route path='events' element={<HostEvents />} />
                         <Route path='messages' element={<MessagesPage />} />
                         <Route path='create-event' element={<CreateEvent />} />
                     </Route>
+
+                    <Route path='/admin' element={<AdminRoute> <SidebarLayout /></AdminRoute>}>
+                        <Route index element={<Navigate to='overview' replace />} />
+                        <Route path='overview' element={<AdminOverview />} />
+                        <Route path='users' element={<AdminUsers />} />
+                        <Route path='events' element={<AdminEvents />} />
+                        <Route path='services' element={<AdminServices />} />
+                    </Route>
+
                     <Route path='*' element={<NotFoundPage />} />
                 </Routes>
             </BrowserRouter>
