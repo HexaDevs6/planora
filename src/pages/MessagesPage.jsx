@@ -14,6 +14,8 @@ import { useDirection } from "@/hooks/useDirection";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
+
 
 export default function MessagesPage() {
    const user = useSelector((state) => state.auth.user);
@@ -31,6 +33,14 @@ export default function MessagesPage() {
    const subRef = useRef(null);
    const inboxSubRef = useRef(null);
    const messagesEndRef = useRef(null);
+
+   //allow browser notification
+   useEffect(() => {
+      if (Notification && Notification.permission !== "granted") {
+         Notification.requestPermission();
+      }
+   }, []);
+
 
    // ⭐ READ CID FROM URL
    const location = useLocation();
@@ -61,10 +71,42 @@ export default function MessagesPage() {
       })();
 
       // Real-time inbox update
-      inboxSubRef.current = subscribeToInbox(userId, async () => {
-         const updated = await getInbox(userId);
-         setInbox(Array.isArray(updated) ? updated : []);
+      inboxSubRef.current = subscribeToInbox(userId, (newMsg) => {
+         // Toast — must be called inside JS, NOT inside JSX
+         if (activeConvId !== newMsg.conversation_id) {
+            toast(
+               <div className="flex flex-col">
+                  <span className="font-bold text-primary">
+                     {t("common.messages.newMessage")}
+                  </span>
+                  <span className="text-sm text-gray-600">
+                     {newMsg.content}
+                  </span>
+               </div>,
+               {
+                  duration: 3500,
+               }
+            );
+
+         }
+
+         setInbox((prev) =>
+            prev.map((conv) => {
+               const convId = conv.conversation_id || conv.id;
+
+               if (convId === newMsg.conversation_id) {
+                  return {
+                     ...conv,
+                     has_new: activeConvId !== newMsg.conversation_id,
+                     last_message: newMsg.content,
+                     last_message_at: new Date().toISOString(),
+                  };
+               }
+               return conv;
+            })
+         );
       });
+
 
       return () => {
          mounted = false;
@@ -213,37 +255,35 @@ export default function MessagesPage() {
                      </div>
                   ) : (
                      messages.length === 0 ? (
-                     <div className="text-center text-gray-500">
-                        {t("common.messages.noMessages")}
-                     </div>
-                  ) : (
-                     messages.map((m) => {
-                        const mine = m.sender_id === userId;
-                        return (
-                           <div
-                              key={m.id}
-                              className={`flex gap-3 ${
-                                 mine ? "justify-end" : "justify-start"
-                              }`}
-                           >
+                        <div className="text-center text-gray-500">
+                           {t("common.messages.noMessages")}
+                        </div>
+                     ) : (
+                        messages.map((m) => {
+                           const mine = m.sender_id === userId;
+                           return (
                               <div
-                                 className={`p-3 rounded-lg max-w-[70%] relative ${
-                                    mine
+                                 key={m.id}
+                                 className={`flex gap-3 ${mine ? "justify-end" : "justify-start"
+                                    }`}
+                              >
+                                 <div
+                                    className={`p-3 rounded-lg max-w-[70%] relative ${mine
                                        ? "bg-primary text-background rounded-br-none"
                                        : "bg-gray-200 text-gray-800 rounded-bl-none"
-                                 }`}
-                              >
+                                       }`}
+                                 >
                                     {/* <Triangle
                                        className={`size-6 absolute bottom-0 ${
                                           mine ? "rotate-0 fill-amber stroke-amber right-0 translate-x-1/2" : "rotate-270 fill-gray-200 stroke-gray-200 left-0 -translate-x-1/2"
                                        }`}
                                     /> */}
-                                 {m.content}
+                                    {m.content}
+                                 </div>
                               </div>
-                           </div>
-                        );
-                     })
-                  ))}
+                           );
+                        })
+                     ))}
 
                   <div ref={messagesEndRef} />
                </div>
@@ -302,14 +342,20 @@ export default function MessagesPage() {
                         return (
                            <div
                               key={conv.conversation_id || conv.id}
-                              onClick={() =>
-                                 setActiveConvId(
-                                    conv.conversation_id || conv.id
-                                 )
-                              }
-                              className={`flex items-center gap-3 p-3 cursor-pointer border-b hover:bg-amber-light/20 ${
-                                 isActive ? "bg-amber/20" : ""
-                              }`}
+                              onClick={() => {
+                                 const cid = conv.conversation_id || conv.id;
+                                 setActiveConvId(cid);
+
+                                 setInbox((prev) =>
+                                    prev.map((c) => {
+                                       const id = c.conversation_id || c.id;
+                                       return id === cid ? { ...c, has_new: false } : c;
+                                    })
+                                 );
+                              }}
+
+                              className={`flex items-center gap-3 p-3 cursor-pointer border-b hover:bg-amber-light/20 ${isActive ? "bg-amber/20" : ""
+                                 }`}
                            >
                               <div className="w-12 h-12 rounded-full bg-gray-200">
                                  <img
@@ -323,7 +369,10 @@ export default function MessagesPage() {
                               </div>
 
                               <div className="flex-1 min-w-0">
-                                 <p className="font-bold truncate">
+                                 <p className="font-bold truncate space-x-5">
+                                    {conv.has_new && (
+                                       <span className="w-2 h-2 bg-red-500 rounded-full inline-block"></span>
+                                    )}
                                     {otherName}
                                  </p>
                                  <p className="text-xs text-gray-500 truncate">

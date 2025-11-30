@@ -72,7 +72,8 @@
       "noConversations": "لا يوجد محادثات بعد",
       "selectConversation": "اختر محادثة...",
       "typeMessage": "اكتب رسالة...",
-      "searchConversation": "ابحث عن محادثة..."
+      "searchConversation": "ابحث عن محادثة...",
+      "newMessage": "لديك رسالة جديدة"
     },
     "loading": "جاري التحميل..."
   },
