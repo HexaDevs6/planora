@@ -82,7 +82,7 @@ function App() {
                         />
                         <Route path='overview' element={<UserOverview />} />
                         <Route path='settings' element={<UserSettings />} />
-                        <Route path='tickets' element={<UserTickets />} />
+                        {/* <Route path='tickets' element={<UserTickets />} /> */}
                         <Route path='messages' element={<MessagesPage />} />
                         <Route path='services' element={<UserServices />} />
                         <Route path='create-service' element={<AddService />} />

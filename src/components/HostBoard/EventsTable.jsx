@@ -134,6 +134,16 @@ const EventsTable = () => {
       }
    }, [dispatch, categories]);
 
+   const getCapacity = (capacity, reserved_count) => {
+      if (capacity === "unlimited") {
+         return lang === "ar" ? "غير محدود" : "Unlimited";
+      } else if (capacity - reserved_count === 0) {
+         return lang === "ar" ? "اكتمل العدد" : "Full";
+      } else {
+         return capacity - reserved_count;
+      }
+   };
+
    // Empty state component
    const EmptyState = () => (
       <div className="flex flex-col items-center justify-center py-16 px-4">
@@ -197,7 +207,7 @@ const EventsTable = () => {
                      <div className="overflow-x-auto">
                         <table className="w-full">
                            <thead className="bg-muted">
-                              <tr className="border-b border-border">
+                              <tr className="border-b border-border ">
                                  <th className="text-start py-3 px-4 font-semibold text-sm">
                                     {lang === "ar" ? "العنوان" : "Title"}
                                  </th>
@@ -209,6 +219,15 @@ const EventsTable = () => {
                                  </th>
                                  <th className="text-start py-3 px-4 font-semibold text-sm">
                                     {lang === "ar" ? "السعر" : "Price"}
+                                 </th>
+                                 <th className="text-start py-3 px-4 font-semibold text-sm">
+                                    {lang === "ar" ? "السعة" : "Capacity"}
+                                 </th>
+                                 <th className="text-start py-3 px-4 font-semibold text-sm">
+                                    {lang === "ar" ? "عدد الحجوزات" : "Reserved"}
+                                 </th>
+                                 <th className="text-start py-3 px-4 font-semibold text-sm">
+                                    {lang === "ar" ? "الأماكن المتاحة" : "Available"}
                                  </th>
                                  <th className="text-start py-3 px-4 font-semibold text-sm">
                                     {lang === "ar" ? "الإجراءات" : "Actions"}
@@ -224,18 +243,15 @@ const EventsTable = () => {
                                     <td className="py-4 px-4">
                                        <div>
                                           <Link
-                                             className="font-medium"
+                                             className="text-primary hover:underline font-semibold"
                                              to={{
                                                 pathname: "/host/attendees",
-                                                search: `?id=${
-                                                   event.id
-                                                }&title=${
-                                                   lang === "ar"
+                                                search: `?id=${event.id
+                                                   }&title=${lang === "ar"
                                                       ? event.name_ar
                                                       : event.name
-                                                }&date=${event.date}&location=${
-                                                   event.location
-                                                }`,
+                                                   }&date=${event.date}&location=${event.location
+                                                   }`,
                                              }}
                                           >
                                              {lang === "ar"
@@ -260,6 +276,17 @@ const EventsTable = () => {
                                           {event.price === 0
                                              ? "Free"
                                              : `$${event.price}`}
+                                       </span>
+                                    </td>
+                                    <td className="py-4 px-4">
+                                       {event.is_unlimited ? lang === "ar" ? "غير محدود" : "Unlimited" : event.capacity}
+                                    </td>
+                                    <td className="py-4 px-4">
+                                       {event.reserved_count}
+                                    </td>
+                                    <td className="py-4 px-4">
+                                       <span className="font-semibold text-sm">
+                                          {getCapacity(event.capacity, event.reserved_count)}
                                        </span>
                                     </td>
                                     <td className="py-4 px-4">

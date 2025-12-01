@@ -208,9 +208,8 @@ const EventCountdown = ({ details, eventId, hostId, user, lang = "en" }) => {
 
    return (
       <div
-         className={`gradient-card rounded-xl p-4 xl:p-6 ${
-            lang === "ar" ? "text-right font-[Cairo]" : "text-left"
-         }`}
+         className={`gradient-card rounded-xl p-4 xl:p-6 ${lang === "ar" ? "text-right font-[Cairo]" : "text-left"
+            }`}
       >
          <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-2 text-center">
             {lang === "ar" ? "العد التنازلي للحدث" : "Event Countdown"}
@@ -260,54 +259,54 @@ const EventCountdown = ({ details, eventId, hostId, user, lang = "en" }) => {
                      ? "الحدث جاري حالياً."
                      : "The event is live now."
                   : lang === "ar"
-                  ? "تابعنا لمزيد من الأحداث القادمة."
-                  : "Stay tuned for upcoming events."}
+                     ? "تابعنا لمزيد من الأحداث القادمة."
+                     : "Stay tuned for upcoming events."}
             </div>
          )}
 
          {isTicketBooked && ticket ? (
             <Card className={'rounded-xl overflow-hidden mt-4'}>
                <TicketFrame
-               ticketData={{
-                  event: details,
-                  client: user,
-                  host: host,
-                  ticket: ticket,
-                  qrCode: ticket.qr_code,
-               }}
-            >
-               <h3 className="text-center text-lg font-semibold mb-4">
-                  {lang === "ar" ? "تذكرة الدخول" : "Your Event Ticket"}
-               </h3>
+                  ticketData={{
+                     event: details,
+                     client: user,
+                     host: host,
+                     ticket: ticket,
+                     qrCode: ticket.qr_code,
+                  }}
+               >
+                  <h3 className="text-center text-lg font-semibold mb-4">
+                     {lang === "ar" ? "تذكرة الدخول" : "Your Event Ticket"}
+                  </h3>
 
-               <div className="flex justify-center mb-4">
-                  <StyledQR value={ticket.qr_code} size={260} />
-               </div>
+                  <div className="flex justify-center mb-4">
+                     <StyledQR value={ticket.qr_code} size={260} />
+                  </div>
 
-               <div className="text-center text-sm text-muted-foreground mt-4">
-                  Ticket ID: {ticket.id}
-               </div>
-            </TicketFrame>
+                  <div className="text-center text-sm text-muted-foreground mt-4">
+                     Ticket ID: {ticket.id}
+                  </div>
+               </TicketFrame>
             </Card>
-         ) : 
-         eventStatus !== "ended" && details.price > 0 ? (
-            <PaymentModal
-               event={eventData}
-               user={user}
-               onPaymentSuccess={handlePaidTicket}
-            />
-         ) : (
-            <Button
-               className="mt-6 w-full"
-               variant="default"
-               size="CTA"
-               onClick={handleCreateTicket}
-               disabled={eventStatus === "ended"}
-            >
-               <Ticket className="size-4" />
-               {lang === "ar" ? "أحجز الان" : "Book Now"}
-            </Button>
-         )}
+         ) :
+            eventStatus !== "ended" && !details.is_free && !details.is_full ? (
+               <PaymentModal
+                  event={eventData}
+                  user={user}
+                  onPaymentSuccess={handlePaidTicket}
+               />
+            ) : (
+               <Button
+                  className="mt-6 w-full"
+                  variant="default"
+                  size="CTA"
+                  onClick={handleCreateTicket}
+                  disabled={eventStatus === "ended" || details.is_full}
+               >
+                  <Ticket className="size-4" />
+                  {lang === "ar" ? "أحجز الان" : "Book Now"}
+               </Button>
+            )}
       </div>
    );
 };
