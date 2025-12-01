@@ -2,7 +2,7 @@ import React from "react";
 import WhiteTicketCTA from "/WhiteTicketCTA.png";
 import YellowTicketCTA from "/YellowTicketCTA.png";
 import { Calendar } from 'lucide-react';
-import { QrCode  } from 'lucide-react';
+import { QrCode } from 'lucide-react';
 import { MessageSquareText } from 'lucide-react';
 import { t } from "i18next";
 
@@ -18,7 +18,7 @@ function CallToAction() {
                 </h3>
                 <div className=' container cta-section-content flex flex-col md:flex-row gap-6 justify-evenly items-center'>
                     <div
-                        className='cta-section-content__card flex h-75 w-62 flex-col justify-start pt-12 items-center text-violet text-lg font-semibold gap-3 cursor-pointer transition-all duration-500 hover:translate-y-[-15px] hover:drop-shadow-[0px_16px_16px_rgba(0,0,0,0.25)]'
+                        className='cta-section-content__card flex h-75 w-62 flex-col justify-start pt-12 items-center text-violet text-lg font-semibold gap-3 transition-all duration-500 hover:translate-y-[-15px] hover:drop-shadow-[0px_16px_16px_rgba(0,0,0,0.25)]'
                         style={{
                             backgroundImage: `url(${WhiteTicketCTA})`,
                             backgroundSize: "cover",
@@ -29,7 +29,7 @@ function CallToAction() {
                         <Calendar size={72} className="text-violet" strokeWidth={1.7} />
                     </div>
                     <div
-                        className='cta-section-content__card flex h-75 w-62 flex-col justify-start pt-12 items-center text-white text-lg font-semibold gap-3 cursor-pointer transition-all duration-500 hover:translate-y-[-15px] hover:drop-shadow-[0px_16px_16px_rgba(0,0,0,0.25)]'
+                        className='cta-section-content__card flex h-75 w-62 flex-col justify-start pt-12 items-center text-white text-lg font-semibold gap-3 transition-all duration-500 hover:translate-y-[-15px] hover:drop-shadow-[0px_16px_16px_rgba(0,0,0,0.25)]'
                         style={{
                             backgroundImage: `url(${YellowTicketCTA})`,
                             backgroundSize: "cover",
@@ -40,7 +40,7 @@ function CallToAction() {
                         <QrCode size={72} className="text-white" strokeWidth={1.7} />
                     </div>
                     <div
-                        className='cta-section-content__card flex h-75 w-62 flex-col justify-start pt-12 items-center text-violet text-lg font-semibold gap-3 cursor-pointer transition-all duration-500 hover:translate-y-[-15px] hover:drop-shadow-[0px_16px_16px_rgba(0,0,0,0.25)] '
+                        className='cta-section-content__card flex h-75 w-62 flex-col justify-start pt-12 items-center text-violet text-lg font-semibold gap-3 transition-all duration-500 hover:translate-y-[-15px] hover:drop-shadow-[0px_16px_16px_rgba(0,0,0,0.25)] '
                         style={{
                             backgroundImage: `url(${WhiteTicketCTA})`,
                             backgroundSize: "cover",
