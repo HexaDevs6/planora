@@ -19,7 +19,7 @@ export default function NavMain({ items, lang = "en", userRole }) {
          ? lang === "ar"
             ? ctaBtnLabel.host.ar
             : ctaBtnLabel.host.en
-         : userRole === "user"
+         : userRole === "client"
             ? lang === "ar"
                ? ctaBtnLabel.user.ar
                : ctaBtnLabel.user.en
@@ -40,7 +40,7 @@ export default function NavMain({ items, lang = "en", userRole }) {
                         to={
                            userRole === "host"
                               ? "/host/create-event"
-                              : userRole === "user"
+                              : userRole === "client"
                                  ? "/user/create-service"
                                  : "/admin/overview"
                         }
