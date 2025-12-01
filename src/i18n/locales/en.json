@@ -27,7 +27,8 @@
       "signingIn": "Signing in...",
       "letsGetStarted": "Let's Get Started",
       "send": "Send",
-      "contactUs": "Contact Us"
+      "contactUs": "Contact Us",
+      "BookNow": "Book Now"
     },
     "form": {
       "email": "Email",
@@ -759,5 +760,67 @@
       "chatCleared": "Chat cleared"
     },
     "welcomeMessage": "Hello! I'm Planora AI. I can help you discover amazing events, book tickets, and answer questions about our platform. What would you like to know?"
+  },
+  "payment": {
+    "dialog": {
+      "title": "Complete Your Booking",
+      "subtitle": "Secure payment powered by Stripe",
+      "successTitle": "Payment Successful!",
+      "successMessage": "Your booking has been confirmed.",
+      "eventLabel": "Event",
+      "totalLabel": "Total",
+      "fullNameLabel": "Full Name",
+      "fullNamePlaceholder": "John Doe",
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "john@example.com",
+      "cardInfoLabel": "Card Information",
+      "securityNotice": "Your payment information is encrypted and secure",
+      "payButton": "Pay",
+      "processingButton": "Processing Payment...",
+      "required": "*"
+    },
+    "validation": {
+      "nameRequired": "Please enter a valid name (at least 2 characters)",
+      "nameToastError": "Please enter your full name",
+      "emailInvalid": "Please enter a valid email address",
+      "emailToastError": "Please enter a valid email",
+      "paymentNotReady": "Payment system not ready. Please try again.",
+      "cardIncomplete": "Please complete your card information",
+      "cardToastError": "Please complete card details",
+      "invalidPrice": "Invalid event price",
+      "userNotAuthenticated": "User not authenticated",
+      "loginRequired": "Please login to continue"
+    },
+    "errors": {
+      "paymentSystemFailed": "Payment system failed to load. Please refresh the page.",
+      "initializationFailed": "Failed to initialize payment system",
+      "cardLoadFailed": "Failed to load card input",
+      "createIntentFailed": "Failed to create payment intent",
+      "invalidServerResponse": "Invalid server response",
+      "bookingFailed": "Payment succeeded but booking failed. Please contact support with Payment ID:",
+      "bookingToastError": "Booking failed. Please contact support.",
+      "paymentFailed": "Payment failed. Please try again."
+    },
+    "success": {
+      "message": "Payment successful! Your booking is confirmed."
+    },
+    "auth": {
+      "loginPrompt": "Please login to book a ticket",
+      "loginButton": "Login",
+      "hostRestriction": "You can't book tickets for hosts"
+    }
+  },
+  "ticket": {
+    "label": "EVENT TICKET",
+    "download": "Download Ticket",
+    "downloading": "Downloading...",
+    "downloadSuccess": "Ticket downloaded successfully!",
+    "downloadError": "Failed to download ticket. Please try again.",
+    "attendee": "Attendee Information",
+    "organizer": "Event Organizer",
+    "ticketId": "Ticket ID",
+    "price": "Price",
+    "scanInstructions": "Scan this QR code at the event entrance",
+    "footer": "Thank you for choosing Planora"
   }
 }

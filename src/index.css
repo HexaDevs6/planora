@@ -270,3 +270,12 @@ button {
   background-color: #ccc;
   border-radius: 4px;
 }
+
+.ticket-bg {
+  background:
+    radial-gradient(at 38% 71%, #f59e0b 0px, transparent 50%),  /* amber */
+    radial-gradient(at 35% 12%, #7c3aed 0px, transparent 50%),  /* violet */
+    radial-gradient(at 24% 90%, #fcd34d 0px, transparent 50%),  /* light amber */
+    radial-gradient(at 5% 80%, #a78bfa 0px, transparent 50%),   /* soft violet */
+    #f59e0b; /* base amber */
+}

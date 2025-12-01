@@ -27,6 +27,7 @@ export default function UserOverview() {
   const [userCats, setUserCats] = useState([]);
   const [userTickets, setUserTickets] = useState([]);
   const [openTicket, setOpenTicket] = useState(null);
+  const [hostsData, setHostsData] = useState({});
 
   const { user } = useSelector((state) => state.auth);
   const {
@@ -90,21 +91,54 @@ export default function UserOverview() {
     };
   }, [user?.id]);
 
-  // userEvents derived from eventsData + userCats
-  const userEvents = useMemo(() => {
-    if (!userCats || !userCats.length || !eventsData.length) return [];
-    return eventsData.filter((event) => userCats.includes(event.category_id));
-  }, [userCats, eventsData]);
+    // userEvents derived from eventsData + userCats
+    const userEvents = useMemo(() => {
+      if (!userCats || !userCats.length || !eventsData.length) return [];
+      return eventsData.filter((event) => userCats.includes(event.category_id));
+    }, [userCats, eventsData]);
+  
+    // merged ticket + event info (memoized)
+    const filteredEvents = useMemo(() => {
+      if (!userTickets.length) return [];
+      return userTickets.map((ticket) => {
+        const eventDetails =
+          eventsData.find((ev) => ev.id === ticket.event_id) || null;
+        return { ...ticket, eventDetails };
+      });
+    }, [userTickets, eventsData]);
 
-  // merged ticket + event info (memoized)
-  const filteredEvents = useMemo(() => {
-    if (!userTickets.length) return [];
-    return userTickets.map((ticket) => {
-      const eventDetails =
-        eventsData.find((ev) => ev.id === ticket.event_id) || null;
-      return { ...ticket, eventDetails };
-    });
-  }, [userTickets, eventsData]);
+  // Fetch hosts data when filteredEvents changes
+  useEffect(() => {
+    if (!filteredEvents.length) return;
+
+    const fetchHosts = async () => {
+      const hostIds = [
+        ...new Set(
+          filteredEvents
+            .map((ticket) => ticket.eventDetails?.host_id)
+            .filter(Boolean)
+        ),
+      ];
+
+      if (!hostIds.length) return;
+
+      const { data, error } = await supabase
+        .from("users")
+        .select("*")
+        .in("id", hostIds);
+
+      if (!error && data) {
+        const hostsMap = {};
+        data.forEach((host) => {
+          hostsMap[host.id] = host;
+        });
+        setHostsData(hostsMap);
+      }
+    };
+
+    fetchHosts();
+  }, [filteredEvents]);
+
 
   const locale = lang === "ar" ? "ar-EG" : "en-US";
 
@@ -174,12 +208,20 @@ export default function UserOverview() {
                 transition={{ duration: 0.5, delay: i * 0.1 }}
               >
                 <Card className="overflow-hidden rounded-xl shadow-sm hover:shadow-md p-0 hover:scale-[1.02] duration-300 transition-all">
-                  <div className="p-4 border-b">
+                  <div className="border-b">
                     <div
-                      className="cursor-pointer"
-                      onClick={() => setOpenTicket(el.id)}
+                      // className="cursor-pointer"
+                      // onClick={() => setOpenTicket(el.id)}
                     >
-                      <TicketFrame>
+                      <TicketFrame
+                        ticketData={{
+                          event: eventsData.find((ev) => ev.id === el.event_id),
+                          client: user,
+                          host: hostsData[el.eventDetails?.host_id],
+                          ticket: el,
+                          qrCode: el.qr_code,
+                        }}
+                      >
                         <h3 className="text-center text-lg font-semibold mb-4 text-amber">
                           {lang === "ar"
                             ? "لا تشارك هذه التذكرة مع احد"
@@ -239,7 +281,7 @@ export default function UserOverview() {
                   </CardContent>
                 </Card>
 
-                <Dialog
+                {/* <Dialog
                   open={openTicket === el.id}
                   onOpenChange={() => setOpenTicket(null)}
                 >
@@ -263,7 +305,7 @@ export default function UserOverview() {
                       </p>
                     </div>
                   </DialogContent>
-                </Dialog>
+                </Dialog> */}
               </motion.div>
             );
           })}

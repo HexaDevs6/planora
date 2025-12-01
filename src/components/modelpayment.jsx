@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, memo } from "react";
+import { useNavigate } from "react-router-dom";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,12 +10,16 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDirection } from "@/hooks/useDirection";
 import Swal from "sweetalert2";
+import { useTranslation } from "react-i18next";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
-export default function Modelpayment({ event, user, onPaymentSuccess }) {
+const Modelpayment = ({ event, user, onPaymentSuccess }) => {
+  console.log(user);
+  
   const { lang } = useDirection();
-  const [name, setName] = useState("");
+  const navigate = useNavigate();
+  const [name, setName] = useState(user?.full_name || "");
   const [email, setEmail] = useState(user?.email || "");
   const [open, setOpen] = useState(false);
   const [stripe, setStripe] = useState(null);
@@ -24,9 +29,9 @@ export default function Modelpayment({ event, user, onPaymentSuccess }) {
   const [cardError, setCardError] = useState("");
   const [cardComplete, setCardComplete] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
-
+  const { t } = useTranslation();
   // Initialize Stripe Elements with enhanced styling
-  const handleStripeInit = async () => {
+  const handleStripeInit = useCallback(async () => {
     if (stripe) return;
 
 
@@ -35,8 +40,8 @@ export default function Modelpayment({ event, user, onPaymentSuccess }) {
 
       const s = await stripePromise;
       if (!s) {
-        setCardError("Payment system failed to load. Please refresh the page.");
-        toast.error("Payment system failed to load");
+        setCardError(t("payment.errors.paymentSystemFailed"));
+        toast.error(t("payment.errors.paymentSystemFailed"));
         return;
       }
 
@@ -76,10 +81,10 @@ export default function Modelpayment({ event, user, onPaymentSuccess }) {
       setCard(cardEl);
     } catch (error) {
       console.error("Stripe initialization error:", error);
-      setCardError("Failed to initialize payment system");
-      toast.error("Failed to initialize payment system");
+      setCardError(t("payment.errors.initializationFailed"));
+      toast.error(t("payment.errors.initializationFailed"));
     }
-  };
+  }, [stripe, t]);
 
   // Mount card element when it's ready
   useEffect(() => {
@@ -88,32 +93,36 @@ export default function Modelpayment({ event, user, onPaymentSuccess }) {
       if (mountPoint && !mountPoint.hasChildNodes()) {
         try {
           card.mount(mountPoint);
-
-          card.on("change", (ev) => {
+  
+          const handleCardChange = (ev) => {
             setCardError(ev.error?.message || "");
             setCardComplete(ev.complete);
-          });
+          };
+  
+          card.on("change", handleCardChange);
+  
+          // Cleanup function to remove the event listener
+          return () => {
+            card.off("change", handleCardChange);
+          };
         } catch (error) {
           console.error("Card mount error:", error);
-          setCardError("Failed to load card input");
+          setCardError(t("payment.errors.cardLoadFailed"));
         }
       }
     }
   }, [card, open]);
 
   // Cleanup on dialog close
-  const handleDialogChange = (isOpen) => {
+  const handleDialogChange = useCallback((isOpen) => {
     if (!user) {
       Swal.fire({
-        title:
-          lang === "ar"
-            ? "يرجى تسجيل الدخول لتتمكن من الحجز"
-            : "Please login to book a ticket",
+        title: t("payment.auth.loginPrompt"),
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "var(--primary)",
         cancelButtonColor: "var(--secondary)",
-        confirmButtonText: lang === "ar" ? "تسجيل الدخول" : "Login",
+        confirmButtonText: t("payment.auth.loginButton"),
       }).then((result) => {
         if (result.isConfirmed) {
           navigate("/signin");
@@ -122,11 +131,7 @@ export default function Modelpayment({ event, user, onPaymentSuccess }) {
     }
 
     if (user.role === "host") {
-      toast.error(
-        lang === "ar"
-          ? "لا يمكنك حجز التذاكر للمستضيفين"
-          : "You can't book tickets for hosts"
-      );
+      toast.error(t("payment.auth.hostRestriction"));
       return;
     }
 
@@ -148,42 +153,42 @@ export default function Modelpayment({ event, user, onPaymentSuccess }) {
       setCardComplete(false);
       setPaymentSuccess(false);
     }
-  };
+  }, [user, navigate, t]);
 
-  const handlePayment = async () => {
+  const handlePayment = useCallback(async () => {
     // Enhanced validation
     if (!name || name.trim().length < 2) {
-      setCardError("Please enter a valid name (at least 2 characters)");
-      toast.error("Please enter your full name");
+      setCardError(t("payment.validation.nameRequired"));
+      toast.error(t("payment.validation.nameToastError"));
       return;
     }
 
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setCardError("Please enter a valid email address");
-      toast.error("Please enter a valid email");
+      setCardError(t("payment.validation.emailInvalid"));
+      toast.error(t("payment.validation.emailToastError"));
       return;
     }
 
     if (!stripe || !elements || !card) {
-      setCardError("Payment system not ready. Please try again.");
+      setCardError(t("payment.validation.paymentNotReady"));
       return;
     }
 
     if (!cardComplete) {
-      setCardError("Please complete your card information");
-      toast.error("Please complete card details");
+      setCardError(t("payment.validation.cardIncomplete"));
+      toast.error(t("payment.validation.cardToastError"));
       return;
     }
 
     if (!event?.price || event.price <= 0) {
-      setCardError("Invalid event price");
-      toast.error("Invalid event price");
+      setCardError(t("payment.validation.invalidPrice"));
+      toast.error(t("payment.validation.invalidPrice"));
       return;
     }
 
     if (!user?.id) {
-      setCardError("User not authenticated");
-      toast.error("Please login to continue");
+      setCardError(t("payment.validation.userNotAuthenticated"));
+      toast.error(t("payment.validation.loginRequired"));
       return;
     }
 
@@ -215,13 +220,13 @@ export default function Modelpayment({ event, user, onPaymentSuccess }) {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Failed to create payment intent");
+        throw new Error(errorData.message || t("payment.errors.createIntentFailed"));
       }
 
       const data = await response.json();
 
       if (!data.clientSecret) {
-        throw new Error("Invalid server response");
+        throw new Error(t("payment.errors.invalidServerResponse"));
       }
 
       // 2) Confirm payment
@@ -249,7 +254,7 @@ export default function Modelpayment({ event, user, onPaymentSuccess }) {
           await onPaymentSuccess();
 
           // Show success message
-          toast.success("Payment successful! Your booking is confirmed.", {
+          toast.success(t("payment.success.message"), {
             duration: 5000,
             icon: "🎉",
           });
@@ -262,38 +267,33 @@ export default function Modelpayment({ event, user, onPaymentSuccess }) {
         } catch (bookingError) {
           console.error("Booking failed after payment:", bookingError);
           setCardError(
-            `Payment succeeded but booking failed. Please contact support with Payment ID: ${result.paymentIntent.id}`
+            `${t("payment.errors.bookingFailed")} ${result.paymentIntent.id}`
           );
-          toast.error("Booking failed. Please contact support.", {
+          toast.error(t("payment.errors.bookingToastError"), {
             duration: 10000,
           });
         }
       }
     } catch (err) {
       console.error("Payment error:", err);
-      setCardError(err.message || "Payment failed. Please try again.");
-      toast.error(err.message || "Payment failed. Please try again.");
+      setCardError(err.message || t("payment.errors.paymentFailed"));
+      toast.error(err.message || t("payment.errors.paymentFailed"));
     } finally {
       setLoading(false);
     }
-  };
+  }, [name, email, stripe, elements, card, cardComplete, event, user, t]);
 
   return (
     <Dialog open={open} onOpenChange={handleDialogChange}>
       <DialogTrigger asChild>
-        <Button variant="amber" className="w-full group relative overflow-hidden">
-          <span className="relative z-10 flex items-center justify-center gap-2">
+        <Button variant="amber" className="w-full mt-4 flex items-center justify-center gap-2">
+
             <CreditCard className="size-4" />
-            Book Now
-          </span>
-          <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange-500 opacity-0 group-hover:opacity-100 transition-opacity"
-            initial={false}
-          />
+            {t("common.buttons.BookNow")}
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="max-w-md sm:max-w-lg">
+      <DialogContent className="max-w-md sm:max-w-lg" lang={lang}>
         <AnimatePresence mode="wait">
           {paymentSuccess ? (
             <motion.div
@@ -310,8 +310,8 @@ export default function Modelpayment({ event, user, onPaymentSuccess }) {
               >
                 <CheckCircle2 className="size-16 text-green-500 mx-auto mb-4" />
               </motion.div>
-              <h3 className="text-2xl font-bold text-green-600 mb-2">Payment Successful!</h3>
-              <p className="text-muted-foreground">Your booking has been confirmed.</p>
+              <h3 className="text-2xl font-bold text-green-600 mb-2">{t("payment.dialog.successTitle")}</h3>
+              <p className="text-muted-foreground">{t("payment.dialog.successMessage")}</p>
             </motion.div>
           ) : (
             <motion.div
@@ -323,10 +323,10 @@ export default function Modelpayment({ event, user, onPaymentSuccess }) {
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2 text-2xl">
                   <Sparkles className="size-6 text-amber-500" />
-                  Complete Your Booking
+                  {t("payment.dialog.title")}
                 </DialogTitle>
                 <DialogDescription>
-                  Secure payment powered by Stripe
+                  {t("payment.dialog.subtitle")}
                 </DialogDescription>
               </DialogHeader>
 
@@ -335,12 +335,12 @@ export default function Modelpayment({ event, user, onPaymentSuccess }) {
                 <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 rounded-lg p-4 border border-amber-200 dark:border-amber-800">
                   <div className="flex justify-between items-center">
                     <div>
-                      <p className="text-sm text-muted-foreground">Event</p>
-                      <p className="font-semibold">{event?.name || event?.title}</p>
+                      <p className="text-sm text-muted-foreground">{t("payment.dialog.eventLabel")}</p>
+                      <p className="font-semibold">{lang === "ar" ? event.name_ar : event.name}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm text-muted-foreground">Total</p>
-                      <p className="text-2xl font-bold text-amber-600">${event?.price}</p>
+                      <p className="text-sm text-muted-foreground">{t("payment.dialog.totalLabel")}</p>
+                      <p className="text-2xl font-bold text-amber-600">{event?.price} EGP</p>
                     </div>
                   </div>
                 </div>
@@ -348,12 +348,12 @@ export default function Modelpayment({ event, user, onPaymentSuccess }) {
                 {/* Name Input */}
                 <div className="space-y-2">
                   <Label htmlFor="name" className="flex items-center gap-2">
-                    Full Name
-                    <span className="text-red-500">*</span>
+                    {t("payment.dialog.fullNameLabel")}
+                    <span className="text-red-500">{t("payment.dialog.required")}</span>
                   </Label>
                   <Input
                     id="name"
-                    placeholder="John Doe"
+                    placeholder={t("payment.dialog.fullNamePlaceholder")}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     disabled={loading}
@@ -364,13 +364,13 @@ export default function Modelpayment({ event, user, onPaymentSuccess }) {
                 {/* Email Input */}
                 <div className="space-y-2">
                   <Label htmlFor="email" className="flex items-center gap-2">
-                    Email Address
-                    <span className="text-red-500">*</span>
+                    {t("payment.dialog.emailLabel")}
+                    <span className="text-red-500">{t("payment.dialog.required")}</span>
                   </Label>
                   <Input
                     id="email"
                     type="email"
-                    placeholder="john@example.com"
+                    placeholder={t("payment.dialog.emailPlaceholder")}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     disabled={loading}
@@ -382,8 +382,8 @@ export default function Modelpayment({ event, user, onPaymentSuccess }) {
                 <div className="space-y-2">
                   <Label className="flex items-center gap-2">
                     <CreditCard className="size-4" />
-                    Card Information
-                    <span className="text-red-500">*</span>
+                    {t("payment.dialog.cardInfoLabel")}
+                    <span className="text-red-500">{t("payment.dialog.required")}</span>
                   </Label>
                   <div
                     id="card-element"
@@ -409,7 +409,7 @@ export default function Modelpayment({ event, user, onPaymentSuccess }) {
                 {/* Security Notice */}
                 <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/50 p-3 rounded-lg">
                   <Lock className="size-4" />
-                  <p>Your payment information is encrypted and secure</p>
+                  <p>{t("payment.dialog.securityNotice")}</p>
                 </div>
 
                 {/* Pay Button */}
@@ -422,12 +422,12 @@ export default function Modelpayment({ event, user, onPaymentSuccess }) {
                   {loading ? (
                     <span className="flex items-center gap-2">
                       <Loader2 className="size-5 animate-spin" />
-                      Processing Payment...
+                      {t("payment.dialog.processingButton")}
                     </span>
                   ) : (
                     <span className="flex items-center gap-2">
                       <Lock className="size-4" />
-                      Pay ${event?.price || 0}
+                      {t("payment.dialog.payButton")} {event?.price || 0} EGP
                     </span>
                   )}
                 </Button>
@@ -439,3 +439,6 @@ export default function Modelpayment({ event, user, onPaymentSuccess }) {
     </Dialog>
   );
 }
+
+export default memo(Modelpayment);
+
