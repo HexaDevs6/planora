@@ -56,11 +56,11 @@ const userNavMain = [
       label: { en: "Overview", ar: "الملخص" },
       url: "/user/overview",
    },
-   {
-      icon: Calendar,
-      label: { en: "Events & Tickets", ar: "الفعاليات والتذاكر" },
-      url: "/user/tickets",
-   },
+   // {
+   //    icon: Calendar,
+   //    label: { en: "Events & Tickets", ar: "الفعاليات والتذاكر" },
+   //    url: "/user/tickets",
+   // },
    {
       icon: MessageSquareTextIcon,
       label: { en: "Messages", ar: "الرسائل" },

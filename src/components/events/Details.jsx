@@ -1,5 +1,6 @@
 import React from "react";
 import {
+   Armchair,
    CalendarDays,
    Clock4,
    CreditCard,
@@ -31,9 +32,21 @@ const Details = ({ details, lang = "en" }) => {
 
    const formattedTime = `${formatTime(start)} - ${formatTime(end)}`;
 
+   const formattedCapacity = details.is_full ? (
+      <span className="text-destructive font-semibold">
+         {lang === "ar" ? "اكتمل العدد" : "Full"}
+      </span>
+   ) : details.is_unlimited ? (
+      <span className="text-primary font-semibold">
+         {lang === "ar" ? "غير محدود" : "Unlimited"}
+      </span>
+   ) : (
+      details.capacity - details.reserved_count
+   );
+
    return (
       <div className="gradient-card rounded-xl p-6 mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 flex-grow w-full">
+         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 flex-grow w-full">
             {/* Date */}
             <div className="flex items-center gap-2">
                <CalendarDays />
@@ -81,7 +94,20 @@ const Details = ({ details, lang = "en" }) => {
                      {lang === "ar" ? "السعر" : "Price"}
                   </p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                     {details.price} EGP
+                     {details.is_free ? <span className="text-green-600 font-semibold">{lang === "ar" ? "مجاناً" : "Free"}</span> : details.price}
+                  </p>
+               </div>
+            </div>
+
+            {/* Capacity */}
+            <div className="flex items-center gap-2">
+               <Armchair />
+               <div>
+                  <p className="font-bold text-gray-900 dark:text-white">
+                     {lang === "ar" ? "الأماكن المتاحة" : "Available Seats"}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                     {formattedCapacity}
                   </p>
                </div>
             </div>
