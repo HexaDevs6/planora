@@ -27,7 +27,8 @@
       "signingIn": "جاري تسجيل الدخول...",
       "letsGetStarted": "ابدأ رحلتك الآن",
       "send": "إرسال",
-      "contactUs": "تواصل معنا"
+      "contactUs": "تواصل معنا",
+      "BookNow": "احجز الان"
     },
     "form": {
       "email": "البريد الإلكتروني",
@@ -758,5 +759,67 @@
       "chatCleared": "تم مسح المحادثة"
     },
     "welcomeMessage": "أهلاً بيك! أنا بلانورا AI – هنا علشان أساعدك تكتشف رحلتك في عالم الفاعليات تحجز تذاكر، وأجاوبك على أي سؤال عن فاعليات بلانورا. تحب تعرف إيه؟"
+  },
+  "payment": {
+    "dialog": {
+      "title": "أكمل الحجز",
+      "subtitle": "دفع آمن بواسطة Stripe",
+      "successTitle": "تمت عملية الدفع بنجاح!",
+      "successMessage": "تم تأكيد حجزك.",
+      "eventLabel": "الفعالية",
+      "totalLabel": "الإجمالي",
+      "fullNameLabel": "الاسم الكامل",
+      "fullNamePlaceholder": "أحمد محمد",
+      "emailLabel": "البريد الإلكتروني",
+      "emailPlaceholder": "ahmed@example.com",
+      "cardInfoLabel": "معلومات البطاقة",
+      "securityNotice": "معلومات الدفع الخاصة بك مشفرة وآمنة",
+      "payButton": "ادفع",
+      "processingButton": "جاري معالجة الدفع...",
+      "required": "*"
+    },
+    "validation": {
+      "nameRequired": "يرجى إدخال اسم صحيح (حرفين على الأقل)",
+      "nameToastError": "يرجى إدخال اسمك الكامل",
+      "emailInvalid": "يرجى إدخال بريد إلكتروني صحيح",
+      "emailToastError": "يرجى إدخال بريد إلكتروني صحيح",
+      "paymentNotReady": "نظام الدفع غير جاهز. يرجى المحاولة مرة أخرى.",
+      "cardIncomplete": "يرجى إكمال معلومات البطاقة",
+      "cardToastError": "يرجى إكمال تفاصيل البطاقة",
+      "invalidPrice": "سعر الفعالية غير صحيح",
+      "userNotAuthenticated": "المستخدم غير مصادق عليه",
+      "loginRequired": "يرجى تسجيل الدخول للمتابعة"
+    },
+    "errors": {
+      "paymentSystemFailed": "فشل تحميل نظام الدفع. يرجى تحديث الصفحة.",
+      "initializationFailed": "فشل تهيئة نظام الدفع",
+      "cardLoadFailed": "فشل تحميل حقل البطاقة",
+      "createIntentFailed": "فشل إنشاء نية الدفع",
+      "invalidServerResponse": "استجابة خادم غير صحيحة",
+      "bookingFailed": "نجح الدفع لكن فشل الحجز. يرجى التواصل مع الدعم بمعرف الدفع:",
+      "bookingToastError": "فشل الحجز. يرجى التواصل مع الدعم.",
+      "paymentFailed": "فشل الدفع. يرجى المحاولة مرة أخرى."
+    },
+    "success": {
+      "message": "نجح الدفع! تم تأكيد حجزك."
+    },
+    "auth": {
+      "loginPrompt": "يرجى تسجيل الدخول لتتمكن من الحجز",
+      "loginButton": "تسجيل الدخول",
+      "hostRestriction": "لا يمكنك حجز التذاكر للمستضيفين"
+    }
+  },
+  "ticket": {
+    "label": "تذكرة الحدث",
+    "download": "تحميل التذكرة",
+    "downloading": "جارٍ التحميل...",
+    "downloadSuccess": "تم تحميل التذكرة بنجاح!",
+    "downloadError": "فشل تحميل التذكرة. يرجى المحاولة مرة أخرى.",
+    "attendee": "معلومات الحاضر",
+    "organizer": "منظم الحدث",
+    "ticketId": "رقم التذكرة",
+    "price": "السعر",
+    "scanInstructions": "امسح رمز الاستجابة السريعة عند مدخل الحدث",
+    "footer": "شكرا لاختيارك بلانورا"
   }
 }

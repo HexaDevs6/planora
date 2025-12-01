@@ -1,16 +1,16 @@
 import { Ticket } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { Button } from "../ui/button";
 import { useDispatch } from "react-redux";
 import { createTicket } from "@/store/tickets/clientTicketsSlice";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabaseClient";
-import QRCode from "react-qr-code";
 import StyledQR from "../qrcode";
 import TicketFrame from "../TicketFrame";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import PaymentModal from "../modelpayment.jsx";
+import { Card } from "../ui/card";
 
 const EventCountdown = ({ details, eventId, hostId, user, lang = "en" }) => {
    const dispatch = useDispatch();
@@ -18,7 +18,10 @@ const EventCountdown = ({ details, eventId, hostId, user, lang = "en" }) => {
 
    const [isTicketBooked, setIsTicketBooked] = useState(false);
    const [ticket, setTicket] = useState(null);
+   const [host, setHost] = useState(null);
    const navigate = useNavigate();
+
+   const eventData = useMemo(() => details, [details.id]);
 
    useEffect(() => {
       const checkExistingTicket = async () => {
@@ -38,6 +41,46 @@ const EventCountdown = ({ details, eventId, hostId, user, lang = "en" }) => {
       };
 
       checkExistingTicket();
+   }, [eventId, user?.id]);
+
+   useEffect(() => {
+      const fetchHost = async () => {
+         if (!hostId) return;
+
+         const { data, error } = await supabase
+            .from("users")
+            .select("*")
+            .eq("id", hostId)
+            .single();
+
+         if (!error && data) {
+            setHost(data);
+         }
+      };
+
+      fetchHost();
+   }, [hostId]);
+
+   const handlePaidTicket = useCallback(async () => {
+      try {
+         if (!user?.id) {
+            toast.error("User not logged in");
+            return;
+         }
+
+         const tic = await dispatch(
+            createTicket({ eventId, clientId: user.id, payStatus: "paid" })
+         ).unwrap();
+         if (tic) {
+            toast.success("Ticket booked successfully");
+            setIsTicketBooked(true);
+            setTicket(tic);
+            console.log(tic);
+         }
+      } catch (err) {
+         console.error("SUPABASE ERROR:", err);
+         toast.error("Payment done but ticket failed to save.");
+      }
    }, [eventId, user?.id]);
 
    const handleCreateTicket = async () => {
@@ -71,58 +114,73 @@ const EventCountdown = ({ details, eventId, hostId, user, lang = "en" }) => {
       try {
          const client = await user;
          const tic = await dispatch(
-            createTicket({ eventId, clientId: client.id })
+            createTicket({ eventId, clientId: client.id, payStatus: "paid" })
          ).unwrap();
          if (tic) {
-            toast.success("Ticket booked successfully");
+            toast.success(
+               lang === "ar"
+                  ? "تذكرة الدخول حجزت بنجاح"
+                  : "Ticket booked successfully",
+               { duration: 5000, icon: "🎉" }
+            );
             setIsTicketBooked(true);
             setTicket(tic);
             console.log(tic);
          }
       } catch (error) {
+         toast.error(
+            lang === "ar" ? "فشل حجز التذكرة" : "Failed to book ticket",
+            { duration: 5000, icon: "❌" }
+         );
          console.error(error);
       }
    };
-   const calculateTimeLeft = () => {
-      const now = new Date().getTime();
+   // const [eventStatus, setEventStatus] = useState("upcoming");
+   const [countdown, setCountdown] = useState(() => calculateTimeLeft());
+
+   // Calculates only the remaining time until the event starts
+   function calculateTimeLeft() {
+      const now = Date.now();
+      const start = new Date(details.date).getTime();
+
+      const diff = start - now;
+
+      if (diff <= 0) {
+         return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+      }
+
+      return {
+         days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+         hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+         minutes: Math.floor((diff / (1000 * 60)) % 60),
+         seconds: Math.floor((diff / 1000) % 60),
+      };
+   }
+
+   // Memoized event status, recalculated only when the dates change
+   const eventStatus = useMemo(() => {
+      const now = Date.now();
       const start = new Date(details.date).getTime();
       const end = new Date(details.end_date).getTime();
 
-      const diff = start - now;
-      const eventEnded = now > end;
-      const eventOngoing = now >= start && now <= end;
+      if (now >= start && now <= end) return "ongoing";
+      if (now > end) return "ended";
+      return "upcoming";
+   }, [details.date, details.end_date]);
 
-      let status = "upcoming";
-      if (eventOngoing) status = "ongoing";
-      if (eventEnded) status = "ended";
-
-      const timeLeft =
-         diff > 0
-            ? {
-                 days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-                 hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-                 minutes: Math.floor((diff / (1000 * 60)) % 60),
-                 seconds: Math.floor((diff / 1000) % 60),
-              }
-            : { days: 0, hours: 0, minutes: 0, seconds: 0 };
-
-      return { ...timeLeft, status };
-   };
-
-   const [countdown, setCountdown] = useState(calculateTimeLeft());
-
+   // Updates the countdown every second
    useEffect(() => {
       const timer = setInterval(() => {
          setCountdown(calculateTimeLeft());
       }, 1000);
 
       return () => clearInterval(timer);
-   }, [details.date, details.end_date]);
+   }, [details.date]);
 
    const formatNumber = (num) => num.toString().padStart(2, "0");
 
    const renderStatus = () => {
-      switch (countdown.status) {
+      switch (eventStatus) {
          case "upcoming":
             return (
                <p className="text-sm font-medium text-blue-600 dark:text-blue-400 text-center mb-4">
@@ -150,9 +208,8 @@ const EventCountdown = ({ details, eventId, hostId, user, lang = "en" }) => {
 
    return (
       <div
-         className={`gradient-card rounded-xl p-4 xl:p-6 ${
-            lang === "ar" ? "text-right font-[Cairo]" : "text-left"
-         }`}
+         className={`gradient-card rounded-xl p-4 xl:p-6 ${lang === "ar" ? "text-right font-[Cairo]" : "text-left"
+            }`}
       >
          <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-2 text-center">
             {lang === "ar" ? "العد التنازلي للحدث" : "Event Countdown"}
@@ -160,7 +217,7 @@ const EventCountdown = ({ details, eventId, hostId, user, lang = "en" }) => {
 
          {renderStatus()}
 
-         {countdown.status === "upcoming" ? (
+         {eventStatus === "upcoming" ? (
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
                <div className="p-3 bg-primary/5 dark:bg-primary/10 rounded-lg">
                   <p className="text-2xl xl:text-4xl font-bold text-gradient-amber ">
@@ -197,64 +254,59 @@ const EventCountdown = ({ details, eventId, hostId, user, lang = "en" }) => {
             </div>
          ) : (
             <div className="text-center text-gray-600 dark:text-gray-300 mt-4">
-               {countdown.status === "ongoing"
+               {eventStatus === "ongoing"
                   ? lang === "ar"
                      ? "الحدث جاري حالياً."
                      : "The event is live now."
                   : lang === "ar"
-                  ? "تابعنا لمزيد من الأحداث القادمة."
-                  : "Stay tuned for upcoming events."}
+                     ? "تابعنا لمزيد من الأحداث القادمة."
+                     : "Stay tuned for upcoming events."}
             </div>
          )}
 
-         {user && hostId === user.id && (
-            <Button
-               className="mt-6 w-full"
-               variant="default"
-               size="CTA"
-               // onClick={handleGoToEvent}
-               disabled={countdown.status === "ended"}
-               asChild
-            >
-               <Link
-                  to={{
-                     pathname: "/host/attendees",
-                     search: `?id=${eventId}&title=${
-                        lang === "ar" ? details.name_ar : details.name
-                     }&date=${details.date}&location=${details.location}`,
+         {isTicketBooked && ticket ? (
+            <Card className={'rounded-xl overflow-hidden mt-4'}>
+               <TicketFrame
+                  ticketData={{
+                     event: details,
+                     client: user,
+                     host: host,
+                     ticket: ticket,
+                     qrCode: ticket.qr_code,
                   }}
                >
-                  {lang === "ar" ? "التحكم في الحدث" : "Manage Event"}
-               </Link>
-            </Button>
-         )}
+                  <h3 className="text-center text-lg font-semibold mb-4">
+                     {lang === "ar" ? "تذكرة الدخول" : "Your Event Ticket"}
+                  </h3>
 
-         {isTicketBooked && ticket ? (
-            <TicketFrame>
-               <h3 className="text-center text-lg font-semibold mb-4">
-                  {lang === "ar" ? "تذكرة الدخول" : "Your Event Ticket"}
-               </h3>
+                  <div className="flex justify-center mb-4">
+                     <StyledQR value={ticket.qr_code} size={260} />
+                  </div>
 
-               <div className="flex justify-center mb-4">
-                  <StyledQR value={ticket.qr_code} size={260} />
-               </div>
-
-               <div className="text-center text-sm text-muted-foreground mt-4">
-                  Ticket ID: {ticket.id}
-               </div>
-            </TicketFrame>
-         ) : (
-            <Button
-               className="mt-6 w-full"
-               variant="default"
-               size="CTA"
-               onClick={handleCreateTicket}
-               disabled={countdown.status === "ended"}
-            >
-               <Ticket className="size-4" />
-               {lang === "ar" ? "أحجز الان" : "Book Now"}
-            </Button>
-         )}
+                  <div className="text-center text-sm text-muted-foreground mt-4">
+                     Ticket ID: {ticket.id}
+                  </div>
+               </TicketFrame>
+            </Card>
+         ) :
+            eventStatus !== "ended" && !details.is_free && !details.is_full ? (
+               <PaymentModal
+                  event={eventData}
+                  user={user}
+                  onPaymentSuccess={handlePaidTicket}
+               />
+            ) : (
+               <Button
+                  className="mt-6 w-full"
+                  variant="default"
+                  size="CTA"
+                  onClick={handleCreateTicket}
+                  disabled={eventStatus === "ended" || details.is_full}
+               >
+                  <Ticket className="size-4" />
+                  {lang === "ar" ? "أحجز الان" : "Book Now"}
+               </Button>
+            )}
       </div>
    );
 };
