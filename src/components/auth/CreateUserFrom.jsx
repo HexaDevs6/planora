@@ -89,7 +89,7 @@ const CreateUserForm = ({
       {/* GOOGLE SIGNUP */}
       <Button
         variant="outline"
-        onClick={() => {}}
+        onClick={() => { }}
         disabled={loading || !agreedToTerms}
         className={`w-full flex items-center justify-center gap-3 border-2 rounded-md py-4 transition-all
           ${!agreedToTerms ? "opacity-60 cursor-not-allowed" : "hover:border-amber hover:bg-amber/10"}`}
@@ -208,15 +208,19 @@ const CreateUserForm = ({
             Back
           </Button>
 
-          <Button type="submit" variant="amber" disabled={loading}>
-            {loading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Creating...
-              </>
-            ) : (
-              "Create Account"
-            )}
+          <Button
+            type="submit"
+            variant="amber"
+            disabled={loading || !agreedToTerms}
+            className={`${!agreedToTerms ? "opacity-50 cursor-not-allowed" : ""}`}
+          >            {loading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Creating...
+            </>
+          ) : (
+            "Create Account"
+          )}
           </Button>
         </div>
       </form>

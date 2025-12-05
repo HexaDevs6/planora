@@ -13,6 +13,7 @@ import {
   ShieldCheck,
   Bus,
   Sparkles,
+  LoaderPinwheel,
 } from "lucide-react";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -63,9 +64,11 @@ export default function Services() {
     }));
 
   // get services from supabase
-  const { items: servicesData, loading:servicesLoading, error } = useSelector(
-    (state) => state.services
-  );
+  const {
+    items: servicesData,
+    loading: servicesLoading,
+    error,
+  } = useSelector((state) => state.services);
 
   useEffect(() => {
     if (!data.length) dispatch(fetchCategories());
@@ -98,7 +101,6 @@ export default function Services() {
   // get visible services from redux store
   const viewService = filterSearch.slice(0, visibleServices);
 
-
   const handleThumbnail = function (el) {
     if (el) {
       if (el.startsWith("http")) {
@@ -107,7 +109,7 @@ export default function Services() {
         return getPublicUrl("services", el);
       }
     }
-  };  
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -121,8 +123,10 @@ export default function Services() {
         <section className="pt-16 md:pt-10 bg-muted/30">
           <div className="container px-4 md:px-6">
             {loading ? (
-              <p className="text-primary text-4xl md:text-3xl font-bold drop-shadow-2xl py-30 text-center">
+              <p className="text-primary text-md font-semibold drop-shadow-2xl py-10 text-center">
+                <LoaderPinwheel className="inline-block mx-3 animate-spin text-accent" />
                 {t("servicesPage.loading.category")}
+                <LoaderPinwheel className="inline-block mx-3 animate-spin text-accent" />
               </p>
             ) : (
               <div
@@ -196,8 +200,10 @@ export default function Services() {
             </div> */}
 
             {servicesLoading ? (
-              <p className="text-primary text-4xl md:text-3xl font-bold drop-shadow-2xl py-30 text-center">
+              <p className="text-primary text-md font-semibold drop-shadow-2xl py-10 text-center">
+                <LoaderPinwheel className="inline-block mx-3 animate-spin text-accent" />
                 {t("servicesPage.loading.cards")}
+                <LoaderPinwheel className="inline-block mx-3 animate-spin text-accent" />
               </p>
             ) : (
               <div className="py-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">

@@ -37,7 +37,11 @@ export default function FooterSection() {
                   key={item}
                   className="transition-all duration-500 hover:translate-x-2 hover:text-[var(--color-amber)] py-1 cursor-pointer"
                 >
-                  <Link to={`/${item}`} className="text-content dark:text-foreground/70" href="#">
+                  <Link
+                    to={`/${item}`}
+                    className="text-content dark:text-foreground/70"
+                    href="#"
+                  >
                     {t(`footer.${item}`)}
                   </Link>
                 </li>
@@ -55,7 +59,11 @@ export default function FooterSection() {
                   key={item}
                   className="transition-all duration-500 hover:translate-x-2 hover:text-[var(--color-amber)] py-1 cursor-pointer"
                 >
-                  <Link to={`/${item}`} className="text-content dark:text-foreground/70" href="#">
+                  <Link
+                    to={`/${item}`}
+                    className="text-content dark:text-foreground/70"
+                    href="#"
+                  >
                     {t(`footer.${item}`)}
                   </Link>
                 </li>
@@ -72,18 +80,20 @@ export default function FooterSection() {
                 <a
                   className="text-content dark:text-foreground/70 flex items-center gap-2"
                   href="mailto:hexadevs06@googlegroups.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   <Mail className="w-5 h-5 text-[var(--color-amber)]" />
-                  hexadevs06@googlegroups.com
+                  Via Email
                 </a>
               </li>
               <li className="transition-all duration-500 hover:translate-x-2 hover:text-[var(--color-amber)] py-1 cursor-pointer">
                 <Link
                   className="text-content dark:text-foreground/70 flex items-center gap-2"
-                  to ='https://discord.gg/8kG9zaUKwS'
->
+                  to="https://discord.gg/8kG9zaUKwS"
+                >
                   <LucideUsers2 className="w-5 h-5 text-[var(--color-amber)]" />
-                  Discord: HexaDevs
+                  Discord Community
                 </Link>
               </li>
             </ul>

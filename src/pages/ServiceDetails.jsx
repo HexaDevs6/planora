@@ -8,7 +8,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Spinner from "@/components/SpinnerLoader";
 import { getPublicUrl } from "@/lib/storage";
-
+import loremImg from "@/assets/loremService.jfif";
 import { useSelector } from "react-redux";
 import { createOrGetConversation } from "@/lib/chatService";
 
@@ -44,10 +44,10 @@ const ServiceDetails = () => {
 
   // handle thumbnail helper
   const handleThumbnail = (el) => {
-    if (!el) return "";
+    if (!el) return loremImg;
     if (typeof el === "string" && el.startsWith("http")) return el;
     if (typeof el === "string") return getPublicUrl("services", el);
-    return "";
+    return loremImg;
   };
 
   const getImages = (images) => {
@@ -76,11 +76,10 @@ const ServiceDetails = () => {
       <DetailsHero
         lang={lang}
         img={handleThumbnail(service?.thumbnail)}
-        title={lang === "ar" ? service.name_ar : service.name}
+        title={lang === "ar" ? service.name_ar : service.name || service.name}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-6 gap-4 md:gap-8">
-
         {/* LEFT SIDE - Provider Info */}
         <div className="md:col-span-2">
           <ProviderCard provider_id={service.client_id} />

@@ -13,6 +13,7 @@ import {
   Grid3x3,
   Hammer,
   HeartPulse,
+  LoaderPinwheel,
   Medal,
   Music,
   Palette,
@@ -45,7 +46,7 @@ export default function Events() {
 
   // get categories from supabase
   const { data, loading } = useSelector((state) => state.categories);
-  console.log(data.map(category => category.name));
+  console.log(data.map((category) => category.name));
 
   const icons = [
     Palette,
@@ -134,8 +135,10 @@ export default function Events() {
         <section className="py-16 md:py-10 bg-muted/30">
           <div className="container px-4 md:px-6">
             {loading ? (
-              <p className="text-primary text-4xl md:text-3xl font-bold drop-shadow-2xl py-30 text-center">
+              <p className="text-primary text-md font-semibold drop-shadow-2xl py-10 text-center">
+                <LoaderPinwheel className="inline-block mx-3 animate-spin text-accent" />
                 {t("eventsPage.loading.category")}
+                <LoaderPinwheel className="inline-block mx-3 animate-spin text-accent" />
               </p>
             ) : (
               <div
@@ -192,8 +195,10 @@ export default function Events() {
             )}
 
             {eventsLoading ? (
-              <p className="text-primary text-4xl md:text-3xl font-bold drop-shadow-2xl py-30 text-center">
+              <p className="text-primary text-md font-semibold drop-shadow-2xl py-5 text-center">
+                <LoaderPinwheel className="inline-block mx-3 animate-spin text-accent" />
                 {t("eventsPage.loading.cards")}
+                <LoaderPinwheel className="inline-block mx-3 animate-spin text-accent" />
               </p>
             ) : (
               <div className="py-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
