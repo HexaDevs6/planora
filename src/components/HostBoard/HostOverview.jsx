@@ -21,6 +21,7 @@ import AreaChartComponent from "../Charts/AreaChartComponent";
 import RadialProgressComponent from "../Charts/RadialProgressComponent";
 import BarChartComponent from "../Charts/BarChartComponent";
 import GroupedBarChart from "../Charts/GroupedBarChart";
+import loremImg from "@/assets/lorem.jfif";
 
 export default function UserOverview() {
     const [events, setEvents] = useState([]);
@@ -97,15 +98,11 @@ export default function UserOverview() {
         fetchUserEvents();
     }, [user?.id]);
 
-    const handleThumbnail = function (el) {
-        if (el) {
-            if (typeof el === "string" && el.startsWith("http")) {
-                return el;
-            } else {
-                return getPublicUrl("events", el);
-            }
-        }
-        return undefined;
+    const handleThumbnail = (el) => {
+        if (!el) return loremImg;
+        if (typeof el === "string" && el.startsWith("http")) return el;
+        if (typeof el === "string") return getPublicUrl("events", el);
+        return loremImg;
     };
 
     const interestOptions = (data || [])
@@ -143,7 +140,7 @@ export default function UserOverview() {
         hostId: user?.id,
     });
 
-    const{data:eventPerfomance} = useGetEventPerformanceQuery({
+    const { data: eventPerfomance } = useGetEventPerformanceQuery({
         hostId: user?.id,
     })
 
@@ -190,11 +187,11 @@ export default function UserOverview() {
                     </div>
                     <div className='host-stats__content grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4'>
                         {hostStats.map((item, i) => (
-                          <RadialProgressComponent
-                            key={i}
-                            title={lang === "en" ? item.label : item.label_ar}
-                            value={item.value}
-                        />
+                            <RadialProgressComponent
+                                key={i}
+                                title={lang === "en" ? item.label : item.label_ar}
+                                value={item.value}
+                            />
                         ))}
                     </div>
                 </div>
@@ -221,7 +218,7 @@ export default function UserOverview() {
                             xKey="event_name"
                             keys={["total_tickets", "attendees", "revenue"]}
                         />
-                            
+
                         {/* <RecentMessages messages={hostMessages} /> */}
                         {/* <ReviewsSection reviews={sampleReviews} /> */}
                     </div>
