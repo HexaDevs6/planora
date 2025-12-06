@@ -30,9 +30,8 @@ const TicketFrame = ({ children, ticketData = null }) => {
 
          // Download the image
          const link = document.createElement("a");
-         link.download = `planora-ticket-${
-            ticketData.event?.name?.replace(/\s+/g, "-") || "event"
-         }-${Date.now()}.png`;
+         link.download = `planora-ticket-${ticketData.event?.name?.replace(/\s+/g, "-") || "event"
+            }-${Date.now()}.png`;
          link.href = dataUrl;
          link.click();
 
@@ -43,7 +42,7 @@ const TicketFrame = ({ children, ticketData = null }) => {
          console.error("Error downloading ticket:", error);
          toast.error(
             t("ticket.downloadError") ||
-               "Failed to download ticket. Please try again."
+            "Failed to download ticket. Please try again."
          );
       } finally {
          setDownloading(false);
@@ -172,13 +171,13 @@ const TicketFrame = ({ children, ticketData = null }) => {
                                  <span className="font-medium">
                                     {ticketData.event?.date
                                        ? new Date(
-                                            ticketData.event.date
-                                         ).toLocaleDateString("en-US", {
-                                            weekday: "short",
-                                            year: "numeric",
-                                            month: "short",
-                                            day: "numeric",
-                                         })
+                                          ticketData.event.date
+                                       ).toLocaleDateString("en-US", {
+                                          weekday: "short",
+                                          year: "numeric",
+                                          month: "short",
+                                          day: "numeric",
+                                       })
                                        : "Date TBD"}
                                  </span>
                               </div>
@@ -356,7 +355,7 @@ const TicketFrame = ({ children, ticketData = null }) => {
                            dir="ltr"
                         >
                            <Globe />
-                           https://planora-app.netlify.app/
+                           https://planora-events.netlify.app/
                         </span>
                      </p>
                   </div>

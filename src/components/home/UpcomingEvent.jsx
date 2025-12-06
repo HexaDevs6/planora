@@ -8,6 +8,7 @@ import g2Img from '@/assets/G2_1_50.jpg'
 import g1Img from '@/assets/G1_1_50.jpg'
 import itiImg from '@/assets/ITI1.png'
 import iti2Img from '@/assets/ITI2.jpg'
+import { Link } from "react-router-dom";
 
 function UpcomingEvent() {
     let upcomingEventImgs = [
@@ -43,12 +44,12 @@ function UpcomingEvent() {
                             <AnimatedCountdown targetDate={eventDate} />
                         </div>
 
-                        <div className="pt-4">
+                        <Link to="/events/020d4451-1803-4d5d-8fdf-4436a8c16e7c" className="pt-4">
                             <Button variant="amber" size="CTA" className="group">
                                 {t('eventsPage.category.cards.viewDetails')}
                                 <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
                             </Button>
-                        </div>
+                        </Link>
                     </div>
 
                     {/* Visual Side */}

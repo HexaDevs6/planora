@@ -46,7 +46,6 @@ export default function Events() {
 
   // get categories from supabase
   const { data, loading } = useSelector((state) => state.categories);
-  console.log(data.map((category) => category.name));
 
   const icons = [
     Palette,
@@ -98,13 +97,13 @@ export default function Events() {
     filterQuery == "all" || filterQuery == "الجميع"
       ? eventsData.filter((el) => el.name.toLowerCase().trim().includes(query))
       : eventsData
-          .filter((el) => el.name.toLowerCase().trim().includes(query))
-          .filter(
-            (el) =>
-              interestOptions
-                .filter((item) => item.id === el.category_id)[0]
-                ?.displayName.toLowerCase() === filterQuery
-          );
+        .filter((el) => el.name.toLowerCase().trim().includes(query))
+        .filter(
+          (el) =>
+            interestOptions
+              .filter((item) => item.id === el.category_id)[0]
+              ?.displayName.toLowerCase() === filterQuery
+        );
 
   const visibleEvents = useSelector(
     (state) => state.eventsSearchAndFilter.visibleCount

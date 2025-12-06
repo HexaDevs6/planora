@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, MapPin, Users } from "lucide-react";
 import { t } from "i18next";
+import { useDirection } from "@/hooks/useDirection";
 
 const EventCard = ({
   id,
@@ -15,6 +16,7 @@ const EventCard = ({
   price,
   attendees,
 }) => {
+  const { lang } = useDirection();
   return (
     <Card
       key={id}
@@ -29,7 +31,7 @@ const EventCard = ({
       </div>
 
       <CardContent className="px-5 pb-5 space-y-3">
-        <h3 className="font-semibold text-lg line-clamp-2 text-primary transition-colors">
+        <h3 className="font-semibold text-lg line-clamp-2 text-primary transition-colors truncate">
           {title}
         </h3>
 
@@ -42,12 +44,14 @@ const EventCard = ({
             <MapPin className="h-4 w-4 text-primary" />
             <span className="line-clamp-1">{location}</span>
           </div>
-          {attendees && (
-            <div className="flex items-center gap-2">
-              <Users className="h-4 w-4 text-primary" />
+          <div className="flex items-center gap-2">
+            <Users className="h-4 w-4 text-primary" />
+            {attendees === 0 ? (
+              <span>{lang === "ar" ? "غير محدود" : "Unlimited"}</span>
+            ) : (
               <span>{attendees} {t('eventsPage.category.cards.attendees')}</span>
-            </div>
-          )}
+            )}
+          </div>
           <div className="flex gap-3 pt-2">
             <div>
               <Badge className="bg-violet text-white border-0 shadow-lg">

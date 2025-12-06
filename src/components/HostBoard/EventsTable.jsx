@@ -135,7 +135,7 @@ const EventsTable = () => {
    }, [dispatch, categories]);
 
    const getCapacity = (capacity, reserved_count) => {
-      if (capacity === "unlimited") {
+      if (capacity === 0) {
          return lang === "ar" ? "غير محدود" : "Unlimited";
       } else if (capacity - reserved_count === 0) {
          return lang === "ar" ? "اكتمل العدد" : "Full";

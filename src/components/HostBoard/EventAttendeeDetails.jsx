@@ -23,10 +23,10 @@ const EventAttendeeDetails = () => {
 
    const [searchParams] = useSearchParams();
 
-  const eventId = searchParams.get("id");
-  const eventTitle = searchParams.get("title");
-    const eventDate = searchParams.get("date");
-    const eventLocation = searchParams.get("location");
+   const eventId = searchParams.get("id");
+   const eventTitle = searchParams.get("title");
+   const eventDate = searchParams.get("date");
+   const eventLocation = searchParams.get("location");
 
    const formatDate = (dateString) => {
       return new Date(dateString).toLocaleDateString("en-US", {
@@ -38,41 +38,41 @@ const EventAttendeeDetails = () => {
 
 
 
-async function loadAttendees(eventId) {
-  const { data, error } = await supabase.rpc("get_event_attendees", {
-    event_id: eventId,
-  });
+   async function loadAttendees(eventId) {
+      const { data, error } = await supabase.rpc("get_event_attendees", {
+         event_id: eventId,
+      });
 
-  if (error) {
-    console.error("Failed to load attendees:", error);
-    return [];
-  }
+      if (error) {
+         console.error("Failed to load attendees:", error);
+         return [];
+      }
 
-  return data;
-}
+      return data;
+   }
 
    useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-      const result = await loadAttendees(eventId);
-      setAttendees(result);
-      setLoading(false);
-    }
+      async function fetchData() {
+         setLoading(true);
+         const result = await loadAttendees(eventId);
+         setAttendees(result);
+         setLoading(false);
+      }
 
-    fetchData();
-  }, [eventId]);
-    
+      fetchData();
+   }, [eventId]);
+
 
    const EmptyState = () => (
-         <div className="flex flex-col items-center justify-center py-16 px-4">
-            <div className="rounded-full bg-primary/10 p-6 mb-4">
-               <Users className="h-12 w-12 text-primary" />
-            </div>
-            <h3 className="text-xl font-semibold mb-2">
-               {lang === "ar" ? "لا يوجد حجوزات بعد" : "No reservations yet"}
-            </h3>
+      <div className="flex flex-col items-center justify-center py-16 px-4">
+         <div className="rounded-full bg-primary/10 p-6 mb-4">
+            <Users className="h-12 w-12 text-primary" />
          </div>
-      );
+         <h3 className="text-xl font-semibold mb-2">
+            {lang === "ar" ? "لا يوجد حجوزات بعد" : "No reservations yet"}
+         </h3>
+      </div>
+   );
 
    return (
       <div className="space-y-5 container">
@@ -80,17 +80,17 @@ async function loadAttendees(eventId) {
          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
             <div>
                <h1 className="text-3xl font-bold text-primary mb-2">
-                   {eventTitle} {lang === "ar" ? " تفاصيل الحضور" : " Attendees Details"}
+                  {eventTitle} {lang === "ar" ? " تفاصيل الحضور" : " Attendees Details"}
                </h1>
                <p className="text-muted-foreground">
-                 {eventDate.split("T")[0]} | {eventLocation}
+                  {eventDate.split("T")[0]} | {eventLocation}
                </p>
             </div>
-            
-   <HostScanner eventId={eventId} />
+
+            <HostScanner eventId={eventId} />
 
 
-            
+
          </div>
 
          {/* Table */}
@@ -135,7 +135,7 @@ async function loadAttendees(eventId) {
                                     <td className="py-4 px-4">
                                        <div>
                                           <p className="font-medium">
-                                                 {attendee.full_name}
+                                             {attendee.full_name}
                                           </p>
                                        </div>
                                     </td>
@@ -150,30 +150,30 @@ async function loadAttendees(eventId) {
                                           {attendee.purchased_at.split("T")[0]}
                                        </div>
                                     </td>
-                             <td className="py-4 px-4">
-  <span className="font-semibold text-sm">
-    {attendee.status === "valid" && (
-      <span className="text-amber-600 flex items-center gap-1">
-        <Circle className="h-4 w-4" />
-        {lang === "ar" ? "حضور" : "Valid"}
-      </span>
-    )}
+                                    <td className="py-4 px-4">
+                                       <span className="font-semibold text-sm">
+                                          {attendee.status === "valid" && (
+                                             <span className="text-amber-600 flex items-center gap-1">
+                                                <Circle className="h-4 w-4" />
+                                                {lang === "ar" ? "صالح" : "Valid"}
+                                             </span>
+                                          )}
 
-    {attendee.status === "used" && (
-      <span className="text-emerald-600 flex items-center gap-1">
-        <Check className="h-4 w-4" />
-        {lang === "ar" ? "غير حضور" : "Used"}
-      </span>
-    )}
+                                          {attendee.status === "used" && (
+                                             <span className="text-emerald-600 flex items-center gap-1">
+                                                <Check className="h-4 w-4" />
+                                                {lang === "ar" ? "مستخدم" : "Used"}
+                                             </span>
+                                          )}
 
-    {attendee.status === "cancelled" && (
-      <span className="text-red-600 flex items-center gap-1">
-        <X className="h-4 w-4" />
-        {lang === "ar" ? "ملغية" : "Cancelled"}
-      </span>
-    )}
-  </span>
-</td>
+                                          {attendee.status === "cancelled" && (
+                                             <span className="text-red-600 flex items-center gap-1">
+                                                <X className="h-4 w-4" />
+                                                {lang === "ar" ? "ملغية" : "Cancelled"}
+                                             </span>
+                                          )}
+                                       </span>
+                                    </td>
 
                                  </tr>
                               ))}

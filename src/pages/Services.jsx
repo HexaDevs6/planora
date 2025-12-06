@@ -29,6 +29,7 @@ import loremService from "@/assets/loremService.jfif";
 import { motion } from "framer-motion";
 import { supabase } from "@/lib/supabaseClient";
 import { getPublicUrl } from "@/lib/storage";
+import { Link } from "react-router-dom";
 
 export default function Services() {
   const query = useSelector((state) =>
@@ -84,16 +85,16 @@ export default function Services() {
   const filterSearch =
     filterQuery == "all" || filterQuery == "الجميع"
       ? servicesData.filter((el) =>
-          el.name.toLowerCase().trim().includes(query)
-        )
+        el.name.toLowerCase().trim().includes(query)
+      )
       : servicesData
-          .filter((el) => el.name.toLowerCase().trim().includes(query))
-          .filter(
-            (el) =>
-              interestOptions
-                .filter((item) => item.id === el.category_id)[0]
-                ?.displayName.toLowerCase() === filterQuery
-          );
+        .filter((el) => el.name.toLowerCase().trim().includes(query))
+        .filter(
+          (el) =>
+            interestOptions
+              .filter((item) => item.id === el.category_id)[0]
+              ?.displayName.toLowerCase() === filterQuery
+        );
 
   const visibleServices = useSelector(
     (state) => state.servicesSearchAndFilter.visibleCountService
@@ -235,8 +236,8 @@ export default function Services() {
                       date={
                         el.created_at
                           ? new Date(el.created_at).toLocaleDateString(
-                              currentLang
-                            )
+                            currentLang
+                          )
                           : "N/A"
                       }
                       provider_id={el.client_id}
@@ -267,13 +268,15 @@ export default function Services() {
                 <p className="text-lg text-white/90">
                   {t("servicesPage.join.description")}
                 </p>
-                <Button
-                  variant="primary"
-                  size="lg"
-                  className="text-white bg-violet hover:scale-105 transition-transform"
-                >
-                  {t("servicesPage.join.button")}
-                </Button>
+                <Link to="/user/create-service">
+                  <Button
+                    variant="primary"
+                    size="lg"
+                    className="text-white bg-violet hover:scale-105 transition-transform"
+                  >
+                    {t("servicesPage.join.button")}
+                  </Button>
+                </Link>
               </div>
             </div>
           </section>
