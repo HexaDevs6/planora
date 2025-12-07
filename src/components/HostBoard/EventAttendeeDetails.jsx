@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Eye, Edit, Trash2, Plus, Calendar, Loader2, Camera, Users, Check, X, XCircle, Circle } from "lucide-react";
+import { Eye, Edit, Trash2, Plus, Calendar, Loader2, Camera, Users, Check, X, XCircle, Circle, CalendarCheck } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import { toast } from "sonner";
 import Swal from "sweetalert2";
@@ -119,7 +119,10 @@ const EventAttendeeDetails = () => {
                                     {lang === "ar" ? "البريد الألكتروني" : "Email"}
                                  </th>
                                  <th className="text-start py-3 px-4 font-semibold text-sm">
-                                    {lang === "ar" ? "التاريخ" : "Date"}
+                                    {lang === "ar" ? "تاريخ الحجز" : "Res. Date"}
+                                 </th>
+                                 <th className="text-start py-3 px-4 font-semibold text-sm">
+                                    {lang === "ar" ? "تاريخ الاستخدام" : "Used Date"}
                                  </th>
                                  <th className="text-start py-3 px-4 font-semibold text-sm">
                                     {lang === "ar" ? "السعر" : "Ticket Status"}
@@ -148,6 +151,20 @@ const EventAttendeeDetails = () => {
                                        <div className="flex items-center gap-1 text-sm text-nowrap">
                                           <Calendar className="h-3 w-3 text-muted-foreground" />
                                           {attendee.purchased_at.split("T")[0]}
+                                          {" | "}
+                                          {attendee.purchased_at.split("T")[1].split(".")[0]}
+                                       </div>
+                                    </td>
+                                    <td className="py-4 px-4">
+                                       <div className="flex items-center gap-1 text-amber-600 text-sm text-nowrap">
+                                          {!attendee.used_at ? "Not checked in yet" : (
+                                             <div className="flex items-center gap-1 text-emerald-600">
+                                                <CalendarCheck className="h-3 w-3" />
+                                                {attendee.used_at.split("T")[0]}
+                                                {" | "}
+                                                {attendee.used_at.split("T")[1].split(".")[0]}
+                                             </div>
+                                          )}
                                        </div>
                                     </td>
                                     <td className="py-4 px-4">
