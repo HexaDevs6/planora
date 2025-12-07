@@ -95,7 +95,7 @@ const ProviderCard = ({ provider_id }) => {
     // <Link to={`/user/${provider_id}`}>
     <div className="group gradient-card rounded-xl p-4 flex md:flex-col gap-4 items-center text-center">
       <Avatar className="size-28">
-        <AvatarImage src={provider.avatar || avatarPlaceholderImg} />
+        <AvatarImage src={provider.avatar || avatarPlaceholderImg} alt={provider.full_name} title={provider.full_name} className="object-cover" />
         <AvatarFallback>{provider.full_name.charAt(0)}</AvatarFallback>
       </Avatar>
 
@@ -104,7 +104,7 @@ const ProviderCard = ({ provider_id }) => {
 
         <p className="text-sm text-foreground">
           {provider.bio && provider.bio.length > 50
-            ? provider.bio.slice(0, 50) + "..."
+            ? provider.bio.slice(0, 55) + "..."
             : provider.bio || "Has no bio yet!"}
         </p>
 

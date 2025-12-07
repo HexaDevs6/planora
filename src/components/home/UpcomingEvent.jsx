@@ -15,10 +15,9 @@ function UpcomingEvent() {
         itiImg,
         g2Img,
         g1Img,
-        iti2Img,
     ];
 
-    const eventDate = "2025-12-10T10:00:00";
+    const eventDate = "2025-12-18T12:00:00";
 
     return (
         <section className="relative py-20 overflow-hidden bg-muted/30 dark:bg-background/50">
