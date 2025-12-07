@@ -4,9 +4,10 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Star,  CheckCircle } from "lucide-react";
+import { Star, CheckCircle, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
-import loremService  from '@/assets/loremService.jfif';
+import loremService from '@/assets/loremService.jfif';
+import { useDirection } from "@/hooks/useDirection";
 
 const ServiceCard = ({
   id,
@@ -22,23 +23,23 @@ const ServiceCard = ({
   // Fetch provider data from supabase by provider_id
 
   const [provider, setProvider] = useState("Unknown Provider");
+  const { lang } = useDirection();
+  const fetchProvider = async () => {
+    if (!provider_id) return;
+    const { data, error } = await supabase
+      .from("users").select("full_name").eq("id", provider_id).single();
 
-    const fetchProvider = async () => {
-      if (!provider_id) return;
-      const { data, error } = await supabase
-        .from("users").select("full_name").eq("id", provider_id).single();
-        
-        if (error) {
-          console.error(error);
-          setProvider("Unknown Provider");
-          return;
-        } else {
-          setProvider(data.full_name || "Unknown Provider");
-        }
-    };
-    useEffect(() => {
-      fetchProvider();
-    }, [provider_id]);
+    if (error) {
+      console.error(error);
+      setProvider("Unknown Provider");
+      return;
+    } else {
+      setProvider(data.full_name || "Unknown Provider");
+    }
+  };
+  useEffect(() => {
+    fetchProvider();
+  }, [provider_id]);
 
   return (
     <Card className="group overflow-hidden border-0 gap-4 shadow-card hover:shadow-hover transition-all duration-300 hover:scale-[1.02]">
@@ -95,8 +96,9 @@ const ServiceCard = ({
         <div className="flex items-center justify-between pt-2 border-t">
           <div className="text-sm font-semibold text-primary">{priceRange}</div>
           <Link to={`/services/${id}`}>
-            <Button variant="hero" size="sm">
-              View Service
+            <Button variant="outline" size="sm">
+              <ArrowRight />
+              {lang === "en" ? "View Service" : "تفاصيل الخدمة"}
             </Button>
           </Link>
         </div>
