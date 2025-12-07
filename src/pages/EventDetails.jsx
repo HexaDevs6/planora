@@ -5,7 +5,7 @@ import WhyAttend from "@/components/events/WhyAttend";
 import HostInfo from "@/components/events/HostInfo";
 import Location from "@/components/events/Location";
 import EventCountdown from "@/components/events/EventCountdown";
-import { Copy, Facebook, Instagram, Twitter } from "lucide-react";
+import { Copy, Facebook, Instagram, MessageCircleMore, Twitter } from "lucide-react";
 import { useDirection } from "@/hooks/useDirection";
 import DetailsHero from "@/components/DetailsHero";
 import { useParams } from "react-router-dom";
@@ -61,12 +61,24 @@ const EventDetails = () => {
     window.open(facebookShareUrl, "_blank", "width=600,height=400");
   };
 
+  //share on whatsapp
+  const shareOnWhatsApp = () => {
+    const eventUrl = window.location.href;
+    const eventTitle = lang === "ar" ? event?.name_ar : event?.name;
+    const text = `${lang === "ar" ? "تحقق من هذا الحدث" : "Check out this event"
+      }: ${eventTitle} - ${eventUrl}`;
+    const whatsappShareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(
+      text
+    )}`;
+    window.open(whatsappShareUrl, "_blank", "width=600,height=400");
+  };
+
+
   const shareOnTwitter = () => {
     const eventUrl = window.location.href;
     const eventTitle = lang === "ar" ? event?.name_ar : event?.name;
-    const text = `${
-      lang === "ar" ? "تحقق من هذا الحدث" : "Check out this event"
-    }: ${eventTitle}`;
+    const text = `${lang === "ar" ? "تحقق من هذا الحدث" : "Check out this event"
+      }: ${eventTitle}`;
     const twitterShareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
       text
     )}&url=${encodeURIComponent(eventUrl)}`;
@@ -151,20 +163,31 @@ const EventDetails = () => {
                   onClick={shareOnFacebook}
                   className="p-3 rounded-full bg-blue-600 text-white hover:scale-110 transition-transform"
                   aria-label="Share on Facebook"
+                  title="Share on Facebook"
                 >
                   <Facebook />
                 </button>
                 <button
+                  onClick={shareOnWhatsApp}
+                  className="p-3 rounded-full bg-green-600 text-white hover:scale-110 transition-transform"
+                  aria-label="Share on WhatsApp"
+                  title="Share on WhatsApp"
+                >
+                  <MessageCircleMore />
+                </button>
+                <button
                   onClick={shareOnTwitter}
-                  className="p-3 rounded-full bg-blue-400 text-white hover:scale-110 transition-transform"
-                  aria-label="Share on Twitter"
+                  className="p-3 rounded-full bg-black text-white hover:scale-110 transition-transform"
+                  aria-label="Share on X"
+                  title="Share on X"
                 >
                   <Twitter />
                 </button>
                 <button
                   onClick={copyEventLink}
                   className="p-3 rounded-full bg-amber-300/80 text-white hover:scale-110 transition-transform"
-                  aria-label="Copy link for Instagram"
+                  aria-label="Copy link to clipboard"
+                  title="Copy link to clipboard"
                 >
                   <Copy />
                 </button>

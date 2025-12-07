@@ -74,7 +74,7 @@ const EventCard = ({
         <div className="flex items-center justify-between pt-2">
           <div className="text-lg font-bold text-primary">{price}</div>
           <Link to={`/events/${id}`}>
-            <Button variant="amber" size="lg">
+            <Button variant="outline" size="lg">
               {t('eventsPage.category.cards.viewDetails')}
             </Button>
           </Link>

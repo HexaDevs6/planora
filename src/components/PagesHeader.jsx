@@ -49,7 +49,7 @@ export default function PagesHeader({ img, title, subtitle, search, type }) {
                 className="pl-10 h-12 border focus:outline-amber-300"
               />
             </div>
-            <div className="relative">
+            {/* <div className="relative">
               <Select value={sortBy} onValueChange={setSortBy}>
                 <SelectTrigger className="sm:w-[100px] py-6">
                   <SelectValue placeholder="Sort by" />
@@ -87,7 +87,7 @@ export default function PagesHeader({ img, title, subtitle, search, type }) {
                   </SelectItem>
                 </SelectContent>
               </Select>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
