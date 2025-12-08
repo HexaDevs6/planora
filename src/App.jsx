@@ -31,6 +31,7 @@ import MessagesPage from "./pages/MessagesPage";
 import EventAttendeeDetails from "./components/HostBoard/EventAttendeeDetails";
 import NotFoundPage from "./components/NotFoundPage";
 import Terms from "./pages/Terms";
+import Faq from "./pages/Faq";
 import { lazy } from "react";
 import AdminRoute from "./components/guards/AdminRoute";
 
@@ -54,6 +55,7 @@ function App() {
                         <Route path='/about' element={<About />} />
                         <Route path='/contact' element={<Contact />} />
                         <Route path='/terms' element={<Terms />} />
+                        <Route path='/qa' element={<Faq />} />
                         <Route
                             path='/events/:eventId'
                             element={<EventDetails />}

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -267,13 +268,15 @@ const Contact = () => {
               <p className="text-gray-300">
                 {lang === "ar" ? "تحقق من قسم الأسئلة الشائعة لدينا للإجابة على الأسئلة الشائعة" : "Check out our FAQ section for instant answers to common questions"}
               </p>
-              <Button
-                variant="outline"
-                size="lg"
-                className="text-violet-dark border-[#FFA704] hover:bg-[#FFA704]/20 transition-all"
-              >
-                {lang === "ar" ? "زيارة الأسئلة الشائعة" : "Visit FAQ"}
-              </Button>
+              <Link to="/qa">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="text-violet-dark border-[#FFA704] hover:bg-[#FFA704]/20 transition-all"
+                >
+                  {lang === "ar" ? "زيارة الأسئلة الشائعة" : "Visit FAQ"}
+                </Button>
+              </Link>
             </div>
           </div>
         </section>

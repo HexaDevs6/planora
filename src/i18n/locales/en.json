@@ -828,5 +828,12 @@
     "title": "Terms & Conditions",
     "subtitle": "Please read these terms and conditions carefully before using our platform",
     "footer": "© 2025 Planora. All rights reserved."
+  },
+  "faqPage": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Find answers to the most common questions about Planora",
+    "questionsCount": "{{count}} Questions",
+    "stillHaveQuestions": "Still have questions?",
+    "contactSupport": "Contact our support team"
   }
 }
