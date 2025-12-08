@@ -823,5 +823,10 @@
     "price": "Price",
     "scanInstructions": "Scan this QR code at the event entrance",
     "footer": "Thank you for choosing Planora"
+  },
+  "termsPage": {
+    "title": "Terms & Conditions",
+    "subtitle": "Please read these terms and conditions carefully before using our platform",
+    "footer": "© 2025 Planora. All rights reserved."
   }
 }

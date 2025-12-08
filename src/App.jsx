@@ -30,6 +30,7 @@ import ChatWidget from "./components/ChatWidget";
 import MessagesPage from "./pages/MessagesPage";
 import EventAttendeeDetails from "./components/HostBoard/EventAttendeeDetails";
 import NotFoundPage from "./components/NotFoundPage";
+import Terms from "./pages/Terms";
 import { lazy } from "react";
 import AdminRoute from "./components/guards/AdminRoute";
 
@@ -52,6 +53,7 @@ function App() {
                         <Route path='/' element={<Home />} />
                         <Route path='/about' element={<About />} />
                         <Route path='/contact' element={<Contact />} />
+                        <Route path='/terms' element={<Terms />} />
                         <Route
                             path='/events/:eventId'
                             element={<EventDetails />}
