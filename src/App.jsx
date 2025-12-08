@@ -30,8 +30,11 @@ import ChatWidget from "./components/ChatWidget";
 import MessagesPage from "./pages/MessagesPage";
 import EventAttendeeDetails from "./components/HostBoard/EventAttendeeDetails";
 import NotFoundPage from "./components/NotFoundPage";
+import Terms from "./pages/Terms";
+import Faq from "./pages/Faq";
 import { lazy } from "react";
 import AdminRoute from "./components/guards/AdminRoute";
+import ScrollToTop from "./components/ScrollToTop";
 
 const AdminOverview = lazy(() => import("./pages/admin/AdminOverview"));
 const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
@@ -44,6 +47,7 @@ function App() {
     return (
         <main>
             <BrowserRouter>
+                <ScrollToTop />
                 <Toaster richColors position='bottom-right' />
                 <ChatWidget />
 
@@ -52,6 +56,8 @@ function App() {
                         <Route path='/' element={<Home />} />
                         <Route path='/about' element={<About />} />
                         <Route path='/contact' element={<Contact />} />
+                        <Route path='/terms' element={<Terms />} />
+                        <Route path='/qa' element={<Faq />} />
                         <Route
                             path='/events/:eventId'
                             element={<EventDetails />}
