@@ -20,8 +20,7 @@ export default function Nav({ lang }) {
                size="sm"
             >
                <Link
-                  to="../contact"
-                  target="_blank"
+                  to="/contact"
                >
                   <Bug />
                   <span className="hidden md:inline-block">{lang === "ar" ? "الإبلاغ عن مشكلة" : "Report a bug"}</span>

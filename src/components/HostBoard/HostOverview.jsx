@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import Stats from "./StatsSection";
+// import Stats from "./StatsSection";
 import EventCard from "../Cards/EventCard";
-import RecentMessages from "./RecentMessagesSec";
-import ReviewsSection from "../Reviews";
+// import RecentMessages from "./RecentMessagesSec";
+// import ReviewsSection from "../Reviews";
 import { supabase } from "@/lib/supabaseClient";
 import { useSelector } from "react-redux";
 import { useDirection } from "@/hooks/useDirection";
@@ -22,63 +22,36 @@ import RadialProgressComponent from "../Charts/RadialProgressComponent";
 import BarChartComponent from "../Charts/BarChartComponent";
 import GroupedBarChart from "../Charts/GroupedBarChart";
 import loremImg from "@/assets/lorem.jfif";
+import { 
+    Calendar, 
+    TrendingUp, 
+    Users, 
+    BarChart3, 
+    Sparkles 
+} from "lucide-react";
+
+// Empty State Placeholder Component with gradient and animations
+const EmptyStatePlaceholder = ({ icon: Icon, title, subtitle }) => (
+    <div className="relative bg-background flex flex-col items-center justify-center p-8 rounded-xl border-2 border-dashed border-border min-h-[300px] overflow-hidden">        
+        <div className="relative z-10 flex flex-col items-center">
+            <div className="mb-5">
+                <Icon className="w-14 h-14 text-muted-foreground drop-shadow-lg shadow-primary" strokeWidth={1.5} />
+            </div>
+            <h3 className="text-xl font-bold text-foreground mb-3 text-center">
+                {title}
+            </h3>
+            <p className="text-sm text-muted-foreground text-center max-w-xs leading-relaxed">
+                {subtitle}
+            </p>
+        </div>
+    </div>
+);
 
 export default function UserOverview() {
     const [events, setEvents] = useState([]);
     const user = useSelector((state) => state.auth.user);
     const { lang } = useDirection();
-    const { data } = useSelector((state) => state.categories);
-
-    const hostMessages = [
-        {
-            name: "Jane Smith",
-            message:
-                "Hey, just wanted to follow up on the catering for the upcoming conference...",
-            time: "2 hours ago",
-            avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuAnbAc-zfMaWNls3igWd_omvAutzQjCRkZV1tT36pc3fKNSQHyxXFIaSb6HZrw66xnxlunJVL754nbAZmUWvTPPKSxPfM_O6dqaBGQ307jbc24jQQseqbRElKN5R97TRmiwZbky2S-33HPkxElL0itdScaJLR6RFB-JcLv8UkLLR-BMJM-e98dCi0kSs7eeO1iDYD_6qCKOwyx9AG7XGQxamuAQgdIXXH8qPuHYM8pNd3pVVO4cjTTOCkSrXJ5Ol9T_XPPtDd3dgFwv",
-        },
-        {
-            name: "Mike Johnson",
-            message:
-                "Can you send over the final attendee list for the workshop?",
-            time: "5 hours ago",
-            avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuCk_uf3J5ghz33duXR6BenmRrIwMTOtg1OYFLUiWsEVq8915HCuOjw_4VHMYu2txwG5Ek01iCS4TwxmpEQSBcEz4l4iExSLL2RaElsXw5FlKvJFBDfYsuxs7bBAmuNOqJH7VWFzYTKhir9cqEqUagwWo2l4yMVvmeWcCMTv7IXWBKVFyjBeMn44XW-MFh5tbOPUoIwlInasOzfgKTcyxb2NxArEluWfXTe_LzLuHu3YF54wjtw2q5UjG9AYVAjxbD0s3VVRdgDqsCw2",
-        },
-        {
-            name: "Sarah Chen",
-            message:
-                "Great job on the event last week! Everyone had a fantastic time.",
-            time: "1 day ago",
-            avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuACkJ9rSPCWZeYfhlkAQJLIRctiwGXNsiZmoi7cx7ZhGzsPKmc-vaSvQHgU-mrxEiSM0yK0rq40IUE2KHzv6LS8x2xK8lHvQA9cEh1VjvcPmBN6g91N9KDosWgV9PBCzN6uVvyP8qPgDBFdpqUvTPPhfeD3fD9Ji3eR4qMwThXUzHR18LT2lBHDlRd0E6rtTDeWtjp80VPuAkdrtt5IdiBNae2om3qacE_gNlMwwPEkaa-o4F5JZ14z7P8xtEqGk8BtdegP4NIiyiFf",
-        },
-    ];
-
-    const sampleReviews = [
-        {
-            id: 1,
-            title: "Absolutely fantastic!",
-            content:
-                "The tech conference was incredibly well-organized. The speakers were top-notch and the networking opportunities were priceless.",
-            rating: 5,
-            author: "Sarah Johnson",
-            date: "Oct 15, 2025",
-        },
-        {
-            id: 2,
-            title: "Great content, minor issues.",
-            content:
-                "Enjoyed the workshop content. However, the venue was a bit crowded and the lunch options could have been better.",
-            rating: 4,
-            author: "Ahmed N.",
-        },
-        {
-            id: 3,
-            title: "Loved it!",
-            content: "Perfect event! Looking forward to next year!",
-            rating: 5,
-            author: "Lina M.",
-        },
-    ];
+    const { data } = useSelector((state) => state.categories);;
 
     useEffect(() => {
         if (!user?.id) return;
@@ -177,8 +150,8 @@ export default function UserOverview() {
     ];
 
     return (
-        <div className='container'>
-            <div className='overview flex flex-col gap-2 transition-all duration-300 ease-in-out '>
+        // <div className='container'>
+            <div className='container flex flex-col gap-4 transition-all duration-300 ease-in-out '>
                 <div className='host-stats'>
                     <div className=' host-stats__header flex justify-between'>
                         <h2 className='text-2xl font-bold text-primary mb-2 '>
@@ -186,82 +159,149 @@ export default function UserOverview() {
                         </h2>
                     </div>
                     <div className='host-stats__content grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4'>
-                        {hostStats.map((item, i) => (
-                            <RadialProgressComponent
-                                key={i}
-                                title={lang === "en" ? item.label : item.label_ar}
-                                value={item.value}
-                            />
-                        ))}
+                        {hostStats.some(stat => stat.value !== undefined && stat.value !== null) ? (
+                            hostStats.map((item, i) => (
+                                <RadialProgressComponent
+                                    key={i}
+                                    title={lang === "en" ? item.label : item.label_ar}
+                                    value={item.value}
+                                />
+                            ))
+                        ) : (
+                            <div className="col-span-full">
+                                <EmptyStatePlaceholder
+                                    icon={Users}
+                                    title={lang === "en" ? "No Statistics Available" : "لا توجد إحصائيات متاحة"}
+                                    subtitle={lang === "en" 
+                                        ? "Your event statistics will appear here once you create events and start getting bookings" 
+                                        : "ستظهر إحصاءات الحدث هنا بمجرد إنشاء الأحداث وبدء الحجوزات"}
+                                    gradient="bg-gradient-to-br from-violet-500 to-purple-500"
+                                />
+                            </div>
+                        )}
                     </div>
                 </div>
-                <h2 className='text-2xl font-bold text-primary mb-2 '>
-                    {lang === "en" ? "Insights" : "الإحصائيات"}
-                </h2>
-                <div className='highlights grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-                    <div className='col-span-2 space-y-4'>
-                        <AreaChartComponent
-                            title={lang === "en" ? "Bookings Over Time" : "الحجوزات على الوقت"}
-                            data={bookingsOverTime}
-                            xKey='day'
-                            yKey='bookings'
-                        />
-                        <BarChartComponent
-                            title={lang === "en" ? "Popular Events" : "الفعاليات الشائعة"}
-                            data={popularEvents}
-                            xKey="event_name"
-                            yKey='total_tickets'
-                        />
-                        <GroupedBarChart
-                            title={lang === "en" ? "Event Performance" : "تحليل الفعاليات "}
-                            data={eventPerfomance}
-                            xKey="event_name"
-                            keys={["total_tickets", "attendees", "revenue"]}
-                        />
-
-                        {/* <RecentMessages messages={hostMessages} /> */}
-                        {/* <ReviewsSection reviews={sampleReviews} /> */}
-                    </div>
-                    <div className='host__next-event space-y-2'>
-                        <div>
-                            {events.length > 0 ? (
-                                <EventCard
-                                    id={events[0]?.id}
-                                    title={
-                                        lang === "en"
-                                            ? events[0]?.name
-                                            : events[0]?.name_ar
-                                    }
-                                    image={handleThumbnail(
-                                        events[0]?.thumbnail
-                                    )}
-                                    date={events[0]?.date.split("T")[0]}
-                                    location={events[0]?.location}
-                                    category={
-                                        interestOptions.find(
-                                            (item) =>
-                                                item.id ===
-                                                events[0]?.category_id
-                                        )?.displayName
-                                    }
-                                    price={
-                                        events[0]?.price === 0
-                                            ? lang === "en"
-                                                ? "Free"
-                                                : "مجانا"
-                                            : events[0]?.price
-                                    }
-                                    attendees={events[0]?.capacity}
+                <div className="">
+                    <h2 className='text-2xl font-bold text-primary mb-2 '>
+                        {lang === "en" ? "Insights" : "الإحصائيات"}
+                    </h2>
+                    <div className='highlights grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+                        <div className='col-span-2 space-y-4'>
+                            {bookingsOverTime && bookingsOverTime.length > 0 ? (
+                                <AreaChartComponent
+                                    title={lang === "en" ? "Bookings Over Time" : "الحجوزات على الوقت"}
+                                    data={bookingsOverTime}
+                                    xKey='day'
+                                    yKey='bookings'
                                 />
                             ) : (
-                                <div className='p-4 text-muted-foreground'>
-                                    No upcoming event
+                                <div>
+                                    <EmptyStatePlaceholder
+                                        icon={TrendingUp}
+                                        title={lang === "en" ? "No Booking Data Yet" : "لا توجد بيانات حجز بعد"}
+                                        subtitle={lang === "en" 
+                                            ? "Start creating events to see your booking trends over time" 
+                                            : "ابدأ في إنشاء الأحداث لمشاهدة اتجاهات الحجز بمرور الوقت"}
+                                        gradient="bg-gradient-to-br from-blue-500 to-purple-500"
+                                    />
                                 </div>
                             )}
+                            
+                            {popularEvents && popularEvents.length > 0 ? (
+                                <BarChartComponent
+                                    title={lang === "en" ? "Popular Events" : "الفعاليات الشائعة"}
+                                    data={popularEvents}
+                                    xKey="event_name"
+                                    yKey='total_tickets'
+                                />
+                            ) : (
+                                <div>
+                                    <h3 className="text-lg font-semibold mb-3">
+                                        {lang === "en" ? "Popular Events" : "الفعاليات الشائعة"}
+                                    </h3>
+                                    <EmptyStatePlaceholder
+                                        icon={BarChart3}
+                                        title={lang === "en" ? "No Popular Events Yet" : "لا توجد فعاليات شائعة بعد"}
+                                        subtitle={lang === "en" 
+                                            ? "Your most popular events will appear here once you start getting bookings" 
+                                            : "ستظهر الأحداث الأكثر شعبية هنا بمجرد بدء الحجوزات"}
+                                        gradient="bg-gradient-to-br from-green-500 to-teal-500"
+                                    />
+                                </div>
+                            )}
+                            
+                            {eventPerfomance && eventPerfomance.length > 0 ? (
+                                <GroupedBarChart
+                                    title={lang === "en" ? "Event Performance" : "تحليل الفعاليات "}
+                                    data={eventPerfomance}
+                                    xKey="event_name"
+                                    keys={["total_tickets", "attendees", "revenue"]}
+                                />
+                            ) : (
+                                <div>
+                                    <h3 className="text-lg font-semibold mb-3">
+                                        {lang === "en" ? "Event Performance" : "تحليل الفعاليات"}
+                                    </h3>
+                                    <EmptyStatePlaceholder
+                                        icon={Sparkles}
+                                        title={lang === "en" ? "No Performance Data" : "لا توجد بيانات أداء"}
+                                        subtitle={lang === "en" 
+                                            ? "Create and manage events to track their performance metrics" 
+                                            : "قم بإنشاء وإدارة الأحداث لتتبع مقاييس الأداء"}
+                                        gradient="bg-gradient-to-br from-orange-500 to-pink-500"
+                                    />
+                                </div>
+                            )}
+
+                            {/* <RecentMessages messages={hostMessages} /> */}
+                            {/* <ReviewsSection reviews={sampleReviews} /> */}
+                        </div>
+                        <div className='host__next-event space-y-2'>
+                            <div>
+                                {events.length > 0 ? (
+                                    <EventCard
+                                        id={events[0]?.id}
+                                        title={
+                                            lang === "en"
+                                                ? events[0]?.name
+                                                : events[0]?.name_ar
+                                        }
+                                        image={handleThumbnail(
+                                            events[0]?.thumbnail
+                                        )}
+                                        date={events[0]?.date.split("T")[0]}
+                                        location={events[0]?.location}
+                                        category={
+                                            interestOptions.find(
+                                                (item) =>
+                                                    item.id ===
+                                                    events[0]?.category_id
+                                            )?.displayName
+                                        }
+                                        price={
+                                            events[0]?.price === 0
+                                                ? lang === "en"
+                                                    ? "Free"
+                                                    : "مجانا"
+                                                : events[0]?.price
+                                        }
+                                        attendees={events[0]?.capacity}
+                                    />
+                                ) : (
+                                    <EmptyStatePlaceholder
+                                        icon={Calendar}
+                                        title={lang === "en" ? "No Upcoming Events" : "لا توجد أحداث قادمة"}
+                                        subtitle={lang === "en" 
+                                            ? "Create your first event to start welcoming attendees" 
+                                            : "قم بإنشاء حدثك الأول لبدء استقبال الحضور"}
+                                        gradient="bg-gradient-to-br from-indigo-500 to-blue-500"
+                                    />
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        // </div>
     );
 }

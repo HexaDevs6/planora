@@ -54,7 +54,7 @@ export default function FooterSection() {
               {t("footer.resources")}
             </h4>
             <ul className="flex flex-col gap-4">
-              {["about", "blog", "qa"].map((item) => (
+              {["about", "blog", "qa", "terms"].map((item) => (
                 <li
                   key={item}
                   className="transition-all duration-500 hover:translate-x-2 hover:text-[var(--color-amber)] py-1 cursor-pointer"

@@ -1,0 +1,339 @@
+{
+  "ar": {
+    "items": [
+      {
+        "id": 1,
+        "question": "إيه هي Planora؟",
+        "answer": [
+          "Planora هي منصة رقمية مصممة خصيصًا لمساعدة المستخدمين في إنشاء الدعوات وتنظيم الفعاليات بشكل بسيط ومحترف.",
+          "سواء بتنظم حفلة شخصية، اجتماع عمل، مؤتمر، ورشة، أو حتى حدث كبير—Planora بتقدم أدوات جاهزة لإدارة الدعوات، التذاكر، بيانات الحضور، ومتابعة تفاصيل الحدث بدون أي تعقيد.",
+          "هدف المنصة إنها توفر تجربة سلسة من أول خطوة لإنشاء الحدث لحد دخول الضيوف عبر QR Code."
+        ]
+      },
+      {
+        "id": 2,
+        "question": "هل أقدر أعمل أي نوع فعالية؟",
+        "answer": [
+          "آه، Planora مرنة ومناسبة لأي نوع Event تقريبًا.",
+          "مفيش نوع فعالية ممنوع، والمستخدم يقدر ينشئ:",
+          "• حفلات تخرج",
+          "• مؤتمرات",
+          "• دورات تدريبية",
+          "• مؤتمرات شركات",
+          "• تجمعات صغيرة",
+          "• أحداث عامة أو مدفوعة",
+          "الفكرة إن Planora بتحاول تغطي أكبر عدد من السيناريوهات اللي ممكن تحتاج فيها إدارة فعالية."
+        ]
+      },
+      {
+        "id": 3,
+        "question": "إيه طرق الدفع المتاحة؟",
+        "answer": [
+          "عمليات الدفع بتتم بالكامل من خلال Stripe، وده بيضمن أمان عالي وسهولة في الاستخدام.",
+          "Stripe بيوفر طرق كتير زي:",
+          "• بطاقات Visa",
+          "• بطاقات Mastercard",
+          "• Apple Pay (في بعض الدول)",
+          "• معاملات بنكية حسب المنطقة",
+          "المستخدم مش محتاج أي إعدادات معقدة—كل العملية بتتم بشكل مباشر وسلس من جوه المنصة."
+        ]
+      },
+      {
+        "id": 4,
+        "question": "هل Planora بتاخد رسوم؟",
+        "answer": [
+          "آه، والرسوم واضحة ومن غير أي مصاريف مخفية:",
+          "• التذاكر المدفوعة: بيتم خصم نسبة بسيطة من كل تذكرة يتم بيعها عبر Planora.",
+          "• الدعوات المجانية: بيتم إضافة رسم ثابت قيمته 5 جنيه مصري لكل دعوة.",
+          "الرسوم بتساعد في تغطية تكاليف تشغيل المنصة وتطوير مميزات جديدة."
+        ]
+      },
+      {
+        "id": 5,
+        "question": "هل أقدر أخصص شكل الدعوة؟",
+        "answer": [
+          "النسخة الحالية من Planora (Beta) بتوفر تصميم ثابت للدعوات عشان التجربة تكون مستقرة للجميع.",
+          "لكن فريق التطوير شغال حاليًا على نظام تخصيص كامل يسمح للمستخدمين:",
+          "• اختيار ثيمات وألوان",
+          "• إضافة صور",
+          "• تعديل شكل التذكرة",
+          "الميزة دي هتكون جزء مهم من التحديثات القادمة."
+        ]
+      },
+      {
+        "id": 6,
+        "question": "هل أقدر أعرف مين سجل في الفعالية؟",
+        "answer": [
+          "آه، عندك تحكم كامل في بيانات الحضور من خلال الـ Dashboard.",
+          "هتلاقي:",
+          "• اسم كل ضيف",
+          "• الإيميل",
+          "• حالة التسجيل",
+          "• نوع التذكرة (لو مدفوعة)",
+          "الميزة دي بتساعد أصحاب الفعاليات في الإدارة والمتابعة والتواصل مع الحضور لو احتاجوا."
+        ]
+      },
+      {
+        "id": 7,
+        "question": "هل التذاكر بيكون ليها QR Code؟",
+        "answer": [
+          "طبعًا.",
+          "كل تذكرة بتتولد تلقائيًا ومعاها QR Code فريد.",
+          "الـ QR بيتسحب على الباب من خلال أي قارئ، وده يمنع التذاكر المكررة وبيساعد في تسجيل الحضور بطريقة منظمة وسريعة."
+        ]
+      },
+      {
+        "id": 8,
+        "question": "هل ينفع أعدل على الفعالية بعد نشرها؟",
+        "answer": [
+          "تقدر تعدل على الحدث بالكامل طالما مفيش أي تذاكر اتباعت.",
+          "لكن بعد أول عملية شراء:",
+          "• بعض البيانات الأساسية زي السعر والتاريخ مش هتقدر تعدلها حفاظًا على حق اللي اشتروا.",
+          "الميزة دي معمولة عشان تحمي المستخدمين من تغيير شروط الحدث بعد الدفع."
+        ]
+      },
+      {
+        "id": 9,
+        "question": "هل ينفع ألغي الفعالية؟",
+        "answer": [
+          "آه، بشرط واحد:",
+          "إن مفيش أي تذاكر اتباعت.",
+          "لو حصل بيع، الإلغاء مش متاح حاليًا علشان يتم الحفاظ على حقوق المشتري.",
+          "في المستقبل، هيتم دراسة إضافة نظام إلغاء مع استرجاع تلقائي حسب سياسات واضحة."
+        ]
+      },
+      {
+        "id": 10,
+        "question": "هل في Dashboard لإدارة الفعاليات؟",
+        "answer": [
+          "آه، الـ Dashboard في Planora تعتبر من أقوى أجزاء المنصة.",
+          "بتعرضلك:",
+          "• إجمالي عدد الدعوات",
+          "• عدد التذاكر المتاحة",
+          "• عدد التذاكر المباعة",
+          "• بيانات الحضور",
+          "• أرباح الفعالية",
+          "• معدل التفاعل",
+          "والهدف إنها توفر نظرة كاملة تساعدك تاخد قرارات أسرع وأدق."
+        ]
+      },
+      {
+        "id": 11,
+        "question": "هل Planora بتوفر تقارير جاهزة للتحميل؟",
+        "answer": [
+          "لسه لا.",
+          "ميزة تصدير التقارير (CSV أو PDF) تحت الدراسة وبتتضاف في المراحل الجاية بعد النسخة الرسمية."
+        ]
+      },
+      {
+        "id": 12,
+        "question": "هل Planora لسه Beta؟",
+        "answer": [
+          "آه، النسخة الحالية هي Beta، وده معناه إن المنصة مستقرة لكن لسه بيتم تحسينها وإضافة مميزات جديدة بشكل مستمر.",
+          "الأخطاء اللي ممكن تظهر بتساعد الفريق على تحسين المنتج."
+        ]
+      },
+      {
+        "id": 13,
+        "question": "الدعم بيرد خلال قد إيه؟",
+        "answer": [
+          "الدعم الفني في Planora بيحاول يرد خلال 24 ساعة.",
+          "غالبًا الرد بيكون أسرع، خصوصًا في المشاكل الفنية."
+        ]
+      },
+      {
+        "id": 14,
+        "question": "مين هم أصحاب بلانورا؟",
+        "answer": [
+          "Planora تم تطويرها بواسطة فريق HexaDevs،",
+          "وهو فريق مكوّن من ستة مطورين مصريين (أربع شباب وبنتين) من خريجي معهد تكنولوجيا المعلومات – ITI.",
+          "المنصة هي مشروع التخرج الخاص بيهم، وتم بنائها بهدف تقديم منتج فعلي ممكن استخدامه في السوق، مش مجرد مشروع أكاديمي.",
+          "الفريق مهتم بتطوير المنصة بشكل مستمر وتحويلها لمنتج كامل جاهز للإطلاق الرسمي."
+        ]
+      },
+      {
+        "id": 15,
+        "question": "هل ممكن الشروط أو الرسوم تتغير؟",
+        "answer": [
+          "آه، لأن المنصة لسه Beta، بعض الرسوم والشروط ممكن تتحدث.",
+          "وأي تحديث مهم بيتم إعلام المستخدمين بيه."
+        ]
+      }
+    ]
+  },
+  "en": {
+    "items": [
+      {
+        "id": 1,
+        "question": "What is Planora?",
+        "answer": [
+          "Planora is a digital platform designed to help users create invitations and manage events of any type—whether it's a personal gathering, business meeting, workshop, conference, or large public event.",
+          "The goal of Planora is to offer a seamless experience that covers the entire event lifecycle: from creating and sharing invitations, to ticket management, to checking attendees at the event using QR codes.",
+          "Planora aims to simplify event management for individuals and organizers in Egypt with a smooth, reliable, and modern experience."
+        ]
+      },
+      {
+        "id": 2,
+        "question": "Can I create any type of event on Planora?",
+        "answer": [
+          "Absolutely.",
+          "Planora is built to support all types of events with no restrictions.",
+          "You can create:",
+          "• Private parties",
+          "• Corporate events",
+          "• Training workshops",
+          "• Graduation parties",
+          "• Public events",
+          "• Paid or free events",
+          "The system is flexible and designed to adapt to a wide range of use cases."
+        ]
+      },
+      {
+        "id": 3,
+        "question": "What payment methods are supported on Planora?",
+        "answer": [
+          "Payments are processed securely through Stripe, which ensures high-level encryption and global reliability.",
+          "Depending on your region, Stripe supports:",
+          "• Visa cards",
+          "• Mastercard",
+          "• Apple Pay (depending on country)",
+          "• Various bank-based payment methods",
+          "Users can complete transactions smoothly without leaving the platform."
+        ]
+      },
+      {
+        "id": 4,
+        "question": "Does Planora charge any fees?",
+        "answer": [
+          "Yes, and all fees are transparent:",
+          "• For paid tickets: Planora takes a small percentage from each ticket sold.",
+          "• For free invitations: a fixed fee of 5 EGP per invitation is applied.",
+          "These fees support the running costs of the platform and enable continuous development of new features."
+        ]
+      },
+      {
+        "id": 5,
+        "question": "Can I customize the invitation design?",
+        "answer": [
+          "Not yet.",
+          "In the current Beta version, invitations follow one unified default design to maintain stability and consistency across the platform.",
+          "However, the development team is working on a future update that will introduce:",
+          "• Customizable themes",
+          "• Color variations",
+          "• Personalized layouts",
+          "• Custom ticket designs",
+          "This feature is part of Planora's long-term roadmap."
+        ]
+      },
+      {
+        "id": 6,
+        "question": "Can I see who has registered for my event?",
+        "answer": [
+          "Yes.",
+          "Planora provides a robust Dashboard that displays the full list of attendees along with their registration details.",
+          "You can easily track:",
+          "• Names",
+          "• Emails",
+          "• Ticket types",
+          "• Registration status",
+          "This helps event organizers manage communication and monitor event engagement."
+        ]
+      },
+      {
+        "id": 7,
+        "question": "Do tickets come with QR Codes?",
+        "answer": [
+          "Yes, automatically.",
+          "Every ticket generated on Planora includes a unique QR Code that can be scanned at the event entrance.",
+          "This ensures:",
+          "• Faster check-in",
+          "• Prevention of duplicated tickets",
+          "• Smooth and organized event entry",
+          "It's especially useful for events with large audiences."
+        ]
+      },
+      {
+        "id": 8,
+        "question": "Can I edit an event after publishing it?",
+        "answer": [
+          "You can freely edit the event as long as no one has purchased a ticket yet.",
+          "This includes changes to:",
+          "• Name",
+          "• Description",
+          "• Pricing",
+          "• Date & time",
+          "• Venue",
+          "However, once the first ticket is sold, certain fields become locked to protect buyers and prevent unexpected changes."
+        ]
+      },
+      {
+        "id": 9,
+        "question": "Can I cancel an event after publishing it?",
+        "answer": [
+          "Yes, but with a condition:",
+          "You can cancel the event only if no tickets have been sold.",
+          "If attendees have already purchased tickets, cancellation is currently disabled to ensure fairness for all participants.",
+          "A more advanced cancellation policy will be considered in future updates."
+        ]
+      },
+      {
+        "id": 10,
+        "question": "Does Planora provide a Dashboard for organizers?",
+        "answer": [
+          "Yes.",
+          "The Dashboard gives organizers full visibility over their event performance, including:",
+          "• Total invitations",
+          "• Available and sold tickets",
+          "• Attendee information",
+          "• Total revenue",
+          "• Engagement metrics",
+          "The goal is to make event management simple, intuitive, and data-driven."
+        ]
+      },
+      {
+        "id": 11,
+        "question": "Does Planora offer downloadable reports (CSV or PDF)?",
+        "answer": [
+          "Not at the moment.",
+          "Exportable reports are planned for future versions, but they are not yet available in the current Beta release."
+        ]
+      },
+      {
+        "id": 12,
+        "question": "Is Planora still in Beta?",
+        "answer": [
+          "Yes, Planora is currently in the Beta phase.",
+          "This means the platform is functional and stable, but still receiving continuous improvements, new features, and performance enhancements.",
+          "Feedback from early users plays a major role in shaping the final product."
+        ]
+      },
+      {
+        "id": 13,
+        "question": "How long does support take to respond?",
+        "answer": [
+          "Our support team typically responds within 24 hours.",
+          "We aim to resolve technical issues as quickly as possible and ensure smooth usage of the platform."
+        ]
+      },
+      {
+        "id": 14,
+        "question": "Who created Planora?",
+        "answer": [
+          "Planora was developed by HexaDevs, a team of six ITI graduates (four males and two females).",
+          "The platform started as their graduation project, with the goal of building a fully functional and practical event-management system suitable for real-world use in Egypt.",
+          "The team continues to improve and expand Planora, aiming to transform it into a complete, production-ready SAAS platform."
+        ]
+      },
+      {
+        "id": 15,
+        "question": "Can the fees or terms change in the future?",
+        "answer": [
+          "Yes.",
+          "Since the platform is still evolving, Planora reserves the right to update its pricing or policies at any time.",
+          "If major changes occur, users will be notified to ensure transparency."
+        ]
+      }
+    ]
+  }
+}
+

@@ -138,7 +138,12 @@ const EventDetails = () => {
                 {lang === "ar" ? event.description_ar : event.description}
               </p>
             </section>
-            <Location lang={lang} address={event?.location || "Egypt"} />
+            <Location 
+              lang={lang} 
+              address={event?.location || "Egypt"}
+              latitude={event?.latitude}
+              longitude={event?.longitude}
+            />
             <WhyAttend lang={lang} eventCategoryId={event.category_id} />
             <HostInfo lang={lang} hostId={event.host_id} />
           </div>
