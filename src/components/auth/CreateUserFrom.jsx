@@ -85,14 +85,17 @@ const CreateUserForm = ({
 
   return (
     <div className="space-y-6 animate-fade-in">
-
       {/* GOOGLE SIGNUP */}
       <Button
         variant="outline"
-        onClick={() => { }}
+        onClick={() => {}}
         disabled={loading || !agreedToTerms}
         className={`w-full flex items-center justify-center gap-3 border-2 rounded-md py-4 transition-all
-          ${!agreedToTerms ? "opacity-60 cursor-not-allowed" : "hover:border-amber hover:bg-amber/10"}`}
+          ${
+            !agreedToTerms
+              ? "opacity-60 cursor-not-allowed"
+              : "hover:border-amber hover:bg-amber/10"
+          }`}
       >
         {loading ? (
           <>
@@ -117,8 +120,10 @@ const CreateUserForm = ({
       </div>
 
       {/* FORM */}
-      <form className="grid grid-cols-1 md:grid-cols-2 gap-4" onSubmit={handleSubmit}>
-
+      <form
+        className="grid grid-cols-1 md:grid-cols-2 gap-4"
+        onSubmit={handleSubmit}
+      >
         {/* EMAIL */}
         <div className="space-y-2">
           <Label>Email *</Label>
@@ -130,7 +135,9 @@ const CreateUserForm = ({
               className="pl-10"
             />
           </div>
-          {errors.email && <p className="text-red-500 text-xs">{errors.email[0]}</p>}
+          {errors.email && (
+            <p className="text-red-500 text-xs">{errors.email[0]}</p>
+          )}
         </div>
 
         {/* PHONE */}
@@ -144,7 +151,9 @@ const CreateUserForm = ({
               className="pl-10"
             />
           </div>
-          {errors.phone && <p className="text-red-500 text-xs">{errors.phone[0]}</p>}
+          {errors.phone && (
+            <p className="text-red-500 text-xs">{errors.phone[0]}</p>
+          )}
         </div>
 
         {/* PASSWORD */}
@@ -159,7 +168,9 @@ const CreateUserForm = ({
               className="pl-10"
             />
           </div>
-          {errors.password && <p className="text-red-500 text-xs">{errors.password[0]}</p>}
+          {errors.password && (
+            <p className="text-red-500 text-xs">{errors.password[0]}</p>
+          )}
         </div>
 
         {/* CONFIRM PASSWORD */}
@@ -189,8 +200,12 @@ const CreateUserForm = ({
           />
           <label className="text-sm">
             {t("auth.form.terms.text")}
-            <Link to="/terms" className="text-primary underline">
-              {" "}Terms
+            <Link
+              to="/terms"
+              target="_blank"
+              className="text-primary underline"
+            >
+              Terms
             </Link>
             {" and "}
             <Link to="/privacy" className="text-primary underline">
@@ -199,7 +214,9 @@ const CreateUserForm = ({
           </label>
         </div>
         {errors.agreedToTerms && (
-          <p className="text-red-500 text-xs md:col-span-2">{errors.agreedToTerms[0]}</p>
+          <p className="text-red-500 text-xs md:col-span-2">
+            {errors.agreedToTerms[0]}
+          </p>
         )}
 
         {/* BUTTONS */}
@@ -212,19 +229,22 @@ const CreateUserForm = ({
             type="submit"
             variant="amber"
             disabled={loading || !agreedToTerms}
-            className={`${!agreedToTerms ? "opacity-50 cursor-not-allowed" : ""}`}
-          >            {loading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Creating...
-            </>
-          ) : (
-            "Create Account"
-          )}
+            className={`${
+              !agreedToTerms ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+          >
+            {" "}
+            {loading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Creating...
+              </>
+            ) : (
+              "Create Account"
+            )}
           </Button>
         </div>
       </form>
-
     </div>
   );
 };

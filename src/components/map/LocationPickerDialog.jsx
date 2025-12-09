@@ -13,7 +13,7 @@ import LocationPicker from "./LocationPicker";
 
 /**
  * LocationPickerDialog
- * 
+ *
  * Wraps LocationPicker in a dialog/modal for a cleaner UI experience.
  * Shows a button that opens a dialog with the full map picker interface.
  */
@@ -46,7 +46,8 @@ const LocationPickerDialog = ({ value, onChange, lang = "en" }) => {
             <p className="text-sm font-medium">{value.location}</p>
             {value.latitude && value.longitude && (
               <p className="text-xs text-muted-foreground mt-1">
-                {lang === "ar" ? "الإحداثيات" : "Coordinates"}: {value.latitude.toFixed(4)}, {value.longitude.toFixed(4)}
+                {lang === "ar" ? "الإحداثيات" : "Coordinates"}:{" "}
+                {value.latitude.toFixed(4)}, {value.longitude.toFixed(4)}
               </p>
             )}
           </div>
@@ -63,10 +64,13 @@ const LocationPickerDialog = ({ value, onChange, lang = "en" }) => {
             onClick={handleOpen}
           >
             <MapPin className="w-4 h-4 mr-2" />
-            {value?.location 
-              ? (lang === "ar" ? "تغيير الموقع" : "Change Location")
-              : (lang === "ar" ? "اختيار موقع" : "Pick Location")
-            }
+            {value?.location
+              ? lang === "ar"
+                ? "تغيير الموقع"
+                : "Change Location"
+              : lang === "ar"
+              ? "اختيار موقع"
+              : "Pick Location"}
           </Button>
         </DialogTrigger>
 
@@ -89,11 +93,7 @@ const LocationPickerDialog = ({ value, onChange, lang = "en" }) => {
 
           {/* Dialog Actions */}
           <div className="flex justify-end gap-3 mt-6">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleCancel}
-            >
+            <Button type="button" variant="outline" onClick={handleCancel}>
               {lang === "ar" ? "إلغاء" : "Cancel"}
             </Button>
             <Button
@@ -112,4 +112,3 @@ const LocationPickerDialog = ({ value, onChange, lang = "en" }) => {
 };
 
 export default LocationPickerDialog;
-
