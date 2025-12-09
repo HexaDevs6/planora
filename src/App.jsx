@@ -34,7 +34,6 @@ import Terms from "./pages/Terms";
 import Faq from "./pages/Faq";
 import { lazy } from "react";
 import AdminRoute from "./components/guards/AdminRoute";
-import ScrollToTop from "./components/ScrollToTop";
 
 const AdminOverview = lazy(() => import("./pages/admin/AdminOverview"));
 const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
@@ -47,7 +46,6 @@ function App() {
     return (
         <main>
             <BrowserRouter>
-                <ScrollToTop />
                 <Toaster richColors position='bottom-right' />
                 <ChatWidget />
 

@@ -11,6 +11,8 @@ export const EventSchema = z.object({
     .string()
     .min(10, "الوصف بالعربية يجب أن يكون 10 أحرف على الأقل"),
   location: z.string().min(3, "Location is required"),
+  latitude: z.number().nullable().optional(),
+  longitude: z.number().nullable().optional(),
   category: z.string().min(1, "Category is required"),
   date: z.string().min(1, "Event date is required"),
   end_date: z.string().min(1, "End date is required"),
