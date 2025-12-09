@@ -46,7 +46,7 @@ export default function NavBar() {
 
   return (
     <nav
-      className="fixed top-0 z-5555 w-full backdrop-blur-lg bg-background/30
+      className="fixed top-0 z-900 w-full backdrop-blur-lg bg-background/30
                 shadow-md supports-[backdrop-filter]:bg-background/20"
     >
       <div className="max-w-7xl mx-auto flex justify-around items-center ">
