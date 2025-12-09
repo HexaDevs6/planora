@@ -23,6 +23,7 @@ import { Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { EventSchema } from "@/validators"; 
 import { getPublicUrl } from "@/lib/storage";
+import LocationPickerDialog from "@/components/map/LocationPickerDialog";
 // import { loremImg } from "@/lib/loremImg";
 
 
@@ -49,6 +50,8 @@ export default function PublishEvent() {
       description: "",
       description_ar: "",
       location: "",
+      latitude: null,
+      longitude: null,
       date: "",
       end_date: "",
       category: "",
@@ -101,6 +104,8 @@ export default function PublishEvent() {
                   thumbnail: event.thumbnail,
                   images: event.images,
                   location: event.location,
+                  latitude: event.latitude || null,
+                  longitude: event.longitude || null,
                   date: formatDateForInput(event.date),
                   end_date: formatDateForInput(event.end_date),
                   capacity: Number(event.capacity),
@@ -178,6 +183,8 @@ export default function PublishEvent() {
          price: "",
          capacity: "",
          location: "",
+         latitude: null,
+         longitude: null,
          date: "",
          end_date: "",
          thumbnail: null,
@@ -331,6 +338,8 @@ export default function PublishEvent() {
                      description_ar: formData.description_ar,
                      category_id: formData.category || null,
                      location: formData.location,
+                     latitude: formData.latitude,
+                     longitude: formData.longitude,
                      date: formattedDate,
                      end_date: formattedEndDate,
                      capacity: Number(formData.capacity) || 0,
@@ -497,23 +506,28 @@ export default function PublishEvent() {
                </div>
 
                {/* Location */}
-               <div>
+               <div className="md:col-span-2">
                   <Label
                      htmlFor="location"
                      className="block text-sm font-semibold mb-2"
                   >
                      {lang === "ar" ? "موقع الحدث" : "Event Location"}
                   </Label>
-                  <Input
-                     id="location"
-                     value={formData.location}
-                     onChange={handleChange}
-                     placeholder={
-                        lang === "ar"
-                           ? "مثال: 'عبر الإنترنت' أو 'القاهرة، مصر'"
-                           : "e.g., 'Online' or 'Cairo, Egypt'"
-                     }
-                     className="bg-background shadow-none"
+                  <LocationPickerDialog
+                     value={{
+                        location: formData.location,
+                        latitude: formData.latitude,
+                        longitude: formData.longitude,
+                     }}
+                     onChange={(newLocation) => {
+                        setFormData({
+                           ...formData,
+                           location: newLocation.location,
+                           latitude: newLocation.latitude,
+                           longitude: newLocation.longitude,
+                        });
+                     }}
+                     lang={lang}
                   />
                   {errors?.location && (
                      <p className="text-red-500 text-xs mt-1">{errors.location[0]}</p>
@@ -521,7 +535,7 @@ export default function PublishEvent() {
                </div>
 
                {/* Category */}
-               <div>
+               <div className="md:col-span-2">
                   <Label
                      htmlFor="category"
                      className="block text-sm font-semibold mb-2"

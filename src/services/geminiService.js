@@ -1,6 +1,8 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { planoraFAQs, aboutPlanora, userInterests } from "../data/planoraData";
 import { supabase } from "@/lib/supabaseClient";
+import faqContent from "../data/faqContent.json";
+import termsContent from "../data/termsContent.json";
 
 // Initialize Gemini AI
 let genAI = null;
@@ -139,6 +141,26 @@ const createPlanoraContext = async (language = 'en') => {
     A: ${faq.answer}`
   ).join("\n\n");
 
+  // Get FAQs and Terms from JSON based on language
+  const faqsFromJson = language === 'ar' ? faqContent.ar.items : faqContent.en.items;
+  const termsFromJson = language === 'ar' ? termsContent.ar : termsContent.en;
+
+  // Format FAQs from JSON
+  const faqsJsonContext = faqsFromJson.map(faq => {
+    const answer = Array.isArray(faq.answer) ? faq.answer.join(' ') : faq.answer;
+    return language === 'ar' 
+      ? `س: ${faq.question}\nج: ${answer}`
+      : `Q: ${faq.question}\nA: ${answer}`;
+  }).join("\n\n");
+
+  // Format Terms & Conditions from JSON
+  const termsJsonContext = termsFromJson.sections.map(section => {
+    const body = Array.isArray(section.body) ? section.body.join('\n') : section.body;
+    return language === 'ar'
+      ? `${section.title}:\n${body}`
+      : `${section.title}:\n${body}`;
+  }).join("\n\n");
+
   // Return empty contexts if no data available
   const eventsText = eventsContext || (language === 'ar' ? 'لا توجد فعاليات متاحة حالياً.' : 'No events available at the moment.');
   const servicesText = servicesContext || (language === 'ar' ? 'لا توجد خدمات متاحة حالياً.' : 'No services available at the moment.');
@@ -174,8 +196,12 @@ ${eventsText}
 الخدمات المتاحة:
 ${servicesText}
 
-الأسئلة الشائعة:
-${faqsContext}
+الأسئلة الشائعة (FAQs) - معلومات مفصلة عن بلانورا:
+${faqsJsonContext}
+
+شروط وأحكام بلانورا:
+${termsJsonContext}
+آخر تحديث: ${termsFromJson.lastUpdated}
 
 مهامك الأساسية:
 أنتِ تساعدي نوعين من المستخدمين:
@@ -200,6 +226,10 @@ ${faqsContext}
    مثال: "ده سؤال حلو فعلاً 😂 بس خليني أساعدك أكتر في حاجة متعلقة بالفعاليات والحفلات. عايز تعرف إيه النهاردة؟"
 
 3. اجعلي الإجابات موجزة وطبيعية للتفاعل الصوتي (2-3 جمل على الأكثر)
+** استخدام معلومات الأسئلة الشائعة والشروط والأحكام: **
+- لو حد سأل عن الشروط، الرسوم، سياسة الاسترجاع، طرق الدفع، أو أي معلومات موجودة في الـ FAQs أو Terms، استخدمي المعلومات اللي فوق للرد بدقة
+- لو حد سأل "إيه رسوم بلانورا؟" أو "إزاي أقدر أسترجع فلوسي؟" أو "مين عمل بلانورا؟"، اديله إجابة دقيقة من الـ FAQs
+- لو حد سأل عن الشروط والأحكام، اديله ملخص مفيد من المعلومات اللي فوق
 4. استخدمي أمثلة محددة من الفعاليات المتاحة لما تتكلمي
 5. لو حد سألك "عامل ايه؟" أو "ازيك؟"، رديلهم زي الصديقة: "الحمد لله كويسة! 😊 عايز أساعدك تلاقي فعالية حلوة تحضرها؟"
 6. استخدمي ايموجي بشكل طبيعي ومش كتير (واحد أو اتنين بس)
@@ -249,8 +279,12 @@ ${eventsText}
 AVAILABLE SERVICES:
 ${servicesText}
 
-FREQUENTLY ASKED QUESTIONS:
-${faqsContext}
+FREQUENTLY ASKED QUESTIONS - Detailed information about Planora:
+${faqsJsonContext}
+
+PLANORA TERMS & CONDITIONS:
+${termsJsonContext}
+Last Updated: ${termsFromJson.lastUpdated}
 
 YOUR MAIN TASKS:
 You help two types of users:
@@ -275,6 +309,10 @@ IMPORTANT RULES:
    Example: "That's a great question! 😂 But let me help you with something more related to events and Planora. What would you like to know today?"
 
 3. Keep responses concise and natural for voice interaction (2-3 sentences maximum)
+** Using FAQs and Terms & Conditions Information: **
+- When someone asks about terms, fees, refund policy, payment methods, or any information in the FAQs or Terms, use the information above to answer accurately
+- If someone asks "What are Planora's fees?" or "How can I get a refund?" or "Who created Planora?", give them a precise answer from the FAQs
+- If someone asks about terms and conditions, provide a helpful summary from the information above
 4. Use specific examples from the available events when you talk
 5. If someone asks "How are you?" or "What's up?", respond like a friend: "I'm doing great! 😊 Want me to help you find some awesome events to check out?"
 6. Use emojis naturally but sparingly (just one or two)
