@@ -43,7 +43,7 @@ function UpcomingEvent() {
                             <AnimatedCountdown targetDate={eventDate} />
                         </div>
 
-                        <Link to="/events/020d4451-1803-4d5d-8fdf-4436a8c16e7c" className="pt-4">
+                        <Link to="/events/f421d12e-55ad-46f6-aa30-622bbae6f6aa" className="pt-4">
                             <Button variant="amber" size="CTA" className="group">
                                 {t('eventsPage.category.cards.viewDetails')}
                                 <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
