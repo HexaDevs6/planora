@@ -2,6 +2,8 @@ import React from "react";
 import { LucideUsers2, Mail } from "lucide-react";
 import { t } from "i18next";
 import { Link } from "react-router-dom";
+import AppStoreBtn from "@/assets/app-store-btn.svg";
+import PlayStoreBtn from "@/assets/google-play-btn.svg";
 
 export default function FooterSection() {
   return (
@@ -25,6 +27,19 @@ export default function FooterSection() {
             <p className="font-medium text-content dark:text-foreground/80">
               {t("hero.slogan")}
             </p>
+
+            <p className="font-medium text-sm dark:text-foreground/80">
+              {t("footer.download")}
+            </p>
+
+            <div className="flex gap-2">
+              <a href="https://apps.apple.com/app/id6754495909" target="_blank" rel="noopener noreferrer">
+                <img src={AppStoreBtn} alt="App Store Button" />
+              </a>
+              <a href="https://play.google.com/store/apps/details?id=com.planora.app" target="_blank" rel="noopener noreferrer">
+                <img src={PlayStoreBtn} alt="Play Store Button" />
+              </a>
+            </div>
           </div>
 
           <div className="flex flex-col gap-3">
@@ -35,7 +50,7 @@ export default function FooterSection() {
               {["services", "events", "register"].map((item) => (
                 <li
                   key={item}
-                  className="transition-all duration-500 hover:translate-x-2 hover:text-[var(--color-amber)] py-1 cursor-pointer"
+                  className="hover:underline py-1 cursor-pointer"
                 >
                   <Link
                     to={`/${item}`}
@@ -57,7 +72,7 @@ export default function FooterSection() {
               {["about", "blog", "qa", "terms"].map((item) => (
                 <li
                   key={item}
-                  className="transition-all duration-500 hover:translate-x-2 hover:text-[var(--color-amber)] py-1 cursor-pointer"
+                  className="hover:underline py-1 cursor-pointer"
                 >
                   <Link
                     to={`/${item}`}
@@ -76,7 +91,7 @@ export default function FooterSection() {
               {t("footer.contact")}
             </h4>
             <ul className="flex flex-col gap-4">
-              <li className="transition-all duration-500 hover:translate-x-2 hover:text-[var(--color-amber)] py-1 cursor-pointer">
+              <li className="hover:underline py-1 cursor-pointer">
                 <a
                   className="text-content dark:text-foreground/70 flex items-center gap-2"
                   href="mailto:hexadevs06@googlegroups.com"
@@ -87,7 +102,7 @@ export default function FooterSection() {
                   Via Email
                 </a>
               </li>
-              <li className="transition-all duration-500 hover:translate-x-2 hover:text-[var(--color-amber)] py-1 cursor-pointer">
+              <li className="hover:underline py-1 cursor-pointer">
                 <Link
                   className="text-content dark:text-foreground/70 flex items-center gap-2"
                   to="https://discord.gg/8kG9zaUKwS"

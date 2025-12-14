@@ -270,9 +270,8 @@ const Contact = () => {
               </p>
               <Link to="/qa">
                 <Button
-                  variant="outline"
+                  variant="amber"
                   size="lg"
-                  className="text-violet-dark border-[#FFA704] hover:bg-[#FFA704]/20 transition-all"
                 >
                   {lang === "ar" ? "زيارة الأسئلة الشائعة" : "Visit FAQ"}
                 </Button>
