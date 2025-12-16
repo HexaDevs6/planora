@@ -81,7 +81,7 @@ const Details = ({ details, lang = "en" }) => {
                      {lang === "ar" ? "الموقع" : "Location"}
                   </p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                     {details.location}
+                     {details.location.split(",")[0]}
                   </p>
                </div>
             </div>

@@ -72,6 +72,20 @@ const EventAttendeeDetails = () => {
     fetchData();
   }, [eventId]);
 
+  function formatCairoDate(dateString) {
+  if (!dateString) return "";
+
+  return new Date(dateString + "Z").toLocaleString("en-US", {
+    timeZone: "Africa/Cairo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+}
+
   const EmptyState = () => (
     <div className="flex flex-col items-center justify-center py-16 px-4">
       <div className="rounded-full bg-primary/10 p-6 mb-4">
@@ -153,9 +167,7 @@ const EventAttendeeDetails = () => {
                         <td className="py-4 px-4">
                           <div className="flex items-center gap-1 text-sm text-nowrap">
                             <Calendar className="h-3 w-3 text-muted-foreground" />
-                            {attendee.purchased_at.split("T")[0]}
-                            {" | "}
-                            {attendee.purchased_at.split("T")[1].split(".")[0]}
+                            {formatCairoDate(attendee.purchased_at)}
                           </div>
                         </td>
                         <td className="py-4 px-4">
@@ -165,9 +177,7 @@ const EventAttendeeDetails = () => {
                             ) : (
                               <div className="flex items-center gap-1 text-emerald-600">
                                 <CalendarCheck className="h-3 w-3" />
-                                {attendee.used_at.split("T")[0]}
-                                {" | "}
-                                {attendee.used_at.split("T")[1].split(".")[0]}
+                                {formatCairoDate(attendee.used_at)}
                               </div>
                             )}
                           </div>
