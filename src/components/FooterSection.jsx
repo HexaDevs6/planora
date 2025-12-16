@@ -4,8 +4,10 @@ import { t } from "i18next";
 import { Link } from "react-router-dom";
 import AppStoreBtn from "@/assets/app-store-btn.svg";
 import PlayStoreBtn from "@/assets/google-play-btn.svg";
+import { useDirection } from "@/hooks/useDirection";
 
 export default function FooterSection() {
+  const { lang } = useDirection();
   return (
     <footer className="py-16 overflow-hidden bg-background dark:bg-[var(--color-violet-dark)] text-content dark:text-foreground transition-colors duration-500">
       <div className="container">
@@ -69,7 +71,7 @@ export default function FooterSection() {
               {t("footer.resources")}
             </h4>
             <ul className="flex flex-col gap-4">
-              {["about", "blog", "qa", "terms"].map((item) => (
+              {["about", "qa", "terms"].map((item) => (
                 <li
                   key={item}
                   className="hover:underline py-1 cursor-pointer"
@@ -99,7 +101,7 @@ export default function FooterSection() {
                   rel="noopener noreferrer"
                 >
                   <Mail className="w-5 h-5 text-[var(--color-amber)]" />
-                  Via Email
+                  {lang === "ar" ? "عبر البريد الإلكتروني" : "Via Email"}
                 </a>
               </li>
               <li className="hover:underline py-1 cursor-pointer">
@@ -108,7 +110,7 @@ export default function FooterSection() {
                   to="https://discord.gg/8kG9zaUKwS"
                 >
                   <LucideUsers2 className="w-5 h-5 text-[var(--color-amber)]" />
-                  Discord Community
+                  {lang === "ar" ? "مجتمع Discord" : "Discord Community"}
                 </Link>
               </li>
             </ul>
