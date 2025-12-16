@@ -17,7 +17,36 @@ function UpcomingEvent() {
         g1Img,
     ];
 
-    const eventDate = "2025-12-18T12:00:00";
+    const eventDate = "2025-12-22T09:00:00";
+    const [isEventLive, setIsEventLive] = useState(false);
+    const [eventEnded, setEventEnded] = useState(false);
+    
+    // Check if event is live or ended
+    useEffect(() => {
+        const checkEventStatus = () => {
+            const now = new Date();
+            const event = new Date(eventDate);
+            
+            // Assuming the event lasts 3 hours
+            const eventEndTime = new Date(event.getTime() + 3 * 60 * 60 * 1000);
+            
+            if (now >= event && now <= eventEndTime) {
+                setIsEventLive(true);
+                setEventEnded(false);
+            } else if (now > eventEndTime) {
+                setIsEventLive(false);
+                setEventEnded(true);
+            } else {
+                setIsEventLive(false);
+                setEventEnded(false);
+            }
+        };
+        
+        checkEventStatus();
+        const interval = setInterval(checkEventStatus, 60000); // Check every minute
+        
+        return () => clearInterval(interval);
+    }, [eventDate]);
 
     return (
         <section className="relative py-20 overflow-hidden bg-muted/30 dark:bg-background/50">
