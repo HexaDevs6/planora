@@ -8,6 +8,7 @@ import { Mail, Phone, Users, Send, MessageSquare } from "lucide-react";
 import { ShineBorder } from "@/components/ui/shine-border";
 import { MagicCard } from "@/components/ui/magic-card";
 import { useDirection } from "@/hooks/useDirection";
+import { Label } from "@/components/ui/label";
 
 const Contact = () => {
    const [formData, setFormData] = useState({
@@ -176,11 +177,11 @@ const Contact = () => {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
-                          <label htmlFor="name" className="text-sm font-medium">{lang === "ar" ? "الاسم الكامل" : "Full Name"} *</label>
+                          <Label htmlFor="name">{lang === "ar" ? "الاسم الكامل" : "Full Name"} *</Label>
                           <Input
                             id="name"
                             name="name"
-                            placeholder="John Doe"
+                            placeholder={lang === "ar" ? "أحمد محمد" : "John Doe"}
                             value={formData.name}
                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                             required
@@ -188,7 +189,7 @@ const Contact = () => {
                         </div>
 
                         <div className="space-y-2">
-                          <label htmlFor="email" className="text-sm font-medium">{lang === "ar" ? "البريد الالكتروني" : "Email Address"} *</label>
+                          <Label htmlFor="email">{lang === "ar" ? "البريد الالكتروني" : "Email Address"} *</Label>
                           <Input
                             id="email"
                             name="email"
@@ -202,11 +203,11 @@ const Contact = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <label htmlFor="subject" className="text-sm font-medium">{lang === "ar" ? "العنوان" : "Subject"} *</label>
+                        <Label htmlFor="subject">{lang === "ar" ? "العنوان" : "Subject"} *</Label>
                         <Input
                           id="subject"
                           name="subject"
-                          placeholder="How can we help you?"
+                          placeholder={lang === "ar" ? "كيف يمكننا مساعدتك؟" : "How can we help you?"}
                           value={formData.subject}
                           onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                           required
@@ -214,11 +215,11 @@ const Contact = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <label htmlFor="message" className="text-sm font-medium">{lang === "ar" ? "الرسالة" : "Message"} *</label>
+                        <Label htmlFor="message">{lang === "ar" ? "الرسالة" : "Message"} *</Label>
                         <Textarea
                           id="message"
                           name="message"
-                          placeholder="Tell us more about your inquiry..."
+                          placeholder={lang === "ar" ? "أخبرنا أكثر عن طلبك..." : "Tell us more about your inquiry..."}
                           rows={6}
                           value={formData.message}
                           onChange={(e) => setFormData({ ...formData, message: e.target.value })}
@@ -228,9 +229,8 @@ const Contact = () => {
 
                       <Button
                         type="submit"
-                        variant="hero"
+                        variant="amber"
                         size="lg"
-                        className="w-full md:w-auto bg-[#FFA704] hover:bg-[#e19500] text-white font-semibold transition-all"
                       >
                         <Send className="mr-2 h-5 w-5" />
                         {lang === "ar" ? "ارسل الرسالة" : "Send Message"}
@@ -270,9 +270,8 @@ const Contact = () => {
               </p>
               <Link to="/qa">
                 <Button
-                  variant="outline"
+                  variant="amber"
                   size="lg"
-                  className="text-violet-dark border-[#FFA704] hover:bg-[#FFA704]/20 transition-all"
                 >
                   {lang === "ar" ? "زيارة الأسئلة الشائعة" : "Visit FAQ"}
                 </Button>
