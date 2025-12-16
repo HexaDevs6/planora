@@ -219,9 +219,9 @@ const About = () => {
 							{team.map((member) => (
 								<div
 									key={member.name}
-									className='relative aspect-square rounded-xl overflow-hidden group hover:shadow-xl transition-all duration-300 hover:scale-105'
+									className='relative aspect-square rounded-xl overflow-hidden group'
 								>
-									<div className='absolute top-1/2 left-1/2 -translate-1/2 w-full h-full'>
+									<div className='absolute top-1/2 left-1/2 -translate-1/2 w-full h-full group-hover:scale-110 transition-all duration-300'>
 										<img
 											src={member.img}
 											alt={member.name}
