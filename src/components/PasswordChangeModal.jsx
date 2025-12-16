@@ -149,7 +149,7 @@ export function PasswordChangeModal({ lang = "en", user }) {
                     />
 
                     <div
-                        className='relative bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md mx-4'
+                        className='relative bg-background rounded-lg shadow-xl w-full max-w-md mx-4'
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className='flex items-center justify-between p-6 border-b'>
