@@ -16,7 +16,7 @@ function UpcomingEvent() {
         g1Img,
     ];
 
-    const eventDate = "2025-12-16T00:00:00";
+    const eventDate = "2025-12-22T09:00:00";
     const [isEventLive, setIsEventLive] = useState(false);
     const [eventEnded, setEventEnded] = useState(false);
     
