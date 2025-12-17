@@ -78,7 +78,7 @@ export default function NavBar() {
             </div>
 
             {/* Left Links */}
-            <ul className="hidden lg:flex gap-6 text-foreground font-medium">
+            <ul className="hidden lg:flex gap-6 text-foreground font-medium justify-between">
                {navLinksLeft.map((link) => (
                   <li key={link.to}>
                      <Link to={link.to} className={linkClass(link.to)}>
