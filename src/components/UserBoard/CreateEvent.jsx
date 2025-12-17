@@ -6,7 +6,6 @@ import { fetchCategories } from "@/store/fetchCategoriesThunk";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
    Select,
    SelectContent,
@@ -24,6 +23,7 @@ import { useTranslation } from "react-i18next";
 import { EventSchema } from "@/validators"; 
 import { getPublicUrl } from "@/lib/storage";
 import LocationPickerDialog from "@/components/map/LocationPickerDialog";
+import RichTextEditor from "@/components/richText/RichTextEditor";
 // import { loremImg } from "@/lib/loremImg";
 
 
@@ -453,56 +453,43 @@ export default function PublishEvent() {
 
                {/* Descriptions */}
                <div className="md:col-span-2">
-                  <Label
-                     htmlFor="description"
-                     className="block text-sm font-semibold mb-2"
-                  >
-                     {lang === "ar"
-                        ? "الوصف (إنجليزي)"
-                        : "Description (English)"}
-                  </Label>
-                  <Textarea
+                  <RichTextEditor
                      id="description"
                      value={formData.description}
+                     onChange={(value) =>
+                        setFormData({ ...formData, description: value })
+                     }
                      dir="ltr"
-                     onChange={handleChange}
-                     rows={3}
+                     label={
+                        lang === "ar"
+                           ? "الوصف (إنجليزي)"
+                           : "Description (English)"
+                     }
                      placeholder={
                         lang === "ar"
                            ? "اكتب وصف الحدث بالإنجليزية"
                            : "Describe your event"
                      }
-                     className="bg-background shadow-none"
+                     error={errors?.description?.[0]}
                   />
-
-                  {errors?.description && (
-                     <p className="text-red-500 text-xs mt-1">{errors.description[0]}</p>
-                  )}
                </div>
 
                <div className="md:col-span-2">
-                  <Label
-                     htmlFor="description_ar"
-                     className="block text-sm font-semibold mb-2"
-                  >
-                     {lang === "ar" ? "الوصف (عربي)" : "Description (Arabic)"}
-                  </Label>
-                  <Textarea
+                  <RichTextEditor
                      id="description_ar"
-                     dir="rtl"
                      value={formData.description_ar}
-                     onChange={handleChange}
-                     rows={3}
+                     onChange={(value) =>
+                        setFormData({ ...formData, description_ar: value })
+                     }
+                     dir="rtl"
+                     label={lang === "ar" ? "الوصف (عربي)" : "Description (Arabic)"}
                      placeholder={
                         lang === "ar"
                            ? "اكتب وصف الحدث بالعربية"
                            : "Describe your event in Arabic"
                      }
-                     className="bg-background shadow-none"
+                     error={errors?.description_ar?.[0]}
                   />
-                  {errors?.description_ar && (
-                     <p className="text-red-500 text-xs mt-1">{errors.description_ar[0]}</p>
-                  )}
                </div>
 
                {/* Location */}
