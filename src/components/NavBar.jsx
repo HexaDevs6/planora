@@ -45,7 +45,7 @@ export default function NavBar() {
       }`;
 
    return (
-      <nav className="fixed top-0 z-50 w-full bg-background/60 backdrop-blur-md shadow-md">
+      <nav className="fixed top-0 z-1001 w-full bg-background/60 backdrop-blur-md shadow-md">
          <div className="container grid grid-cols-2 lg:grid-cols-3 items-center py-2 lg:py-0">
             {/* Mobile Menu Button */}
             <div className="flex lg:hidden items-center gap-4">
@@ -62,7 +62,7 @@ export default function NavBar() {
                </button>
                <Link
                   to="/"
-                  className="navbar-logo h-8"
+                  className="navbar-logo w-55"
                >
                   <img
                      src="/LogoBasic.png"
