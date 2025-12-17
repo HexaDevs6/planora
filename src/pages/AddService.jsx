@@ -6,7 +6,6 @@ import { fetchCategories } from "@/store/fetchCategoriesThunk";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
    Select,
    SelectContent,
@@ -26,6 +25,7 @@ import { Loader2 } from "lucide-react";
 import { ServiceSchema } from "@/validators";
 import { getPublicUrl } from "@/lib/storage";
 import loremImg from "@/assets/lorem.jfif";
+import RichTextEditor from "@/components/richText/RichTextEditor";
 
 
 export default function AddService() {
@@ -414,57 +414,35 @@ export default function AddService() {
 
                {/* Descriptions */}
                <div className="md:col-span-2">
-                  <Label
-                     htmlFor="description"
-                     className="block text-sm font-semibold mb-2"
-                  >
-                     {lang === "ar"
-                        ? "الوصف (إنجليزي)"
-                        : "Description (English)"}
-                  </Label>
-                  <Textarea
+                  <RichTextEditor
                      id="description"
+                     label={lang === "ar" ? "الوصف (إنجليزي)" : "Description (English)"}
                      value={formData.description}
-                     onChange={handleChange}
+                     onChange={(value) => setFormData({ ...formData, description: value })}
                      dir="ltr"
-                     rows={3}
                      placeholder={
                         lang === "ar"
                            ? "اكتب وصف الخدمة بالإنجليزية"
                            : "Enter service description in English, what you are offering ?"
                      }
-                     className="bg-muted shadow-none"
+                     error={errors?.description?.[0] || ""}
                   />
-                  {errors?.description && (
-                     <p className="text-red-500 text-xs mt-1">{errors.description[0]}</p>
-                  )}
-
                </div>
 
                <div className="md:col-span-2">
-                  <Label
-                     htmlFor="description_ar"
-                     className="block text-sm font-semibold mb-2"
-                  >
-                     {lang === "ar" ? "الوصف (عربي)" : "Description (Arabic)"}
-                  </Label>
-                  <Textarea
+                  <RichTextEditor
                      id="description_ar"
-                     dir="rtl"
+                     label={lang === "ar" ? "الوصف (عربي)" : "Description (Arabic)"}
                      value={formData.description_ar}
-                     onChange={handleChange}
-                     rows={3}
+                     onChange={(value) => setFormData({ ...formData, description_ar: value })}
+                     dir="rtl"
                      placeholder={
                         lang === "ar"
                            ? "اكتب وصف الخدمة بالعربية"
                            : "Enter service description in Arabic"
                      }
-                     className="bg-muted shadow-none"
+                     error={errors?.description_ar?.[0] || ""}
                   />
-                  {errors?.description_ar && (
-                     <p className="text-red-500 text-xs mt-1">{errors.description_ar[0]}</p>
-                  )}
-
                </div>
 
                {/* Category */}

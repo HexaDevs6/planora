@@ -11,6 +11,7 @@ import { getPublicUrl } from "@/lib/storage";
 import loremImg from "@/assets/loremService.jfif";
 import { useSelector } from "react-redux";
 import { createOrGetConversation } from "@/lib/chatService";
+import RichTextRenderer from "@/components/richText/RichTextRenderer";
 
 const ServiceDetails = () => {
   const { lang } = useDirection();
@@ -92,9 +93,10 @@ const ServiceDetails = () => {
               {lang === "en" ? "About the Service" : "حول الخدمة"}
             </h3>
 
-            <p className="text-foreground leading-8 text-lg">
-              {lang === "ar" ? service.description_ar : service.description}
-            </p>
+            <RichTextRenderer 
+              html={lang === "ar" ? service.description_ar : service.description}
+              className="text-foreground leading-8 text-lg"
+            />
           </section>
 
           {service?.images?.length > 0 && (
