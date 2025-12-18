@@ -13,7 +13,7 @@ export default function RichTextRenderer({ html, className = "" }) {
   return (
     <div
       className={`rich-text-content ${className}`}
-      dangerouslySetInnerHTML={{ __html: html }}
+      dangerouslySetInnerHTML={{ __html: html.replace(/&nbsp;/g, ' ') }}
     />
   );
 }
