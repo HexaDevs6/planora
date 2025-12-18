@@ -15,6 +15,7 @@ import { getPublicUrl } from "@/lib/storage";
 import loremImg from "@/assets/lorem.jfif";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
+import RichTextRenderer from "@/components/richText/RichTextRenderer";
 
 const EventDetails = () => {
   const { lang } = useDirection();
@@ -134,9 +135,9 @@ const EventDetails = () => {
               <h3 className="text-2xl font-bold mb-4 text-gradient-amber">
                 {lang === "en" ? "About the Event" : "حول الحدث"}
               </h3>
-              <p className="text-foreground leading-relaxed">
-                {lang === "ar" ? event.description_ar : event.description}
-              </p>
+              <RichTextRenderer
+                html={lang === "ar" ? event.description_ar : event.description}
+              />
             </section>
             <Location 
               lang={lang} 

@@ -279,3 +279,164 @@ button {
     radial-gradient(at 5% 80%, #a78bfa 0px, transparent 50%),   /* soft violet */
     #f59e0b; /* base amber */
 }
+
+/* ---------------- Rich Text Editor (Quill) Theming ---------------- */
+.planora-quill {
+  @apply rounded-lg;
+}
+
+.planora-quill .ql-toolbar.ql-snow {
+  @apply bg-card border-border rounded-t-lg;
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.planora-quill .ql-container.ql-snow {
+  @apply bg-background border-border rounded-b-lg;
+  font-family: inherit;
+  font-size: 0.875rem;
+  min-height: 150px;
+}
+
+.planora-quill .ql-editor {
+  @apply text-foreground;
+  min-height: 350px;
+  padding: 12px 15px;
+}
+
+.planora-quill .ql-editor.ql-blank::before {
+  @apply text-muted-foreground;
+  font-style: normal;
+  left: 15px;
+  right: 15px;
+}
+
+/* RTL support */
+.planora-quill.rtl-editor .ql-editor {
+  text-align: right;
+  direction: rtl;
+}
+
+.planora-quill.rtl-editor .ql-editor.ql-blank::before {
+  text-align: right;
+  right: 15px;
+  left: auto;
+}
+
+/* Toolbar buttons */
+.planora-quill .ql-toolbar .ql-stroke {
+  stroke: var(--foreground);
+}
+
+.planora-quill .ql-toolbar .ql-fill {
+  fill: var(--foreground);
+}
+
+.planora-quill .ql-toolbar .ql-picker-label{
+  @apply text-foreground !border-border !bg-primary/10 rounded-sm;
+}
+.planora-quill .ql-toolbar .ql-picker-options {
+  @apply text-foreground !border-border !bg-background rounded-sm;
+}
+.planora-quill .ql-toolbar button {
+  @apply !bg-primary/10 rounded-sm !text-foreground !border !border-transparent;
+}
+
+.planora-quill .ql-toolbar button:hover,
+.planora-quill .ql-toolbar button:focus,
+.planora-quill .ql-toolbar button.ql-active,
+.planora-quill .ql-toolbar .ql-picker-label:hover,
+.planora-quill .ql-toolbar .ql-picker-label.ql-active {
+  @apply !bg-primary/20 !text-foreground !border-primary/50;
+}
+
+.planora-quill .ql-toolbar  {
+  @apply flex gap-2;
+}
+.planora-quill .ql-toolbar .ql-formats {
+  @apply flex gap-2;
+}
+
+.planora-quill .ql-toolbar button:hover .ql-stroke,
+.planora-quill .ql-toolbar button:focus .ql-stroke,
+.planora-quill .ql-toolbar button.ql-active .ql-stroke,
+.planora-quill .ql-toolbar .ql-picker-label:hover .ql-stroke,
+.planora-quill .ql-toolbar .ql-picker-label.ql-active .ql-stroke {
+  stroke: var(--foreground) !important;
+}
+
+.planora-quill .ql-toolbar button:hover .ql-fill,
+.planora-quill .ql-toolbar button:focus .ql-fill,
+.planora-quill .ql-toolbar button.ql-active .ql-fill,
+.planora-quill .ql-toolbar .ql-picker-label:hover .ql-fill,
+.planora-quill .ql-toolbar .ql-picker-label.ql-active .ql-fill {
+  fill: var(--primary);
+}
+
+/* Dropdown options */
+.planora-quill .ql-picker-options {
+  @apply bg-popover border-border text-popover-foreground;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.planora-quill .ql-picker-item {
+  @apply text-foreground;
+}
+
+.planora-quill .ql-picker-item:hover {
+  @apply text-primary;
+}
+
+/* Focus state */
+.planora-quill .ql-container.ql-snow:focus-within {
+  @apply ring-2 ring-ring;
+  border-color: var(--ring);
+}
+
+/* Error state */
+.planora-quill.error-state .ql-toolbar.ql-snow,
+.planora-quill.error-state .ql-container.ql-snow {
+  border-color: #B82E2E;
+}
+
+.planora-quill.error-state .ql-container.ql-snow:focus-within {
+  border-color: #B82E2E;
+  @apply ring-2;
+  --tw-ring-color: rgba(184, 46, 46, 0.3);
+}
+
+/* Rich text content rendering styles */
+.rich-text-content {
+  @apply text-foreground leading-relaxed max-w-full;
+}
+
+.rich-text-content h1 {
+  @apply text-3xl mb-4;
+}
+
+.rich-text-content h2 {
+  @apply text-2xl mb-3;
+}
+
+.rich-text-content h3 {
+  @apply text-xl mb-2;
+}
+
+.rich-text-content p {
+  @apply mb-4;
+}
+
+.rich-text-content a {
+  @apply text-blue-500 underline hover:text-blue-600 transition-colors;
+}
+
+.rich-text-content strong {
+  @apply font-bold;
+}
+
+.rich-text-content em {
+  @apply italic;
+}
+
+.rich-text-content u {
+  @apply underline;
+}

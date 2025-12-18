@@ -141,6 +141,7 @@ const DragZone = ({ onChange, acceptMultiple = false, files = null, maxFiles = 1
             onDrop={handleDrop}
             onError={console.error}
             src={file}
+            className="shadow-none hover:bg-primary/10 rounded-lg"
          >
             <DropzoneEmptyState lang={lang} maxFiles={maxFiles} />
             <DropzoneContent lang={lang} maxFiles={maxFiles}>

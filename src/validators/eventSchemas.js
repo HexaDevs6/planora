@@ -1,15 +1,22 @@
 // src/validators/eventSchemas.js
 import { z } from "zod";
+import { stripHtml } from "@/utils/stripHtml";
 
 export const EventSchema = z.object({
   name: z.string().min(3, "Event name (EN) must be at least 3 characters"),
   name_ar: z.string().min(3, "اسم الحدث بالعربية يجب أن يكون 3 أحرف على الأقل"),
   description: z
     .string()
-    .min(10, "Description (EN) must be at least 10 characters"),
+    .refine(
+      (val) => stripHtml(val).length >= 10,
+      "Description (EN) must be at least 10 characters"
+    ),
   description_ar: z
     .string()
-    .min(10, "الوصف بالعربية يجب أن يكون 10 أحرف على الأقل"),
+    .refine(
+      (val) => stripHtml(val).length >= 10,
+      "الوصف بالعربية يجب أن يكون 10 أحرف على الأقل"
+    ),
   location: z.string().min(3, "Location is required"),
   latitude: z.number().nullable().optional(),
   longitude: z.number().nullable().optional(),
