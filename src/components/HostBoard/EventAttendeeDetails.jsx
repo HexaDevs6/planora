@@ -124,8 +124,9 @@ const EventAttendeeDetails = () => {
 
 
           <div className="flex justify-between items-center">
-              <lable >{lang === "ar" ? "جميع الحجوزات" : "All Attendees"}</lable>
+              <label htmlFor="searchAttendees" >{lang === "ar" ? "جميع الحجوزات" : "All Attendees"}</label>
               <Input 
+              id ="searchAttendees"
                   className='w-1/2 !bg-input'
                   type="search" 
                   value={searchInput}
