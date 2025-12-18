@@ -1,37 +1,30 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
-  Eye,
-  Edit,
-  Trash2,
-  Plus,
   Calendar,
   Loader2,
-  Camera,
   Users,
   Check,
   X,
-  XCircle,
   Circle,
   CalendarCheck,
 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
-import { toast } from "sonner";
-import Swal from "sweetalert2";
-import { useDirection } from "@/hooks/useDirection";
-import { Link, useSearchParams } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { useSearchParams } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
-import { useSelector, useDispatch } from "react-redux";
 import HostScanner from "./HostScanner";
+import { Input } from "@/components/ui/input";
+import { useDirection } from "@/hooks/useDirection";
 
 const EventAttendeeDetails = () => {
-  const { data: categories } = useSelector((state) => state.categories);
   const { lang } = useDirection();
-  const dispatch = useDispatch();
+
+  const [searchInput, setSearchInput] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const debounceMs = 400;
+  const debounceRef = useRef(null);
+
   const [attendees, setAttendees] = useState([]);
-  const user = useSelector((state) => state.auth.user);
   const [loading, setLoading] = useState(true);
-  const [loadingDelete, setLoadingDelete] = useState(false);
 
   const [searchParams] = useSearchParams();
 
@@ -40,15 +33,23 @@ const EventAttendeeDetails = () => {
   const eventDate = searchParams.get("date");
   const eventLocation = searchParams.get("location");
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+        setDebouncedSearch(searchInput.trim());
+    }, debounceMs);
 
-  async function loadAttendees(eventId) {
+    return () => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+}, [searchInput]);
+
+  const flushSearchNow = () => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    setDebouncedSearch(searchInput.trim());
+};
+
+  async function loadAttendees(eventId, debouncedSearch) {
     const { data, error } = await supabase.rpc("get_event_attendees", {
       p_event_id: eventId,
     });
@@ -58,19 +59,26 @@ const EventAttendeeDetails = () => {
       return [];
     }
 
-    return data;
+    if (debouncedSearch) {
+      const filteredData = data.filter((attendee) => {
+        return attendee.full_name.toLowerCase().includes(debouncedSearch.toLowerCase()) || attendee.email.toLowerCase().includes(debouncedSearch.toLowerCase());
+      });
+      return filteredData;
+    }
+
+    return data || [];
   }
 
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
-      const result = await loadAttendees(eventId);
+      const result = await loadAttendees(eventId, debouncedSearch);
       setAttendees(result);
       setLoading(false);
     }
 
     fetchData();
-  }, [eventId]);
+  }, [eventId, debouncedSearch]);
 
   function formatCairoDate(dateString) {
   if (!dateString) return "";
@@ -100,7 +108,7 @@ const EventAttendeeDetails = () => {
   return (
     <div className="space-y-5 container">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+      <div className="flex gap-4 flex-col md:flex-row md:items-center md:justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-primary mb-2">
             {eventTitle}{" "}
@@ -114,8 +122,24 @@ const EventAttendeeDetails = () => {
         <HostScanner eventId={eventId} />
       </div>
 
+
+          <div className="flex justify-between items-center">
+              <lable >{lang === "ar" ? "جميع الحجوزات" : "All Attendees"}</lable>
+              <Input 
+                  className='w-1/2 !bg-input'
+                  type="search" 
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  onKeyDown={(e) => {
+                      if (e.key === "Enter") flushSearchNow();
+                  }}
+                  placeholder={lang === "ar" ? "ابحث باسم الحجز أو البريد الإلكتروني..." : "Search by reservation name or email..."}
+                  aria-label={lang === "ar" ? "بحث" : "Search"}
+              />
+        </div>
+
       {/* Table */}
-      {attendees.length === 0 && !loading && !loadingDelete ? (
+      {attendees.length === 0 && !loading ? (
         <Card>
           <CardContent>
             <EmptyState />

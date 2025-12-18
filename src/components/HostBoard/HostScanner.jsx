@@ -69,7 +69,7 @@ console.log(ticketData, error);
   };
 
   return (
-    <div className="max-w-md  p-4">
+    <div className="max-w-md">
       <Button  onClick={() => setOpen(true)}>
         <Camera /> {lang === "ar" ? "مسح التذكرة" : "Scan Ticket"}
       </Button>
