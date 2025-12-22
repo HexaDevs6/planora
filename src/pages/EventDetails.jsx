@@ -137,10 +137,13 @@ const EventDetails = () => {
               </h3>
               <RichTextRenderer
                 html={lang === "ar" ? event.description_ar : event.description}
+                maxHeight={200}
+                readMoreText={lang === "ar" ? "قراءة المزيد" : "Read more"}
+                readLessText={lang === "ar" ? "أظهر أقل" : "Show less"}
               />
             </section>
-            <Location 
-              lang={lang} 
+            <Location
+              lang={lang}
               address={event?.location || "Egypt"}
               latitude={event?.latitude}
               longitude={event?.longitude}

@@ -93,9 +93,11 @@ const ServiceDetails = () => {
               {lang === "en" ? "About the Service" : "حول الخدمة"}
             </h3>
 
-            <RichTextRenderer 
+            <RichTextRenderer
               html={lang === "ar" ? service.description_ar : service.description}
               className="text-foreground leading-8 text-lg"
+              readMoreText={lang === "ar" ? "قراءة المزيد" : "Read more"}
+              readLessText={lang === "ar" ? "أظهر أقل" : "Show less"}
             />
           </section>
 
