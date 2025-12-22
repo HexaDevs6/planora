@@ -36,18 +36,18 @@ const EventAttendeeDetails = () => {
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
-        setDebouncedSearch(searchInput.trim());
+      setDebouncedSearch(searchInput.trim());
     }, debounceMs);
 
     return () => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
+      if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-}, [searchInput]);
+  }, [searchInput]);
 
   const flushSearchNow = () => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     setDebouncedSearch(searchInput.trim());
-};
+  };
 
   async function loadAttendees(eventId, debouncedSearch) {
     const { data, error } = await supabase.rpc("get_event_attendees", {
@@ -69,17 +69,45 @@ const EventAttendeeDetails = () => {
     return data || [];
   }
 
+  async function fetchData() {
+    setLoading(true);
+    const result = await loadAttendees(eventId, debouncedSearch);
+    setAttendees(result);
+    setLoading(false);
+  }
   useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-      const result = await loadAttendees(eventId, debouncedSearch);
-      setAttendees(result);
-      setLoading(false);
-    }
-
+    if (!eventId) return;
     fetchData();
   }, [eventId, debouncedSearch]);
 
+  //Enable Real-Time Channel
+  useEffect(() => {
+    if (!eventId) return;
+
+    const channel = supabase
+      .channel(`tickets-realtime-${eventId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "tickets",
+          filter: `event_id=eq.${eventId}`,
+        },
+        () => {
+          fetchData();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [eventId]);
+
+
+
+  //reformat date and time for cairo TZ
   function formatCairoDate(dateString) {
     if (!dateString) return "";
 
@@ -125,21 +153,21 @@ const EventAttendeeDetails = () => {
       </div>
 
 
-          <div className="flex justify-between items-center">
-              <label htmlFor="searchAttendees" >{lang === "ar" ? "جميع الحجوزات" : "All Attendees"}</label>
-              <Input 
-              id ="searchAttendees"
-                  className='w-1/2 !bg-input'
-                  type="search" 
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  onKeyDown={(e) => {
-                      if (e.key === "Enter") flushSearchNow();
-                  }}
-                  placeholder={lang === "ar" ? "ابحث باسم الحجز أو البريد الإلكتروني..." : "Search by reservation name or email..."}
-                  aria-label={lang === "ar" ? "بحث" : "Search"}
-              />
-        </div>
+      <div className="flex justify-between items-center">
+        <label htmlFor="searchAttendees" >{lang === "ar" ? "جميع الحجوزات" : "All Attendees"}</label>
+        <Input
+          id="searchAttendees"
+          className='w-1/2 !bg-input'
+          type="search"
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") flushSearchNow();
+          }}
+          placeholder={lang === "ar" ? "ابحث باسم الحجز أو البريد الإلكتروني..." : "Search by reservation name or email..."}
+          aria-label={lang === "ar" ? "بحث" : "Search"}
+        />
+      </div>
 
       {/* Table */}
       {attendees.length === 0 && !loading ? (
