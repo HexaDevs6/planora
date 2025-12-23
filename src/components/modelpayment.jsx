@@ -293,7 +293,7 @@ const Modelpayment = ({ event, user, onPaymentSuccess }) => {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="max-w-md sm:max-w-lg" lang={lang}>
+      <DialogContent className="max-w-md sm:max-w-lg z-[9999]" lang={lang}>
         <AnimatePresence mode="wait">
           {paymentSuccess ? (
             <motion.div
