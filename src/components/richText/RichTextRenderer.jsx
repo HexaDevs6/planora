@@ -57,7 +57,7 @@ export default function RichTextRenderer({
 
         {/* Gradient overlay when collapsed */}
         {shouldShowButton && !isExpanded && (
-          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white dark:from-gray-900 to-transparent pointer-events-none" />
+          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-background to-transparent pointer-events-none" />
         )}
       </div>
 

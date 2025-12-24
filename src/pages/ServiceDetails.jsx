@@ -32,6 +32,8 @@ const ServiceDetails = () => {
         .select("*")
         .eq("id", serviceId);
 
+        console.log(data[0]);
+
       if (error) {
         console.error(error);
       } else {
