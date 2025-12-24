@@ -353,7 +353,7 @@ button {
   @apply flex gap-2;
 }
 .planora-quill .ql-toolbar .ql-formats {
-  @apply flex gap-2;
+  @apply flex gap-2 !m-0;
 }
 
 .planora-quill .ql-toolbar button:hover .ql-stroke,

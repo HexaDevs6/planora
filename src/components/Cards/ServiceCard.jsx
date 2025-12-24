@@ -42,7 +42,7 @@ const ServiceCard = ({
   }, [provider_id]);
 
   return (
-    <Card className="group overflow-hidden border-0 gap-4 shadow-card hover:shadow-hover transition-all duration-300 hover:scale-[1.02]">
+    <Card className="group overflow-hidden border-0 gap-4 shadow-card hover:shadow-hover transition-all duration-300">
       <div className="overflow-hidden aspect-square h-75 ">
         <motion.img
           onError={(e) => {
@@ -62,7 +62,7 @@ const ServiceCard = ({
           <p className="text-sm text-muted-foreground">{provider}</p>
         </div>
 
-        <div className="space-y-2">
+        {/* <div className="space-y-2">
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1">
               <Star className="h-4 w-4 fill-accent text-accent" />
@@ -72,7 +72,7 @@ const ServiceCard = ({
               ({reviews} reviews)
             </span>
           </div>
-        </div>
+        </div> */}
 
         <div className="flex items-center gap-3">
           <div>

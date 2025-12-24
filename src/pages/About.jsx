@@ -221,7 +221,7 @@ const About = () => {
 									key={member.name}
 									className='relative aspect-square rounded-xl overflow-hidden group'
 								>
-									<div className='absolute top-1/2 left-1/2 -translate-1/2 w-full h-full group-hover:scale-110 transition-all duration-300'>
+									<div className='absolute top-1/2 left-1/2 -translate-1/2 w-full h-full md:group-hover:scale-110 transition-all duration-300'>
 										<img
 											src={member.img}
 											alt={member.name}
@@ -229,7 +229,7 @@ const About = () => {
 										/>
 									</div>
 
-									<div className='translate-y-18 group-hover:translate-0 transition duration-300 flex justify-end flex-col gap-4 h-full p-4 md:p-6 bg-gradient-to-t from-muted to-transparent relative z-10'>
+									<div className='md:translate-y-18 md:group-hover:translate-0 transition duration-300 flex justify-end flex-col gap-4 h-full p-4 md:p-6 bg-gradient-to-t from-muted to-transparent relative z-10'>
 										<h3 className='font-semibold text-lg text-foreground'>
 											{member.name}
 										</h3>

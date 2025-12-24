@@ -157,7 +157,7 @@ const DragZone = ({ onChange, acceptMultiple = false, files = null, maxFiles = 1
                         e.stopPropagation();
                         handleRemove(0);
                      }}
-                     className="absolute top-1 right-1 bg-red-500/20 text-red-700 rounded-md p-1 shadow-lg transition-all opacity-0 group-hover:opacity-100"
+                     className="absolute top-1 right-1 bg-red-500/20 text-red-700 rounded-md p-1 shadow-lg transition-all md:opacity-0 group-hover:opacity-100"
                      title="Remove image"
                   >
                      <Trash2 className="h-4 w-4" />
@@ -184,7 +184,7 @@ const DragZone = ({ onChange, acceptMultiple = false, files = null, maxFiles = 1
                                  e.stopPropagation();
                                  handleRemove(index);
                               }}
-                              className="absolute top-1 right-1 bg-red-500/20 text-red-700 rounded-md p-1 shadow-lg transition-all opacity-0 group-hover:opacity-100"
+                              className="absolute top-1 right-1 bg-red-500/20 text-red-700 rounded-md p-1 shadow-lg transition-all md:opacity-0 group-hover:opacity-100"
                               title="Remove image"
                            >
                               <Trash2 className="h-3 w-3" />
