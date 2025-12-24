@@ -52,7 +52,7 @@ const Faq = () => {
               className="bg-card dark:bg-card/50 rounded-lg px-6 border border-border dark:border-border/20"
             >
               <AccordionTrigger className="text-lg font-semibold text-foreground hover:text-primary dark:hover:text-accent">
-                <span className="flex items-start gap-3 text-left">
+                <span className="flex items-start gap-3 text-start">
                   <span className="text-amber-500 dark:text-amber-400 shrink-0">
                     {item.id}.
                   </span>
